@@ -22,10 +22,6 @@
       box-sizing: border-box;
     }
 
-    html, body {
-      overflow-x: hidden;
-    }
-
     body {
       font-family: "Poppins", sans-serif;
       background: linear-gradient(145deg, #fff, var(--fond));
@@ -34,37 +30,38 @@
       min-height: 100vh;
     }
 
-    .conteneur {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
     header {
       background: radial-gradient(circle at top left, #ffe9f7 0%, #f6ecff 55%, #f3f0ff 100%);
-      padding: 40px 0 60px;
+      padding: 40px 5%;
     }
 
     nav {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
+      gap: 28px;
       margin-bottom: 60px;
-      flex-wrap: wrap;
-      row-gap: 16px;
     }
 
     nav .logo {
-      font-size: 1.8rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      display: block;
+      width: 110px;
+      max-width: 60vw;
+    }
+
+    nav .logo img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
     }
 
     nav ul {
       list-style: none;
       display: flex;
-      flex-wrap: wrap;
       gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     nav a {
@@ -138,7 +135,7 @@
     }
 
     section {
-      padding: 80px 0;
+      padding: 80px 5%;
     }
 
     .titre-section {
@@ -339,7 +336,10 @@
     footer {
       background: #1f1a24;
       color: #d6cadc;
-      padding: 40px 0;
+      padding: 40px 5%;
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     }
 
     footer h4 {
@@ -379,314 +379,130 @@
 </head>
 <body>
   <header>
-    <div class="conteneur">
-      <nav>
-        <span class="logo">Lumina Beauty</span>
-        <ul>
-          <li><a href="#produits">Boutique</a></li>
-          <li><a href="#collections">Collections</a></li>
-          <li><a href="#valeurs">Engagements</a></li>
-          <li><a href="#commande">Commander</a></li>
-        </ul>
-      </nav>
-      <div class="hero">
-        <div class="hero-text">
-          <h1>Révélez votre éclat avec notre maquillage haute performance</h1>
-          <p>
-            Des textures luxueuses, des pigments vibrants et des formules haute tolérance.
-            Laissez Lumina Beauty sublimer chaque moment avec des essentiels conçus par des make-up artists.
-          </p>
-          <div class="cta-buttons">
-            <button class="btn btn-principal" onclick="document.getElementById('produits').scrollIntoView({behavior:'smooth'})">Découvrir la boutique</button>
-            <button class="btn btn-secondaire" onclick="document.getElementById('commande').scrollIntoView({behavior:'smooth'})">Passer commande</button>
-          </div>
+    <nav>
+      <a class="logo" href="#">
+        <img src="https://i.ibb.co/k7R6BCs/Photo-Room-20251101-143835.png"
+             alt="Logo Lumina Beauty">
+      </a>
+      <ul>
+        <li><a href="#produits">Boutique</a></li>
+        <li><a href="#collections">Collections</a></li>
+        <li><a href="#valeurs">Engagements</a></li>
+        <li><a href="#commande">Commander</a></li>
+      </ul>
+    </nav>
+    <div class="hero">
+      <div class="hero-text">
+        <h1>Révélez votre éclat avec notre maquillage haute performance</h1>
+        <p>
+          Des textures luxueuses, des pigments vibrants et des formules haute tolérance.
+          Laissez Lumina Beauty sublimer chaque moment avec des essentiels conçus par des make-up artists.
+        </p>
+        <div class="cta-buttons">
+          <button class="btn btn-principal" onclick="document.getElementById('produits').scrollIntoView({behavior:'smooth'})">Découvrir la boutique</button>
+          <button class="btn btn-secondaire" onclick="document.getElementById('commande').scrollIntoView({behavior:'smooth'})">Passer commande</button>
         </div>
-        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Palette de maquillage professionnelle">
       </div>
+      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Palette de maquillage professionnelle">
     </div>
   </header>
 
   <section id="produits">
-    <div class="conteneur">
-      <h2 class="titre-section">Nos essentiels stars</h2>
-      <p class="sous-titre">Des classiques indémodables aux dernières pépites backstage : tout pour un look impeccable du matin au soir.</p>
-      <div class="produits-grille">
-        <article class="card product-card" data-name="Rouge à lèvres velours" data-price="24.90">
-          <span class="tag">Best-seller</span>
-          <h3>Rouge à lèvres velours</h3>
-          <p>Une texture crémeuse au fini mat flouté, enrichie en huile de camélia pour des lèvres confortables.</p>
-          <strong class="prix">24,90 €</strong>
-          <button class="btn btn-principal">Ajouter au panier</button>
-        </article>
+    <h2 class="titre-section">Nos essentiels stars</h2>
+    <p class="sous-titre">Des classiques indémodables aux dernières pépites backstage : tout pour un look impeccable du matin au soir.</p>
+    <div class="produits-grille">
+      <article class="card product-card" data-name="Rouge à lèvres velours" data-price="24.90">
+        <span class="tag">Best-seller</span>
+        <h3>Rouge à lèvres velours</h3>
+        <p>Une texture crémeuse au fini mat flouté, enrichie en huile de camélia pour des lèvres confortables.</p>
+        <strong class="prix">24,90 €</strong>
+        <button class="btn btn-principal">Ajouter au panier</button>
+      </article>
 
-        <article class="card product-card" data-name="Palette yeux Prismatique" data-price="39.50">
-          <span class="tag">Nouvel arrivage</span>
-          <h3>Palette yeux Prismatique</h3>
-          <p>12 teintes ultra pigmentées, du satin au métallique, pour créer des looks infinis sans chutes.</p>
-          <strong class="prix">39,50 €</strong>
-          <button class="btn btn-principal">Ajouter au panier</button>
-        </article>
+      <article class="card product-card" data-name="Palette yeux Prismatique" data-price="39.50">
+        <span class="tag">Nouvel arrivage</span>
+        <h3>Palette yeux Prismatique</h3>
+        <p>12 teintes ultra pigmentées, du satin au métallique, pour créer des looks infinis sans chutes.</p>
+        <strong class="prix">39,50 €</strong>
+        <button class="btn btn-principal">Ajouter au panier</button>
+      </article>
 
-        <article class="card product-card" data-name="Fond de teint Sérum Glow" data-price="42.00">
-          <span class="tag">HOT</span>
-          <h3>Fond de teint Sérum Glow</h3>
-          <p>Couvrance modulable et effet peau nue lumineux grâce à l’acide hyaluronique micro-encapsulé.</p>
-          <strong class="prix">42,00 €</strong>
-          <button class="btn btn-principal">Ajouter au panier</button>
-        </article>
+      <article class="card product-card" data-name="Fond de teint Sérum Glow" data-price="42.00">
+        <span la="tag">HOT</span>
+        <h3>Fond de teint Sérum Glow</h3>
+        <p>Couvrance modulable et effet peau nue lumineux grâce à l’acide hyaluronique micro-encapsulé.</p>
+        <strong class="prix">42,00 €</strong>
+        <button class="btn btn-principal">Ajouter au panier</button>
+      </article>
 
-        <article class="card product-card" data-name="Brume fixante Hydra-Mist" data-price="21.90">
-          <h3>Brume fixante Hydra-Mist</h3>
-          <p>Booste l’éclat et fixe le maquillage jusqu’à 16 h, avec des extraits de rose et d’aloé vera.</p>
-          <strong class="prix">21,90 €</strong>
-          <button class="btn btn-principal">Ajouter au panier</button>
-        </article>
-      </div>
+      <article class="card product-card" data-name="Brume fixante Hydra-Mist" data-price="21.90">
+        <h3>Brume fixante Hydra-Mist</h3>
+        <p>Booste l’éclat et fixe le maquillage jusqu’à 16 h, avec des extraits de rose et d’aloé vera.</p>
+        <strong class="prix">21,90 €</strong>
+        <button class="btn btn-principal">Ajouter au panier</button>
+      </article>
     </div>
   </section>
 
   <section id="collections">
-    <div class="conteneur">
-      <h2 class="titre-section">Collections signature</h2>
-      <p class="sous-titre">Des univers pensés pour répondre aux besoins de chaque peau et révéler toutes les beautés.</p>
-      <div class="collections-grille">
-        <article class="card">
-          <span class="tag">Glow couture</span>
-          <h3>Lumière pure</h3>
-          <p>Une sélection lumineuse pour un teint éclatant instantané, inspirée des catwalks parisiens.</p>
-        </article>
-        <article class="card">
-          <span class="tag">Studio Pro</span>
-          <h3>Résistance 24/7</h3>
-          <p>Formules waterproof et sweatproof pour des journées marathon et des nuits sans retouche.</p>
-        </article>
-        <article class="card">
-          <span class="tag">Clean Beauty</span>
-          <h3>Botanical blends</h3>
-          <p>Actifs naturels et packaging éco-conçus, sans compromis sur la couleur ni la tenue.</p>
-        </article>
-      </div>
+    <h2 class="titre-section">Collections signature</h2>
+    <p class="sous-titre">Des univers pensés pour répondre aux besoins de chaque peau et révéler toutes les beautés.</p>
+    <div class="collections-grille">
+      <article class="card">
+        <span class="tag">Glow couture</span>
+        <h3>Lumière pure</h3>
+        <p>Une sélection lumineuse pour un teint éclatant instantané, inspirée des catwalks parisiens.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Studio Pro</span>
+        <h3>Résistance 24/7</h3>
+        <p>Formules waterproof et sweatproof pour des journées marathon et des nuits sans retouche.</p>
+      </article>
+      <article class="card">
+        <span class="tag">Clean Beauty</span>
+        <h3>Botanical blends</h3>
+        <p>Actifs naturels et packaging éco-conçus, sans compromis sur la couleur ni la tenue.</p>
+      </article>
     </div>
   </section>
 
   <section id="valeurs">
-    <div class="conteneur">
-      <h2 class="titre-section">Nos engagements beauté</h2>
-      <div class="valeurs">
-        <div class="valeur">
-          <span>01</span>
-          <div>
-            <h3>Formules testées dermatologiquement</h3>
-            <p>Sécurité optimale, même pour les peaux sensibles, grâce à des tests sous contrôle dermatologique indépendant.</p>
-          </div>
+    <h2 class="titre-section">Nos engagements beauté</h2>
+    <div class="valeurs">
+      <div class="valeur">
+        <span>01</span>
+        <div>
+          <h3>Formules testées dermatologiquement</h3>
+          <p>Sécurité optimale, même pour les peaux sensibles, grâce à des tests sous contrôle dermatologique indépendant.</p>
         </div>
-        <div class="valeur">
-          <span>02</span>
-          <div>
-            <h3>Ingrédients premium</h3>
-            <p>Actifs haute performance sourcés de manière responsable pour offrir efficacité et plaisir sensoriel.</p>
-          </div>
+      </div>
+      <div class="valeur">
+        <span>02</span>
+        <div>
+          <h3>Ingrédients premium</h3>
+          <p>Actifs haute performance sourcés de manière responsable pour offrir efficacité et plaisir sensoriel.</p>
         </div>
-        <div class="valeur">
-          <span>03</span>
-          <div>
-            <h3>Respect du vivant</h3>
-            <p>Aucun test sur les animaux et une chaîne de production certifiée éthique à chaque étape.</p>
-          </div>
+      </div>
+      <div class="valeur">
+        <span>03</span>
+        <div>
+          <h3>Respect du vivant</h3>
+          <p>Aucun test sur les animaux et une chaîne de production certifiée éthique à chaque étape.</p>
         </div>
       </div>
     </div>
   </section>
 
   <section id="commande">
-    <div class="conteneur">
-      <h2 class="titre-section">Prête à passer commande ?</h2>
-      <p class="sous-titre">Ajoutez vos produits au panier puis complétez le formulaire. Nous vous recontactons dans les 24 h pour finaliser l’expédition.</p>
+    <h2 class="titre-section">Prête à passer commande ?</h2>
+    <p class="sous-titre">Ajoutez vos produits au panier puis complétez le formulaire. Nous vous recontactons dans les 24 h pour finaliser l’expédition.</p>
 
-      <div class="layout-shop">
-        <div class="panier">
-          <h3>Votre panier</h3>
-          <div class="panier-liste" id="cart-items">
-            <p>Votre panier est encore vide. Faites-vous plaisir !</p>
-          </div>
-          <div class="panier-total">
-            <span>Total</span>
-            <span id="cart-total">0,00 €</span>
-          </div>
+    <div class="layout-shop">
+      <div class="panier">
+        <h3>Votre panier</h3>
+        <div class="panier-liste" id="cart-items">
+          <p>Votre panier est encore vide. Faites-vous plaisir !</p>
         </div>
-
-        <form id="order-form">
-          <div>
-            <label for="name">Nom complet</label>
-            <input type="text" id="name" name="name" placeholder="Ex : Camille Dupont" required>
-          </div>
-          <div>
-            <label for="email">Adresse e-mail</label>
-            <input type="email" id="email" name="email" placeholder="camille@example.com" required>
-          </div>
-          <div>
-            <label for="phone">Téléphone</label>
-            <input type="tel" id="phone" name="phone" placeholder="+33 6 12 34 56 78" required>
-          </div>
-          <div>
-            <label for="address">Adresse de livraison</label>
-            <textarea id="address" name="address" placeholder="Numéro, rue, code postal, ville" required></textarea>
-          </div>
-          <div>
-            <label for="payment">Mode de paiement préféré</label>
-            <select id="payment" name="payment" required>
-              <option value="">Choisir une option</option>
-              <option value="carte">Carte bancaire</option>
-              <option value="paypal">PayPal</option>
-              <option value="virement">Virement bancaire</option>
-            </select>
-          </div>
-          <div>
-            <label for="notes">Notes complémentaires</label>
-            <textarea id="notes" name="notes" placeholder="Allergies, instructions de livraison, teintes souhaitées..."></textarea>
-          </div>
-          <button type="submit" class="btn btn-principal">Envoyer ma commande</button>
-          <p id="order-feedback" style="display:none; font-weight:600; color:var(--accent);">Merci ! Votre demande a été transmise avec succès.</p>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="conteneur">
-      <h2 class="titre-section">Questions fréquentes</h2>
-      <div class="faq">
-        <article>
-          <h3>Quels sont vos délais de livraison ?</h3>
-          <p>En France métropolitaine, comptez 2 à 4 jours ouvrés. Livraison Express disponible (24 h) sur demande.</p>
-        </article>
-        <article>
-          <h3>Proposez-vous des tests de teintes ?</h3>
-          <p>Oui, nous offrons des mini-échantillons pour le teint et des nuanciers numériques pour les lèvres et les yeux.</p>
-        </article>
-        <article>
-          <h3>Et pour les peaux sensibles ?</h3>
-          <p>Toutes nos formules sont hypoallergéniques, sans parfum synthétique ni parabènes. Testez en toute confiance.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="conteneur" style="display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
-      <div>
-        <h4>À propos</h4>
-        <p>Lumina Beauty, la maison française de maquillage inspirée des coulisses. Qualité studio accessible au quotidien.</p>
-      </div>
-      <div>
-        <h4>Contact</h4>
-        <a href="mailto:bonjour@luminabeauty.fr">bonjour@luminabeauty.fr</a>
-        <a href="tel:+33123456789">+33 1 23 45 67 89</a>
-        <p>12 rue des Artistes, 75009 Paris</p>
-      </div>
-      <div>
-        <h4>Restez inspirée</h4>
-        <p>Inscrivez-vous pour recevoir des tutoriels exclusifs, looks backstage et offres privées.</p>
-        <form>
-          <input type="email" placeholder="Votre e-mail">
-          <button type="submit" class="btn btn-secondaire" style="margin-top:12px;">Je m’inscris</button>
-        </form>
-      </div>
-      <p class="credits">© 2025 Lumina Beauty. Tous droits réservés. Brillance et bienveillance incluses.</p>
-    </div>
-  </footer>
-
-  <script>
-    const cart = [];
-    const cartItemsContainer = document.getElementById("cart-items");
-    const cartTotalElement = document.getElementById("cart-total");
-    const orderForm = document.getElementById("order-form");
-    const orderFeedback = document.getElementById("order-feedback");
-
-    function renderCart() {
-      cartItemsContainer.innerHTML = "";
-      if (cart.length === 0) {
-        cartItemsContainer.innerHTML = "<p>Votre panier est encore vide. Faites-vous plaisir !</p>";
-        cartTotalElement.textContent = "0,00 €";
-        return;
-      }
-
-      cart.forEach((item, index) => {
-        const div = document.createElement("div");
-        div.classList.add("item-panier");
-        div.innerHTML = `
-          <span>${item.quantity} × ${item.name}</span>
-          <span>${(item.price * item.quantity).toFixed(2).replace(".", ",")} €</span>
-          <button aria-label="Retirer l'article" data-index="${index}">×</button>
-        `;
-        cartItemsContainer.appendChild(div);
-      });
-
-      const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-      cartTotalElement.textContent = total.toFixed(2).replace(".", ",") + " €";
-    }
-
-    function addToCart(name, price) {
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        cart.push({ name, price, quantity: 1 });
-      }
-      renderCart();
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      renderCart();
-    }
-
-    document.querySelectorAll(".product-card button").forEach(button => {
-      button.addEventListener("click", (event) => {
-        const card = event.target.closest(".product-card");
-        const name = card.dataset.name;
-        const price = parseFloat(card.dataset.price);
-        addToCart(name, price);
-      });
-    });
-
-    cartItemsContainer.addEventListener("click", (event) => {
-      if (event.target.matches("button[data-index]")) {
-        const index = parseInt(event.target.dataset.index, 10);
-        removeFromCart(index);
-      }
-    });
-
-    orderForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      if (cart.length === 0) {
-        alert("Votre panier est vide. Ajoutez des produits avant de passer commande.");
-        return;
-      }
-
-      const formData = new FormData(orderForm);
-      const orderDetails = {
-        client: {
-          nom: formData.get("name"),
-          email: formData.get("email"),
-          telephone: formData.get("phone"),
-          adresse: formData.get("address"),
-        },
-        paiement: formData.get("payment"),
-        notes: formData.get("notes"),
-        panier: cart.map(item => ({
-          produit: item.name,
-          quantite: item.quantity,
-          prixUnitaire: item.price
-        })),
-        total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
-      };
-
-      console.table(orderDetails);
-      orderFeedback.style.display = "block";
-      setTimeout(() => orderFeedback.style.display = "none", 6000);
-      orderForm.reset();
-    });
-  </script>
-</body>
-  </html>
+        <div class="panier-total">
+          <span>Total</span>
+          <span
