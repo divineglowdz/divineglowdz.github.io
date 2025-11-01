@@ -82,7 +82,14 @@
       gap: 40px;
       align-items: center;
     }
-
+    
+    .hero img {
+      width: auto;
+      height: auto;
+      max-width: none;
+      max-height: none;
+      }
+    
     .hero-text h1 {
       font-size: clamp(2.5rem, 5vw, 3.6rem);
       line-height: 1.15;
@@ -783,7 +790,8 @@
         <h1>Divine glow dz</h1>
         <p>
           Votre destination pour une beauté éclatante et des soins d'exception.
-          Découvrez notre sélection de produits de haute qualité conçus pour sublimer votre peau et vos looks.
+          Découvrez notre sélection de produits de haute qualité 
+          pour sublimer votre peau et vos looks.
         </p>
         <div class="cta-buttons">
           <button class="btn btn-principal" onclick="document.getElementById('produits').scrollIntoView({behavior:'smooth'})">Découvrir nos produits</button>
