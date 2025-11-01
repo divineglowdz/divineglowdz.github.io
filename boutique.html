@@ -84,9 +84,9 @@
     }
 
     .hero img {
-      width: 306px;
-      height: 1594px;
-      object-fit: cover;
+      width: min(100%, 420px);
+      height: auto;
+      object-fit: contain;
       justify-self: center;
       display: block;
     }
@@ -142,11 +142,11 @@
     }
 
     .hero img {
-      width: 100%;
+      width: min(100%, 420px);
+      height: auto;
       border-radius: 24px;
       box-shadow: var(--ombre-douce);
-      object-fit: cover;
-      aspect-ratio: 4 / 5;
+      object-fit: contain;
     }
 
     section {
@@ -780,7 +780,7 @@
         <img src="https://i.ibb.co/k7R6BCs/Photo-Room-20251101-143835.png" alt="Logo Lumina Beauty">
       </a>
       <ul>
-        <li><a href="#Boutique.html">Boutique</a></li>
+        <li><a href="#boutique.html">Boutique</a></li>
         <li><a href="#collections">Collections</a></li>
         <li><a href="#valeurs">Engagements</a></li>
         <li><a href="#commande">Commander</a></li>
@@ -1636,65 +1636,21 @@
       </div>
     </div>
     <p class="credits">© 2025 Lumina Beauty. Tous droits réservés. Brillance et bienveillance incluses.</p>
-  </footer>
-
-  <button class="floating-cart-button" id="floating-cart-button" type="button" aria-label="Ouvrir le panier" aria-expanded="false" aria-controls="cart-drawer">
-    <span class="cart-icon" aria-hidden="true">🛒</span>
-    <span class="cart-badge" id="cart-badge" hidden>0</span>
-  </button>
-
-  <div class="cart-overlay" id="cart-overlay" aria-hidden="true"></div>
-
-  <aside class="cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" aria-hidden="true" tabindex="-1">
-    <div class="cart-drawer-header">
-      <h2 id="cart-drawer-title">Votre panier</h2>
-      <button type="button" class="cart-close" id="cart-close" aria-label="Fermer le panier">×</button>
-    </div>
-    <ul id="cart-items" class="cart-items-list">
-      <li class="cart-empty">Votre panier est vide pour le moment.</li>
-    </ul>
-    <p id="cart-summary" class="cart-summary">Total : 0&nbsp;DA</p>
-  </aside>
+  </footer
 
   <div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const productCards = document.querySelectorAll('.product-card');
-      const cartList = document.getElementById('cart-items');
-      const cartSummary = document.getElementById('cart-summary');
-      const cartBadge = document.getElementById('cart-badge');
-      const floatingCartButton = document.getElementById('floating-cart-button');
-      const cartOverlay = document.getElementById('cart-overlay');
-      const cartDrawer = document.getElementById('cart-drawer');
-      const cartCloseButton = document.getElementById('cart-close');
+      const cartList = document.getElementById('panier-liste');
+      const cartTotal = document.getElementById('panier-total');
+      const cartCounter = document.getElementById('panier-compteur');
       const toastContainer = document.getElementById('toast-container');
       const CART_KEY = 'lumina-cart';
       const cart = [];
 
-      cartBadge.hidden = true;
-
       const formatPrice = (value) => `${new Intl.NumberFormat('fr-DZ').format(value)} DA`;
-
-      const openCart = () => {
-        cartDrawer.classList.add('open');
-        cartOverlay.classList.add('active');
-        document.body.classList.add('cart-open');
-        floatingCartButton.setAttribute('aria-expanded', 'true');
-        cartDrawer.setAttribute('aria-hidden', 'false');
-        cartOverlay.setAttribute('aria-hidden', 'false');
-        cartCloseButton.focus();
-      };
-
-      const closeCart = () => {
-        cartDrawer.classList.remove('open');
-        cartOverlay.classList.remove('active');
-        document.body.classList.remove('cart-open');
-        floatingCartButton.setAttribute('aria-expanded', 'false');
-        cartDrawer.setAttribute('aria-hidden', 'true');
-        cartOverlay.setAttribute('aria-hidden', 'true');
-        floatingCartButton.focus();
-      };
 
       const loadCart = () => {
         const stored = localStorage.getItem(CART_KEY);
@@ -1739,21 +1695,20 @@
 
       const renderCart = () => {
         if (cart.length === 0) {
-          cartList.innerHTML = '<li class="cart-empty">Votre panier est vide pour le moment.</li>';
-          cartSummary.innerHTML = 'Total : 0&nbsp;DA';
-          cartBadge.textContent = '0';
-          cartBadge.hidden = true;
+          cartList.innerHTML = '<li class="panier-vide">Votre panier est vide pour le moment.</li>';
+          cartTotal.innerHTML = 'Total : 0&nbsp;DA';
+          cartCounter.textContent = '0';
           return;
         }
 
         const itemsMarkup = cart.map((item, index) => `
-          <li class="cart-item">
+          <li class="panier-item">
             <img src="${item.image}" alt="${item.name}">
-            <div class="cart-item-info">
+            <div class="panier-item-info">
               <h4>${item.name}</h4>
               ${item.optionLabel ? `<p>Option : <strong>${item.optionLabel}</strong></p>` : '<p>Option unique incluse</p>'}
               <p>${formatPrice(item.price)}</p>
-              <div class="cart-item-controls">
+              <div class="panier-item-controls">
                 <button type="button" data-action="minus" data-index="${index}" aria-label="Diminuer la quantité">−</button>
                 <span>${item.quantity}</span>
                 <button type="button" data-action="plus" data-index="${index}" aria-label="Augmenter la quantité">+</button>
@@ -1766,11 +1721,8 @@
         cartList.innerHTML = itemsMarkup;
 
         const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-        cartSummary.innerHTML = `Total : ${formatPrice(total)}`;
-
-        const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-        cartBadge.textContent = String(totalItems);
-        cartBadge.hidden = totalItems === 0;
+        cartTotal.innerHTML = `Total : ${formatPrice(total)}`;
+        cartCounter.textContent = String(cart.reduce((acc, item) => acc + item.quantity, 0));
       };
 
       const addToCart = (product) => {
@@ -1806,23 +1758,6 @@
 
         renderCart();
         saveCart();
-      });
-
-      floatingCartButton.addEventListener('click', () => {
-        if (cartDrawer.classList.contains('open')) {
-          closeCart();
-        } else {
-          openCart();
-        }
-      });
-
-      cartCloseButton.addEventListener('click', closeCart);
-      cartOverlay.addEventListener('click', closeCart);
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && cartDrawer.classList.contains('open')) {
-          closeCart();
-        }
       });
 
       productCards.forEach((card) => {
