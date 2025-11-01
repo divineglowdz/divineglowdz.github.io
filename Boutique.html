@@ -77,10 +77,9 @@
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 40px;
-      align-items: center;
+     display: flex;
+     justify-content: center;
+     align-items: center;
     }
     
     .hero img {
@@ -88,6 +87,7 @@
       height: auto;
       max-width: none;
       max-height: none;
+      display: block;
       }
     
     .hero-text h1 {
