@@ -77,18 +77,19 @@
     }
 
     .hero {
-     display: flex;
-     justify-content: center;
-     align-items: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      align-items: center;
     }
-    
-    .hero img {
+
+   .hero img {
       width: auto;
       height: auto;
-      max-width: none;
-      max-height: none;
-      display: block;
-      }
+      max-width: 100%;
+      object-fit: contain;
+      justify-self: center;
+    }
     
     .hero-text h1 {
       font-size: clamp(2.5rem, 5vw, 3.6rem);
