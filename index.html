@@ -7,13 +7,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --fond: #f7f0f7;
-      --accent: #b51f79;
-      --accent-light: #fbd5ec;
-      --texte-principal: #1f1a24;
-      --texte-secondaire: #5e5366;
-      --clair: #fff;
-      --ombre-douce: 0 20px 45px rgba(181, 31, 121, 0.15);
+      --fond: #f9f4ec;
+      --accent: #c9a47a;
+      --accent-light: #f2e3d2;
+      --texte-principal: #3e2b24;
+      --texte-secondaire: #7b6b59;
+      --clair: #fffaf1;
+      --ombre-douce: 0 20px 45px rgba(201, 164, 122, 0.18);
     }
 
     * {
@@ -24,14 +24,14 @@
 
     body {
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(145deg, #fff, var(--fond));
+      background: linear-gradient(145deg, var(--clair), var(--fond));
       color: var(--texte-principal);
       line-height: 1.6;
       min-height: 100vh;
     }
 
     header {
-      background: radial-gradient(circle at top left, #ffe9f7 0%, #f6ecff 55%, #f3f0ff 100%);
+      background: radial-gradient(circle at top left, #fffaf1 0%, #f5ebdd 55%, #ede0cf 100%);
       padding: 40px 5%;
     }
 
@@ -107,7 +107,7 @@
       border: none;
       cursor: pointer;
       font-weight: 600;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
     }
 
     .btn-principal {
@@ -118,12 +118,18 @@
 
     .btn-principal:hover {
       transform: translateY(-3px);
+      background: #ba8f60;
     }
 
     .btn-secondaire {
       background: var(--clair);
       color: var(--accent);
       border: 1px solid var(--accent-light);
+    }
+
+    .btn-secondaire:hover {
+      background: #f6ecda;
+      transform: translateY(-2px);
     }
 
     .hero img {
@@ -162,7 +168,7 @@
       background: var(--clair);
       border-radius: 22px;
       padding: 24px;
-      box-shadow: 0 12px 30px rgba(31, 26, 36, 0.08);
+      box-shadow: 0 12px 30px rgba(62, 43, 36, 0.08);
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -171,7 +177,7 @@
 
     .card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 18px 40px rgba(31, 26, 36, 0.12);
+      box-shadow: 0 18px 40px rgba(62, 43, 36, 0.12);
     }
 
     .tag {
@@ -206,7 +212,7 @@
     }
 
     .collections-grille .card {
-      background: linear-gradient(160deg, #ffffff, #ffeafd 95%);
+      background: linear-gradient(160deg, #fffaf1, #f2e5d4 95%);
       align-items: flex-start;
     }
 
@@ -245,7 +251,7 @@
       background: var(--clair);
       border-radius: 22px;
       padding: 28px;
-      box-shadow: 0 15px 35px rgba(31, 26, 36, 0.1);
+      box-shadow: 0 15px 35px rgba(62, 43, 36, 0.1);
       position: sticky;
       top: 30px;
     }
@@ -281,6 +287,10 @@
       cursor: pointer;
     }
 
+    .item-panier button:hover {
+      color: #b98a5c;
+    }
+
     .panier-total {
       margin-top: 20px;
       display: flex;
@@ -298,21 +308,25 @@
       font-weight: 600;
     }
 
-    input, textarea, select {
+    input,
+    textarea,
+    select {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
-      border: 1px solid #e2d7e8;
-      background: #fff;
+      border: 1px solid #e7dbc8;
+      background: #ffffff;
       font-family: inherit;
       font-size: 0.95rem;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    input:focus, textarea:focus, select:focus {
+    input:focus,
+    textarea:focus,
+    select:focus {
       border-color: var(--accent);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(181, 31, 121, 0.15);
+      box-shadow: 0 0 0 3px rgba(201, 164, 122, 0.18);
     }
 
     textarea {
@@ -330,12 +344,12 @@
       background: var(--clair);
       padding: 24px;
       border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(31, 26, 36, 0.08);
+      box-shadow: 0 12px 30px rgba(62, 43, 36, 0.08);
     }
 
     footer {
-      background: #1f1a24;
-      color: #d6cadc;
+      background: #3b2f23;
+      color: #f0e3d1;
       padding: 40px 5%;
       display: grid;
       gap: 20px;
@@ -343,20 +357,83 @@
     }
 
     footer h4 {
-      color: #fff;
+      color: #fffaf1;
       margin-bottom: 14px;
       font-size: 1.1rem;
     }
 
     footer a {
-      color: #d6cadc;
+      color: #f0e3d1;
       text-decoration: none;
-      display: inline-block;
-      margin-bottom: 8px;
     }
 
     footer a:hover {
       color: var(--accent-light);
+    }
+
+    .contact-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 40px;
+      background: rgba(255, 250, 241, 0.12);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(4px);
+      margin-bottom: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .contact-chip svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--accent-light);
+      stroke: var(--accent);
+      stroke-width: 1.2;
+    }
+
+    .contact-chip:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .social-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .social-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: rgba(242, 227, 210, 0.15);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+      color: #fffaf1;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .social-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: #f8dcb7;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .social-icon:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
+      background: rgba(242, 227, 210, 0.25);
+    }
+
+    .social-icon span {
+      letter-spacing: 0.3px;
     }
 
     .credits {
@@ -371,6 +448,7 @@
       .layout-shop {
         grid-template-columns: 1fr;
       }
+
       .panier {
         position: static;
       }
@@ -381,8 +459,7 @@
   <header>
     <nav>
       <a class="logo" href="#">
-        <img src="https://i.ibb.co/k7R6BCs/Photo-Room-20251101-143835.png"
-             alt="Logo Lumina Beauty">
+        <img src="https://i.ibb.co/k7R6BCs/Photo-Room-20251101-143835.png" alt="Logo Lumina Beauty">
       </a>
       <ul>
         <li><a href="#produits">Boutique</a></li>
@@ -402,9 +479,7 @@
           <button class="btn btn-principal" onclick="document.getElementById('produits').scrollIntoView({behavior:'smooth'})">Découvrir la boutique</button>
           <button class="btn btn-secondaire" onclick="document.getElementById('commande').scrollIntoView({behavior:'smooth'})">Passer commande</button>
         </div>
-      </div>
-      <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Palette de maquillage professionnelle">
-    </div>
+        
   </header>
 
   <section id="produits">
@@ -428,7 +503,7 @@
       </article>
 
       <article class="card product-card" data-name="Fond de teint Sérum Glow" data-price="42.00">
-        <span la="tag">HOT</span>
+        <span class="tag">HOT</span>
         <h3>Fond de teint Sérum Glow</h3>
         <p>Couvrance modulable et effet peau nue lumineux grâce à l’acide hyaluronique micro-encapsulé.</p>
         <strong class="prix">42,00 €</strong>
@@ -527,15 +602,6 @@
           <textarea id="address" name="address" placeholder="Numéro, rue, code postal, ville" required></textarea>
         </div>
         <div>
-          <label for="payment">Mode de paiement préféré</label>
-          <select id="payment" name="payment" required>
-            <option value="">Choisir une option</option>
-            <option value="carte">Carte bancaire</option>
-            <option value="paypal">PayPal</option>
-            <option value="virement">Virement bancaire</option>
-          </select>
-        </div>
-        <div>
           <label for="notes">Notes complémentaires</label>
           <textarea id="notes" name="notes" placeholder="Allergies, instructions de livraison, teintes souhaitées..."></textarea>
         </div>
@@ -550,7 +616,7 @@
     <div class="faq">
       <article>
         <h3>Quels sont vos délais de livraison ?</h3>
-        <p>En France métropolitaine, comptez 2 à 4 jours ouvrés. Livraison Express disponible (24 h) sur demande.</p>
+        <p>Nos délais de livraison sont de 24 à 48h sur Alger et de 2 à 5 jours ouvrables dans les autres wilayas.</p>
       </article>
       <article>
         <h3>Proposez-vous des tests de teintes ?</h3>
@@ -566,13 +632,24 @@
   <footer>
     <div>
       <h4>À propos</h4>
-      <p>Lumina Beauty, la maison française de maquillage inspirée des coulisses. Qualité studio accessible au quotidien.</p>
+      <p>Divine Glow DZ — Boutique en ligne de cosmétiques et maquillage authentiques. Retrouvez toutes vos marques préférées, des produits de qualité, à prix abordables, avec livraison rapide partout en Algérie. ✨</p>
     </div>
     <div>
       <h4>Contact</h4>
-      <a href="mailto:bonjour@luminabeauty.fr">bonjour@luminabeauty.fr</a>
-      <a href="tel:+33123456789">+33 1 23 45 67 89</a>
-      <p>12 rue des Artistes, 75009 Paris</p>
+      <a class="contact-chip" href="mailto:divineglowdz1@gmail.com">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="14" rx="2.2"></rect>
+          <polyline points="4 6 12 12 20 6"></polyline>
+        </svg>
+        <span>divineglowdz1@gmail.com</span>
+      </a>
+      <a class="contact-chip" href="tel:+213559764690">
+        <svg viewBox="0 0 24 24">
+          <path d="M5.8 2.6 8.5 3a2.2 2.2 0 0 1 1.9 1.8l.5 2.7a2.2 2.2 0 0 1-.6 1.9l-1.6 1.6a12.6 12.6 0 0 0 6.3 6.3l1.6-1.6a2.2 2.2 0 0 1 1.9-.6l2.7.5a2.2 2.2 0 0 1 1.8 1.9l.3 2.7a2.2 2.2 0 0 1-2.2 2.4A18.6 18.6 0 0 1 2.4 7.8 2.2 2.2 0 0 1 4.8 5.6l1-.3z"></path>
+        </svg>
+        <span>+213 55 97 64 690</span>
+      </a>
+      <p>Alger, Algérie</p>
     </div>
     <div>
       <h4>Restez inspirée</h4>
@@ -582,7 +659,26 @@
         <button type="submit" class="btn btn-secondaire" style="margin-top:12px;">Je m’inscris</button>
       </form>
     </div>
-    <p class="credits">© 2025 Lumina Beauty. Tous droits réservés. Brillance et bienveillance incluses.</p>
+    <div>
+      <h4>Suivez-nous</h4>
+      <div class="social-links">
+        <a class="social-icon" href="https://www.instagram.com/divineglowdz?igsh=MXc3MjBzM3lkcHpxOA%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+            <circle cx="12" cy="12" r="4.5"></circle>
+            <circle cx="17.5" cy="6.5" r="1.3" fill="#f8dcb7"></circle>
+          </svg>
+          <span>Instagram</span>
+        </a>
+        <a class="social-icon" href="https://www.tiktok.com/@divineglowdz?_r=1&_t=ZS-912PSkQN0cs" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24">
+            <path d="M15 3v5.6a3.8 3.8 0 0 1 3.7 3.8v1a7 7 0 0 1-5.3-2.4v6.4a4.5 4.5 0 1 1-4.5-4.5 4.4 4.4 0 0 1 1.6.3V9.1h2.9V3z"></path>
+          </svg>
+          <span>TikTok</span>
+        </a>
+      </div>
+    </div>
+    <p class="credits">© 2025 divine glow dz. Tous droits réservés. Brillance et bienveillance incluses.</p>
   </footer>
 
   <script>
@@ -661,7 +757,6 @@
           telephone: formData.get("phone"),
           adresse: formData.get("address"),
         },
-        paiement: formData.get("payment"),
         notes: formData.get("notes"),
         panier: cart.map(item => ({
           produit: item.name,
@@ -678,4 +773,4 @@
     });
   </script>
 </body>
-</html>
+  </html>
