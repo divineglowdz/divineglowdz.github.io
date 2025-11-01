@@ -505,4 +505,177 @@
         </div>
         <div class="panier-total">
           <span>Total</span>
-          <span
+          <span id="cart-total">0,00 €</span>
+        </div>
+      </div>
+
+      <form id="order-form">
+        <div>
+          <label for="name">Nom complet</label>
+          <input type="text" id="name" name="name" placeholder="Ex : Camille Dupont" required>
+        </div>
+        <div>
+          <label for="email">Adresse e-mail</label>
+          <input type="email" id="email" name="email" placeholder="camille@example.com" required>
+        </div>
+        <div>
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" name="phone" placeholder="+33 6 12 34 56 78" required>
+        </div>
+        <div>
+          <label for="address">Adresse de livraison</label>
+          <textarea id="address" name="address" placeholder="Numéro, rue, code postal, ville" required></textarea>
+        </div>
+        <div>
+          <label for="payment">Mode de paiement préféré</label>
+          <select id="payment" name="payment" required>
+            <option value="">Choisir une option</option>
+            <option value="carte">Carte bancaire</option>
+            <option value="paypal">PayPal</option>
+            <option value="virement">Virement bancaire</option>
+          </select>
+        </div>
+        <div>
+          <label for="notes">Notes complémentaires</label>
+          <textarea id="notes" name="notes" placeholder="Allergies, instructions de livraison, teintes souhaitées..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-principal">Envoyer ma commande</button>
+        <p id="order-feedback" style="display:none; font-weight:600; color:var(--accent);">Merci ! Votre demande a été transmise avec succès.</p>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="titre-section">Questions fréquentes</h2>
+    <div class="faq">
+      <article>
+        <h3>Quels sont vos délais de livraison ?</h3>
+        <p>En France métropolitaine, comptez 2 à 4 jours ouvrés. Livraison Express disponible (24 h) sur demande.</p>
+      </article>
+      <article>
+        <h3>Proposez-vous des tests de teintes ?</h3>
+        <p>Oui, nous offrons des mini-échantillons pour le teint et des nuanciers numériques pour les lèvres et les yeux.</p>
+      </article>
+      <article>
+        <h3>Et pour les peaux sensibles ?</h3>
+        <p>Toutes nos formules sont hypoallergéniques, sans parfum synthétique ni parabènes. Testez en toute confiance.</p>
+      </article>
+    </div>
+  </section>
+
+  <footer>
+    <div>
+      <h4>À propos</h4>
+      <p>Lumina Beauty, la maison française de maquillage inspirée des coulisses. Qualité studio accessible au quotidien.</p>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <a href="mailto:bonjour@luminabeauty.fr">bonjour@luminabeauty.fr</a>
+      <a href="tel:+33123456789">+33 1 23 45 67 89</a>
+      <p>12 rue des Artistes, 75009 Paris</p>
+    </div>
+    <div>
+      <h4>Restez inspirée</h4>
+      <p>Inscrivez-vous pour recevoir des tutoriels exclusifs, looks backstage et offres privées.</p>
+      <form>
+        <input type="email" placeholder="Votre e-mail">
+        <button type="submit" class="btn btn-secondaire" style="margin-top:12px;">Je m’inscris</button>
+      </form>
+    </div>
+    <p class="credits">© 2025 Lumina Beauty. Tous droits réservés. Brillance et bienveillance incluses.</p>
+  </footer>
+
+  <script>
+    const cart = [];
+    const cartItemsContainer = document.getElementById("cart-items");
+    const cartTotalElement = document.getElementById("cart-total");
+    const orderForm = document.getElementById("order-form");
+    const orderFeedback = document.getElementById("order-feedback");
+
+    function renderCart() {
+      cartItemsContainer.innerHTML = "";
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p>Votre panier est encore vide. Faites-vous plaisir !</p>";
+        cartTotalElement.textContent = "0,00 €";
+        return;
+      }
+
+      cart.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.classList.add("item-panier");
+        div.innerHTML = `
+          <span>${item.quantity} × ${item.name}</span>
+          <span>${(item.price * item.quantity).toFixed(2).replace(".", ",")} €</span>
+          <button aria-label="Retirer l'article" data-index="${index}">×</button>
+        `;
+        cartItemsContainer.appendChild(div);
+      });
+
+      const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      cartTotalElement.textContent = total.toFixed(2).replace(".", ",") + " €";
+    }
+
+    function addToCart(name, price) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ name, price, quantity: 1 });
+      }
+      renderCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    document.querySelectorAll(".product-card button").forEach(button => {
+      button.addEventListener("click", (event) => {
+        const card = event.target.closest(".product-card");
+        const name = card.dataset.name;
+        const price = parseFloat(card.dataset.price);
+        addToCart(name, price);
+      });
+    });
+
+    cartItemsContainer.addEventListener("click", (event) => {
+      if (event.target.matches("button[data-index]")) {
+        const index = parseInt(event.target.dataset.index, 10);
+        removeFromCart(index);
+      }
+    });
+
+    orderForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (cart.length === 0) {
+        alert("Votre panier est vide. Ajoutez des produits avant de passer commande.");
+        return;
+      }
+
+      const formData = new FormData(orderForm);
+      const orderDetails = {
+        client: {
+          nom: formData.get("name"),
+          email: formData.get("email"),
+          telephone: formData.get("phone"),
+          adresse: formData.get("address"),
+        },
+        paiement: formData.get("payment"),
+        notes: formData.get("notes"),
+        panier: cart.map(item => ({
+          produit: item.name,
+          quantite: item.quantity,
+          prixUnitaire: item.price
+        })),
+        total: cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
+      };
+
+      console.table(orderDetails);
+      orderFeedback.style.display = "block";
+      setTimeout(() => orderFeedback.style.display = "none", 6000);
+      orderForm.reset();
+    });
+  </script>
+</body>
+</html>
