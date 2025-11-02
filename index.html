@@ -178,12 +178,105 @@
       box-shadow: 0 18px 40px rgba(62, 43, 36, 0.12);
     }
 
+    .product-media {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: 0 14px 32px rgba(62, 43, 36, 0.1);
+      touch-action: pan-y;
+      background: #fff;
+    }
+
+    .product-slider {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.35s ease;
+    }
+
+    .product-slide {
+      min-width: 100%;
+      display: flex;
+    }
+
     .product-image {
       width: 100%;
       border-radius: 18px;
       aspect-ratio: 1;
       object-fit: cover;
-      box-shadow: 0 14px 32px rgba(62, 43, 36, 0.1);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .slider-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.28);
+      border: none;
+      color: #fffaf1;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+      z-index: 2;
+    }
+
+    .slider-nav span {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .slider-nav:hover {
+      background: rgba(0, 0, 0, 0.4);
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .slider-nav.prev {
+      left: 12px;
+    }
+
+    .slider-nav.next {
+      right: 12px;
+    }
+
+    .slider-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(6px);
+      z-index: 2;
+    }
+
+    .slider-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.6);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+
+    .slider-dot.active {
+      background: #fffaf1;
+      transform: scale(1.12);
+      opacity: 1;
+    }
+
+    .slider-dot:not(.active) {
+      opacity: 0.7;
     }
 
     .tag {
@@ -788,12 +881,31 @@
     <h2 class="titre-section">Nos essentiels stars</h2>
     <p class="sous-titre">Des classiques indémodables aux dernières pépites backstage : tout pour un look impeccable du matin au soir.</p>
     <div class="produits-grille">
-      <article class="card product-card" data-product-id="gloss-huda-faux-filler" data-product-name="Gloss Huda Beauty Faux Filler" data-price="5800" data-image="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80" data-attribute="levres">
-        <img class="product-image" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80" alt="Gloss repulpant Huda Beauty">
+      <article class="card product-card" data-product-id="gloss-huda-faux-filler" data-product-name="Gloss Huda Beauty Faux Filler" data-price="5800" data-image="https://static.tildacdn.com/tild3863-3030-4434-a366-613430373735/1000105269.png" data-attribute="levres">
+        <div class="product-media" data-slider>
+          <div class="product-slider">
+            <div class="product-slide">
+              <img class="product-image" src="https://static.tildacdn.com/tild3863-3030-4434-a366-613430373735/1000105269.png" alt="Gloss repulpant Huda Beauty vue principale">
+            </div>
+            <div class="product-slide">
+              <img class="product-image" src="https://static.tildacdn.com/tild3565-3136-4963-b539-653263336531/1000105272.png" alt="Gloss repulpant Huda Beauty gros plan applicateur">
+            </div>
+            <div class="product-slide">
+              <img class="product-image" src="https://static.tildacdn.com/tild3362-6562-4664-a362-336132306163/1000105273.png" alt="Swatch du gloss repulpant Huda Beauty sur les lèvres">
+            </div>
+          </div>
+          <button class="slider-nav prev" type="button" aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+          <button class="slider-nav next" type="button" aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+          <div class="slider-dots" role="tablist" aria-label="Choisir une image du produit">
+            <button class="slider-dot active" type="button" role="tab" aria-selected="true" aria-label="Image 1 sur 3" data-index="0"></button>
+            <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Image 2 sur 3" data-index="1"></button>
+            <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Image 3 sur 3" data-index="2"></button>
+          </div>
+        </div>
         <span class="tag">Best-seller</span>
         <h3>Gloss Huda Beauty Faux Filler</h3>
         <p>Gloss repulpant effet miroir pour un volume immédiat et un confort longue durée.</p>
-        <div class="product-options">
+        <div	class="product-options">
           <label for="gloss-faux-filler-shade">Choisissez une teinte :</label>
           <select id="gloss-faux-filler-shade">
             <option value="">-- Sélectionnez une teinte --</option>
@@ -807,8 +919,27 @@
         <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
       </article>
 
-      <article class="card product-card" data-product-id="juicy-bombshell-duo" data-product-name="Juicy Bombshell Lip Duo • Huda Beauty" data-price="7000" data-image="https://images.unsplash.com/photo-1512495039889-ba50f0e95cb5?auto=format&fit=crop&w=600&q=80" data-attribute="levres">
-        <img class="product-image" src="https://images.unsplash.com/photo-1512495039889-ba50f0e95cb5?auto=format&fit=crop&w=600&q=80" alt="Duo lèvres Juicy Bombshell Huda Beauty">
+      <article class="card product-card" data-product-id="juicy-bombshell-duo" data-product-name="Juicy Bombshell Lip Duo • Huda Beauty" data-price="7000" data-image="https://static.tildacdn.com/tild3565-3961-4332-b263-313337333039/1000105277.png" data-attribute="levres">
+        <div class="product-media" data-slider>
+          <div class="product-slider">
+            <div class="product-slide">
+              <img class="product-image" src="https://static.tildacdn.com/tild3565-3961-4332-b263-313337333039/1000105277.png" alt="Duo lèvres Juicy Bombshell Huda Beauty ensemble">
+            </div>
+            <div class="product-slide">
+              <img class="product-image" src="https://img-product.sephora.me/dw/image/v2/BKWK_PRD/on/demandware.static/-/Sites-masterCatalog_Sephora/default/dwff4bee9c/images/hi-res/alternates/PID_alternate2/PID_alternate2_3268/P10060823_2.jpg?sw=1160&sm=fit&q=85&fmt=webp" alt="Crayon contour lèvres Juicy Bombshell Huda Beauty">
+            </div>
+            <div class="product-slide">
+              <img class="product-image" src="https://img-product.sephora.me/dw/image/v2/BKWK_PRD/on/demandware.static/-/Sites-masterCatalog_Sephora/default/dwb86a0277/images/hi-res/alternates/PID_alternate4/PID_alternate4_2514/P10060823_4.jpg?sw=1160&sm=fit&q=85&fmt=webp" alt="Application du gloss Juicy Bombshell Huda Beauty">
+            </div>
+          </div>
+          <button class="slider-nav prev" type="button" aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+          <button class="slider-nav next" type="button" aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+          <div class="slider-dots" role="tablist" aria-label="Choisir une image du produit">
+            <button class="slider-dot active" type="button" role="tab" aria-selected="true" aria-label="Image 1 sur 3" data-index="0"></button>
+            <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Image 2 sur 3" data-index="1"></button>
+            <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Image 3 sur 3" data-index="2"></button>
+          </div>
+        </div>
         <span class="tag">Nouvel arrivage</span>
         <h3>Juicy Bombshell Lip Duo • Huda Beauty</h3>
         <p>Duo gloss + crayon coordonné pour un contour parfait et une brillance glossy.</p>
@@ -821,8 +952,27 @@
         <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
       </article>
 
-      <article class="card product-card" data-product-id="fenty-riri-szn" data-product-name="It’s Riri SZN Coffret • Fenty Beauty" data-price="13000" data-image="https://images.unsplash.com/photo-1512207856965-3c9a032ac0d1?auto=format&fit=crop&w=600&q=80" data-attribute="levres">
-        <img class="product-image" src="https://images.unsplash.com/photo-1512207856965-3c9a032ac0d1?auto=format&fit=crop&w=600&q=80" alt="Coffret lèvres Fenty Beauty Riri SZN">
+      <article class="card product-card" data-product-id="fenty-riri-szn" data-product-name="It’s Riri SZN Coffret • Fenty Beauty" data-price="13000" data-image="https://static.tildacdn.com/tild3230-6438-4739-a439-666263396362/1000105286.jpg" data-attribute="levres">
+        <div class="product-media" data-slider>
+          <div class="product-slider">
+            <div class="product-slide">
+              <img class="product-image" src="https://static.tildacdn.com/tild3230-6438-4739-a439-666263396362/1000105286.jpg" alt="Coffret lèvres Fenty Beauty Riri SZN ensemble">
+            </div>
+            <div class="product-slide">
+              <img class="product-image" src="https://media.s-bol.com/7xmZWBRpN1wy/VOkXgjW/550x686.jpg" alt="Produits individuels du coffret Fenty Beauty Riri SZN">
+            </div>
+            <div class="product-slide">
+              <img class="product-image" src="https://media.s-bol.com/RymA5ELvQ87O/VOkXgjW/550x687.jpg" alt="Texture gloss Fenty Beauty Riri SZN sur la peau">
+            </div>
+          </div>
+          <button class="slider-nav prev" type="button" aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+          <button class="slider-nav next" type="button" aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+          <div class="slider-dots" role="tablist" aria-label="Choisir une image du produit">
+            <button class="slider-dot active" type="button" role="tab" aria-selected="true" aria-label="Image 1 sur 3" data-index="0"></button>
+            <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Image 2 sur 3" data-index="1"></button>
+            <button class="slider-dot" type="button" role="tab" aria-selected="false" aria-label="Image 3 sur 3" data-index="2"></button>
+          </div>
+        </div>
         <span class="tag">HOT</span>
         <h3>It’s Riri SZN Coffret • Fenty Beauty</h3>
         <p>Trio exclusif de produits lèvres signés Rihanna pour des looks glossy irrésistibles.</p>
@@ -1005,6 +1155,123 @@
         yeux: 'Yeux',
         parfum: 'Parfum'
       };
+
+      const initProductSliders = () => {
+        const medias = document.querySelectorAll('[data-slider]');
+        medias.forEach((media) => {
+          const slider = media.querySelector('.product-slider');
+          const slides = Array.from(media.querySelectorAll('.product-slide'));
+          const dots = Array.from(media.querySelectorAll('.slider-dot'));
+          const prev = media.querySelector('.slider-nav.prev');
+          const next = media.querySelector('.slider-nav.next');
+          let currentIndex = 0;
+          let isDragging = false;
+          let startX = 0;
+          let deltaX = 0;
+
+          const updateDots = () => {
+            dots.forEach((dot, index) => {
+              const isActive = index === currentIndex;
+              dot.classList.toggle('active', isActive);
+              dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+              dot.setAttribute('tabindex', isActive ? '0' : '-1');
+            });
+          };
+
+          const slideTo = (index, { animate = true } = {}) => {
+            if (!slides.length) return;
+            currentIndex = (index + slides.length) % slides.length;
+            if (!animate) {
+              slider.style.transition = 'none';
+            } else {
+              slider.style.transition = '';
+            }
+            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+            if (!animate) {
+              requestAnimationFrame(() => {
+                slider.style.transition = '';
+              });
+            }
+            updateDots();
+          };
+
+          const handlePrev = () => slideTo(currentIndex - 1);
+          const handleNext = () => slideTo(currentIndex + 1);
+
+          prev?.addEventListener('click', handlePrev);
+          next?.addEventListener('click', handleNext);
+
+          dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => slideTo(index));
+            dot.addEventListener('keydown', (event) => {
+              if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                handlePrev();
+              }
+              if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                handleNext();
+              }
+            });
+          });
+
+          const onPointerDown = (event) => {
+            if (event.pointerType === 'mouse' && event.button !== 0) return;
+            isDragging = true;
+            startX = event.clientX;
+            deltaX = 0;
+            slider.style.transition = 'none';
+            if (typeof media.setPointerCapture === 'function') {
+              media.setPointerCapture(event.pointerId);
+            }
+          };
+
+          const onPointerMove = (event) => {
+            if (!isDragging) return;
+            deltaX = event.clientX - startX;
+            slider.style.transform = `translateX(calc(-${currentIndex * 100}% + ${deltaX}px))`;
+          };
+
+          const onPointerUp = (event) => {
+            if (!isDragging) return;
+            isDragging = false;
+            slider.style.transition = '';
+            if (Math.abs(deltaX) > 50) {
+              if (deltaX < 0) {
+                handleNext();
+              } else {
+                handlePrev();
+              }
+            } else {
+              slideTo(currentIndex);
+            }
+            deltaX = 0;
+            if (typeof media.releasePointerCapture === 'function' && event.pointerId) {
+              try {
+                media.releasePointerCapture(event.pointerId);
+              } catch (error) {
+                console.warn(error);
+              }
+            }
+          };
+
+          media.addEventListener('pointerdown', onPointerDown);
+          media.addEventListener('pointermove', onPointerMove);
+          media.addEventListener('pointerup', onPointerUp);
+          media.addEventListener('pointercancel', onPointerUp);
+          media.addEventListener('pointerleave', () => {
+            if (isDragging) {
+              isDragging = false;
+              slider.style.transition = '';
+              slideTo(currentIndex);
+            }
+          });
+
+          slideTo(0, { animate: false });
+        });
+      };
+
+      initProductSliders();
 
       productCards.forEach((card) => {
         const attributeKey = card.dataset.attribute || 'toutes';
@@ -1226,11 +1493,14 @@
             optionLabel = hiddenOption.value;
           }
 
+          const productImageElement = card.querySelector('.product-slide:first-child .product-image') || card.querySelector('.product-image');
+          const productImage = productImageElement ? productImageElement.getAttribute('src') : card.dataset.image;
+
           const product = {
             id: card.dataset.productId,
             name: card.dataset.productName,
             price: Number(card.dataset.price),
-            image: card.dataset.image,
+            image: productImage || card.dataset.image || '',
             optionValue,
             optionLabel
           };
