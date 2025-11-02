@@ -383,7 +383,113 @@
       height: 220px;
       object-fit: cover;
       border-radius: 15px;
-      margin-bottom: 10px;
+      display: block;
+    }
+
+    .product-card .product-media {
+      position: relative;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background: var(--clair);
+      box-shadow: inset 0 0 0 1px rgba(62, 43, 36, 0.06);
+    }
+
+    .product-carousel {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-snap-stop: always;
+      scroll-behavior: smooth;
+      border-radius: inherit;
+      cursor: grab;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .product-carousel.grabbing {
+      cursor: grabbing;
+    }
+
+    .product-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .product-slide {
+      flex: 0 0 100%;
+      scroll-snap-align: center;
+      border-radius: inherit;
+      overflow: hidden;
+    }
+
+    .product-media-controls {
+      position: absolute;
+      inset-block: 0;
+      inset-inline: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      pointer-events: none;
+    }
+
+    .product-media-button {
+      pointer-events: auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 250, 241, 0.72);
+      color: var(--texte-principal);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 600;
+      box-shadow: 0 12px 22px rgba(62, 43, 36, 0.2);
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-media-button:hover {
+      transform: translateY(-1px);
+      background-color: var(--clair);
+    }
+
+    .product-media-button[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .product-media-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(6px);
+    }
+
+    .product-media-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.55);
+      opacity: 0.6;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .product-media-dot.active {
+      opacity: 1;
+      background: #fffaf1;
+      transform: scale(1.15);
     }
 
     .tag {
@@ -1005,6 +1111,12 @@
       }
     }
 
+    @media (max-width: 480px) {
+      .product-slide img {
+        height: 200px;
+      }
+    }
+
     @media (max-width: 400px) {
       .floating-cart-button {
         bottom: 16px;
@@ -1082,8 +1194,25 @@
       </div>
 
       <div class="catalogue-grid">
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="gloss-huda-faux-filler" data-product-name="Gloss Huda Beauty Faux Filler" data-price="5800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Gloss+Huda">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Gloss+Huda" alt="Gloss Huda Beauty Faux Filler">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="gloss-huda-faux-filler" data-product-name="Gloss Huda Beauty Faux Filler" data-price="5800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Gloss+Huda+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://static.tildacdn.com/tild3863-3030-4434-a366-613430373735/1000105269.png" alt="Gloss Huda Beauty Faux Filler – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://static.tildacdn.com/tild3565-3136-4963-b539-653263336531/1000105272.png" alt="Gloss Huda Beauty Faux Filler – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://static.tildacdn.com/tild3362-6562-4664-a362-336132306163/1000105273.png" alt="Gloss Huda Beauty Faux Filler – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Gloss Huda Beauty Faux Filler</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1109,8 +1238,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="juicy-bombshell-duo" data-product-name="Juicy Bombshell Lip Duo • Huda Beauty" data-price="7000" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Juicy+Bombshell">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Juicy+Bombshell" alt="Juicy Bombshell Lip Duo • Huda Beauty">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="juicy-bombshell-duo" data-product-name="Juicy Bombshell Lip Duo • Huda Beauty" data-price="7000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Juicy+Bombshell+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://static.tildacdn.com/tild3565-3961-4332-b263-313337333039/1000105277.png" alt="Juicy Bombshell Lip Duo – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://img-product.sephora.me/dw/image/v2/BKWK_PRD/on/demandware.static/-/Sites-masterCatalog_Sephora/default/dwff4bee9c/images/hi-res/alternates/PID_alternate2/PID_alternate2_3268/P10060823_2.jpg?sw=1160&sm=fit&q=85&fmt=webp" alt="Juicy Bombshell Lip Duo – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://img-product.sephora.me/dw/image/v2/BKWK_PRD/on/demandware.static/-/Sites-masterCatalog_Sephora/default/dwb86a0277/images/hi-res/alternates/PID_alternate4/PID_alternate4_2514/P10060823_4.jpg?sw=1160&sm=fit&q=85&fmt=webp" alt="Juicy Bombshell Lip Duo – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Juicy Bombshell Lip Duo • Huda Beauty</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1127,8 +1273,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="fenty-riri-szn" data-product-name="It’s Riri SZN Coffret • Fenty Beauty" data-price="13000" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Riri+SZN">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Riri+SZN" alt="It’s Riri SZN Coffret • Fenty Beauty">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="fenty-riri-szn" data-product-name="It’s Riri SZN Coffret • Fenty Beauty" data-price="13000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Riri+SZN+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://static.tildacdn.com/tild3230-6438-4739-a439-666263396362/1000105286.jpg" alt="It’s Riri SZN Coffret – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://media.s-bol.com/7xmZWBRpN1wy/VOkXgjW/550x686.jpg" alt="It’s Riri SZN Coffret – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://media.s-bol.com/RymA5ELvQ87O/VOkXgjW/550x687.jpg" alt="It’s Riri SZN Coffret – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>It’s Riri SZN Coffret • Fenty Beauty</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1145,8 +1308,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="blush-too-faced" data-product-name="Blush Too Faced" data-price="7500" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Blush+Too+Faced">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Blush+Too+Faced" alt="Blush Too Faced">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="blush-too-faced" data-product-name="Blush Too Faced" data-price="7500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Blush+Too+Faced+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Blush+Too+Faced+1" alt="Blush Too Faced – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Blush+Too+Faced+2" alt="Blush Too Faced – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Blush+Too+Faced+3" alt="Blush Too Faced – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Blush Too Faced</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1168,8 +1348,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="bronzer-too-faced" data-product-name="Bronzer Too Faced" data-price="7500" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Bronzer+Too+Faced">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Bronzer+Too+Faced" alt="Bronzer Too Faced">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="bronzer-too-faced" data-product-name="Bronzer Too Faced" data-price="7500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Bronzer+Too+Faced+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Bronzer+Too+Faced+1" alt="Bronzer Too Faced – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Bronzer+Too+Faced+2" alt="Bronzer Too Faced – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Bronzer+Too+Faced+3" alt="Bronzer Too Faced – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Bronzer Too Faced</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1193,8 +1390,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="fixateur-loreal" data-product-name="Fixateur L’Oréal" data-price="3200" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Fixateur+L%27Oreal">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Fixateur+L%27Oreal" alt="Fixateur L’Oréal">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="fixateur-loreal" data-product-name="Fixateur L’Oréal" data-price="3200" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Fixateur+LOreal+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Fixateur+LOreal+1" alt="Fixateur L’Oréal – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Fixateur+LOreal+2" alt="Fixateur L’Oréal – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Fixateur+LOreal+3" alt="Fixateur L’Oréal – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Fixateur L’Oréal</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1211,8 +1425,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-fixateur-100" data-product-name="Fixateur Charlotte Tilbury 100 ml" data-price="9800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Fixateur+CT">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Fixateur+CT" alt="Fixateur Charlotte Tilbury 100 ml">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-fixateur-100" data-product-name="Fixateur Charlotte Tilbury 100 ml" data-price="9800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Fixateur+CT+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Fixateur+CT+1" alt="Fixateur Charlotte Tilbury 100 ml – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Fixateur+CT+2" alt="Fixateur Charlotte Tilbury 100 ml – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Fixateur+CT+3" alt="Fixateur Charlotte Tilbury 100 ml – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Fixateur Charlotte Tilbury 100&nbsp;ml</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1229,8 +1460,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="soin" data-attribute="soin" data-product-id="glow-recipe-glass-skin" data-product-name="Duo Glass Skin • Glow Recipe 40 ml" data-price="13000" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Glass+Skin">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Glass+Skin" alt="Duo Glass Skin • Glow Recipe 40 ml">
+        <article class="product-card" data-category="soin" data-attribute="soin" data-product-id="glow-recipe-glass-skin" data-product-name="Duo Glass Skin • Glow Recipe 40 ml" data-price="13000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Glass+Skin+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Glass+Skin+1" alt="Duo Glass Skin Glow Recipe – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Glass+Skin+2" alt="Duo Glass Skin Glow Recipe – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Glass+Skin+3" alt="Duo Glass Skin Glow Recipe – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Soin</span>
           <h3>Duo Glass Skin • Glow Recipe 40&nbsp;ml</h3>
           <p class="product-attribute">Attribut : Soin</p>
@@ -1247,8 +1495,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="soin" data-attribute="soin" data-product-id="byoma-so-clear" data-product-name="Kit Byoma So Clear Set" data-price="6800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Byoma+Kit">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Byoma+Kit" alt="Kit Byoma So Clear Set">
+        <article class="product-card" data-category="soin" data-attribute="soin" data-product-id="byoma-so-clear" data-product-name="Kit Byoma So Clear Set" data-price="6800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Byoma+Kit+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Byoma+Kit+1" alt="Kit Byoma So Clear – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Byoma+Kit+2" alt="Kit Byoma So Clear – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Byoma+Kit+3" alt="Kit Byoma So Clear – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Soin</span>
           <h3>Kit Byoma So Clear Set</h3>
           <p class="product-attribute">Attribut : Soin</p>
@@ -1265,8 +1530,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="blush-sunkisser-maybelline" data-product-name="Blush Sunkisser • Maybelline" data-price="1800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Blush+Sunkisser">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Blush+Sunkisser" alt="Blush Sunkisser • Maybelline">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="blush-sunkisser-maybelline" data-product-name="Blush Sunkisser • Maybelline" data-price="1800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Blush+Sunkisser+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Blush+Sunkisser+1" alt="Blush Sunkisser Maybelline – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Blush+Sunkisser+2" alt="Blush Sunkisser Maybelline – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Blush+Sunkisser+3" alt="Blush Sunkisser Maybelline – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Blush Sunkisser • Maybelline</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1296,8 +1578,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="highlighter-sunkisser" data-product-name="Highlighter Sunkisser • Maybelline" data-price="1800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Highlighter+Sunkisser">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Highlighter+Sunkisser" alt="Highlighter Sunkisser • Maybelline">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="highlighter-sunkisser" data-product-name="Highlighter Sunkisser • Maybelline" data-price="1800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Highlighter+Sunkisser+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Highlighter+Sunkisser+1" alt="Highlighter Sunkisser Maybelline – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Highlighter+Sunkisser+2" alt="Highlighter Sunkisser Maybelline – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Highlighter+Sunkisser+3" alt="Highlighter Sunkisser Maybelline – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Highlighter Sunkisser • Maybelline</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1319,8 +1618,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="mascara-sky-high" data-product-name="Mascara Maybelline Sky High" data-price="1800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Mascara+Sky+High">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Mascara+Sky+High" alt="Mascara Maybelline Sky High">
+        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="mascara-sky-high" data-product-name="Mascara Maybelline Sky High" data-price="1800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sky+High+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sky+High+1" alt="Mascara Maybelline Sky High – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Sky+High+2" alt="Mascara Maybelline Sky High – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Sky+High+3" alt="Mascara Maybelline Sky High – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Yeux</span>
           <h3>Mascara Maybelline Sky High</h3>
           <p class="product-attribute">Attribut : Yeux</p>
@@ -1344,8 +1660,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="nyx-buttermelt-glaze" data-product-name="NYX Buttermelt Glaze" data-price="1900" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=NYX+Glaze">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=NYX+Glaze" alt="NYX Buttermelt Glaze">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="nyx-buttermelt-glaze" data-product-name="NYX Buttermelt Glaze" data-price="1900" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=NYX+Glaze+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=NYX+Glaze+1" alt="NYX Buttermelt Glaze – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=NYX+Glaze+2" alt="NYX Buttermelt Glaze – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=NYX+Glaze+3" alt="NYX Buttermelt Glaze – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>NYX Buttermelt Glaze</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1367,8 +1700,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="parfum" data-attribute="parfum" data-product-id="sol-de-janeiro-mist" data-product-name="Brume Sol de Janeiro" data-price="3200" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Sol+de+Janeiro">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Sol+de+Janeiro" alt="Brume Sol de Janeiro">
+        <article class="product-card" data-category="parfum" data-attribute="parfum" data-product-id="sol-de-janeiro-mist" data-product-name="Brume Sol de Janeiro" data-price="3200" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sol+de+Janeiro+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sol+de+Janeiro+1" alt="Brume Sol de Janeiro – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Sol+de+Janeiro+2" alt="Brume Sol de Janeiro – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Sol+de+Janeiro+3" alt="Brume Sol de Janeiro – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Parfum</span>
           <h3>Brume Sol de Janeiro</h3>
           <p class="product-attribute">Attribut : Parfum</p>
@@ -1402,8 +1752,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="tarte-setting-powder" data-product-name="Setting Powder Creaseless • Tarte" data-price="7800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Tarte+Powder">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Tarte+Powder" alt="Setting Powder Creaseless • Tarte">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="tarte-setting-powder" data-product-name="Setting Powder Creaseless • Tarte" data-price="7800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Tarte+Powder+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Tarte+Powder+1" alt="Setting Powder Creaseless Tarte – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Tarte+Powder+2" alt="Setting Powder Creaseless Tarte – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Tarte+Powder+3" alt="Setting Powder Creaseless Tarte – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Setting Powder Creaseless • Tarte</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1425,8 +1792,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="nars-afterglow-blush" data-product-name="Afterglow Liquid Blush • Nars" data-price="6800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Nars+Afterglow">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Nars+Afterglow" alt="Afterglow Liquid Blush • Nars">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="nars-afterglow-blush" data-product-name="Afterglow Liquid Blush • Nars" data-price="6800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Nars+Afterglow+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Nars+Afterglow+1" alt="Afterglow Liquid Blush Nars – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Nars+Afterglow+2" alt="Afterglow Liquid Blush Nars – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Nars+Afterglow+3" alt="Afterglow Liquid Blush Nars – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Afterglow Liquid Blush • Nars</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1450,8 +1834,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="rare-beauty-soft-pinch" data-product-name="Soft Pinch Blush Mat Effect • Rare Beauty" data-price="7500" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Soft+Pinch">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Soft+Pinch" alt="Soft Pinch Blush Mat Effect • Rare Beauty">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="rare-beauty-soft-pinch" data-product-name="Soft Pinch Blush Mat Effect • Rare Beauty" data-price="7500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Soft+Pinch+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Soft+Pinch+1" alt="Soft Pinch Blush Rare Beauty – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Soft+Pinch+2" alt="Soft Pinch Blush Rare Beauty – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Soft+Pinch+3" alt="Soft Pinch Blush Rare Beauty – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Soft Pinch Blush Mat Effect • Rare Beauty</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1473,8 +1874,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="ct-plumpgasm" data-product-name="Big Lip Plumpgasm • Charlotte Tilbury" data-price="6500" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Plumpgasm">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Plumpgasm" alt="Big Lip Plumpgasm • Charlotte Tilbury">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="ct-plumpgasm" data-product-name="Big Lip Plumpgasm • Charlotte Tilbury" data-price="6500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Plumpgasm+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Plumpgasm+1" alt="Big Lip Plumpgasm Charlotte Tilbury – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Plumpgasm+2" alt="Big Lip Plumpgasm Charlotte Tilbury – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Plumpgasm+3" alt="Big Lip Plumpgasm Charlotte Tilbury – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Big Lip Plumpgasm • Charlotte Tilbury</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1496,8 +1914,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-glow-bronzer" data-product-name="Sun Kissed Glow Bronzer Crème • Charlotte Tilbury" data-price="9800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=CT+Bronzer">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=CT+Bronzer" alt="Sun Kissed Glow Bronzer Crème • Charlotte Tilbury">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-glow-bronzer" data-product-name="Sun Kissed Glow Bronzer Crème • Charlotte Tilbury" data-price="9800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=CT+Bronzer+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=CT+Bronzer+1" alt="Sun Kissed Glow Bronzer Charlotte Tilbury – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=CT+Bronzer+2" alt="Sun Kissed Glow Bronzer Charlotte Tilbury – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=CT+Bronzer+3" alt="Sun Kissed Glow Bronzer Charlotte Tilbury – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Sun Kissed Glow Bronzer Crème • Charlotte Tilbury</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1519,8 +1954,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="tartelette-in-bloom" data-product-name="Palette Tartelette in Bloom" data-price="9000" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Tartelette">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Tartelette" alt="Palette Tartelette in Bloom">
+        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="tartelette-in-bloom" data-product-name="Palette Tartelette in Bloom" data-price="9000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Tartelette+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Tartelette+1" alt="Palette Tartelette in Bloom – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Tartelette+2" alt="Palette Tartelette in Bloom – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Tartelette+3" alt="Palette Tartelette in Bloom – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Yeux</span>
           <h3>Palette Tartelette in Bloom</h3>
           <p class="product-attribute">Attribut : Yeux</p>
@@ -1537,8 +1989,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="mbm-ethereal-eyes" data-product-name="Palette Makeup by Mario Ethereal Eyes Moonlight" data-price="15500" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=MBM+Moonlight">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=MBM+Moonlight" alt="Palette Makeup by Mario Ethereal Eyes Moonlight">
+        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="mbm-ethereal-eyes" data-product-name="Palette Makeup by Mario Ethereal Eyes Moonlight" data-price="15500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MBM+Moonlight+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MBM+Moonlight+1" alt="Palette Makeup by Mario Moonlight – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=MBM+Moonlight+2" alt="Palette Makeup by Mario Moonlight – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=MBM+Moonlight+3" alt="Palette Makeup by Mario Moonlight – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Yeux</span>
           <h3>Palette Makeup by Mario Ethereal Eyes Moonlight</h3>
           <p class="product-attribute">Attribut : Yeux</p>
@@ -1555,8 +2024,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="huda-blush-filter" data-product-name="Blush Filter Liquide • Huda Beauty" data-price="7000" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Huda+Blush+Filter">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Huda+Blush+Filter" alt="Blush Filter Liquide • Huda Beauty">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="huda-blush-filter" data-product-name="Blush Filter Liquide • Huda Beauty" data-price="7000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Huda+Blush+Filter+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Huda+Blush+Filter+1" alt="Blush Filter Liquide Huda Beauty – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Huda+Blush+Filter+2" alt="Blush Filter Liquide Huda Beauty – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Huda+Blush+Filter+3" alt="Blush Filter Liquide Huda Beauty – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Blush Filter Liquide • Huda Beauty</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1578,8 +2064,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="too-faced-bts-naturally" data-product-name="Mascara Too Faced Better Than Sex Naturally" data-price="5200" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Better+Than+Sex">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Better+Than+Sex" alt="Mascara Too Faced Better Than Sex Naturally">
+        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="too-faced-bts-naturally" data-product-name="Mascara Too Faced Better Than Sex Naturally" data-price="5200" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Better+Than+Sex+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Better+Than+Sex+1" alt="Mascara Too Faced Better Than Sex – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Better+Than+Sex+2" alt="Mascara Too Faced Better Than Sex – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Better+Than+Sex+3" alt="Mascara Too Faced Better Than Sex – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Yeux</span>
           <h3>Mascara Too Faced Better Than Sex Naturally</h3>
           <p class="product-attribute">Attribut : Yeux</p>
@@ -1601,8 +2104,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="benefit-badgal-mini" data-product-name="Mini Mascara BADgal • Benefit" data-price="3500" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=BADgal+Mini">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=BADgal+Mini" alt="Mini Mascara BADgal • Benefit">
+        <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="benefit-badgal-mini" data-product-name="Mini Mascara BADgal • Benefit" data-price="3500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=BADgal+Mini+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=BADgal+Mini+1" alt="Mini Mascara BADgal Benefit – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=BADgal+Mini+2" alt="Mini Mascara BADgal Benefit – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=BADgal+Mini+3" alt="Mini Mascara BADgal Benefit – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Yeux</span>
           <h3>Mini Mascara BADgal • Benefit</h3>
           <p class="product-attribute">Attribut : Yeux</p>
@@ -1619,8 +2139,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-forest-lipstick" data-product-name="Forest Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=MAC+Forest">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=MAC+Forest" alt="Forest Lipstick • MAC">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-forest-lipstick" data-product-name="Forest Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MAC+Forest+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MAC+Forest+1" alt="Forest Lipstick MAC – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=MAC+Forest+2" alt="Forest Lipstick MAC – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=MAC+Forest+3" alt="Forest Lipstick MAC – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Forest Lipstick • MAC</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1642,8 +2179,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-lusterglass" data-product-name="Lusterglass Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Lusterglass">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Lusterglass" alt="Lusterglass Lipstick • MAC">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-lusterglass" data-product-name="Lusterglass Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Lusterglass+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Lusterglass+1" alt="Lusterglass Lipstick MAC – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Lusterglass+2" alt="Lusterglass Lipstick MAC – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Lusterglass+3" alt="Lusterglass Lipstick MAC – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Lusterglass Lipstick • MAC</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1665,8 +2219,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-matte-lipstick" data-product-name="Matte Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=MAC+Matte">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=MAC+Matte" alt="Matte Lipstick • MAC">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-matte-lipstick" data-product-name="Matte Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MAC+Matte+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MAC+Matte+1" alt="Matte Lipstick MAC – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=MAC+Matte+2" alt="Matte Lipstick MAC – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=MAC+Matte+3" alt="Matte Lipstick MAC – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Matte Lipstick • MAC</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1688,8 +2259,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="huda-lip-pencil" data-product-name="Crayon à Lèvres • Huda Beauty" data-price="4800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Huda+Lipliner">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Huda+Lipliner" alt="Crayon à Lèvres • Huda Beauty">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="huda-lip-pencil" data-product-name="Crayon à Lèvres • Huda Beauty" data-price="4800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Huda+Lipliner+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Huda+Lipliner+1" alt="Crayon à Lèvres Huda Beauty – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Huda+Lipliner+2" alt="Crayon à Lèvres Huda Beauty – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Huda+Lipliner+3" alt="Crayon à Lèvres Huda Beauty – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Crayon à Lèvres • Huda Beauty</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1711,8 +2299,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="sephora-liquid-lip" data-product-name="Rouge à Lèvres Sephora Sans Transfert" data-price="2800" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Sephora+Lip">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Sephora+Lip" alt="Rouge à Lèvres Sephora Sans Transfert">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="sephora-liquid-lip" data-product-name="Rouge à Lèvres Sephora Sans Transfert" data-price="2800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sephora+Lip+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sephora+Lip+1" alt="Rouge à Lèvres Sephora Sans Transfert – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Sephora+Lip+2" alt="Rouge à Lèvres Sephora Sans Transfert – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Sephora+Lip+3" alt="Rouge à Lèvres Sephora Sans Transfert – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Rouge à Lèvres Sephora Sans Transfert</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1734,8 +2339,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-airbrush-powder" data-product-name="Poudre Airbrush Flawless Finish • Charlotte Tilbury" data-price="7000" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Airbrush+Powder">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=Airbrush+Powder" alt="Poudre Airbrush Flawless Finish • Charlotte Tilbury">
+        <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-airbrush-powder" data-product-name="Poudre Airbrush Flawless Finish • Charlotte Tilbury" data-price="7000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Airbrush+Powder+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Airbrush+Powder+1" alt="Poudre Airbrush Flawless Finish Charlotte Tilbury – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=Airbrush+Powder+2" alt="Poudre Airbrush Flawless Finish Charlotte Tilbury – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=Airbrush+Powder+3" alt="Poudre Airbrush Flawless Finish Charlotte Tilbury – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Teint</span>
           <h3>Poudre Airbrush Flawless Finish • Charlotte Tilbury</h3>
           <p class="product-attribute">Attribut : Teint</p>
@@ -1757,8 +2379,25 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="w7-perfect-pout" data-product-name="Perfect Pout Lip Essentials • W7" data-price="5000" data-image="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=W7+Perfect+Pout">
-          <img src="https://via.placeholder.com/500x500/f2e3d2/3e2b24?text=W7+Perfect+Pout" alt="Perfect Pout Lip Essentials • W7">
+        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="w7-perfect-pout" data-product-name="Perfect Pout Lip Essentials • W7" data-price="5000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=W7+Perfect+Pout+1">
+          <div class="product-media">
+            <div class="product-carousel" data-carousel>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=W7+Perfect+Pout+1" alt="Perfect Pout Lip Essentials W7 – vue 1" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/efdcca/3e2b24?text=W7+Perfect+Pout+2" alt="Perfect Pout Lip Essentials W7 – vue 2" loading="lazy">
+              </figure>
+              <figure class="product-slide">
+                <img src="https://via.placeholder.com/640x480/f7e7d6/3e2b24?text=W7+Perfect+Pout+3" alt="Perfect Pout Lip Essentials W7 – vue 3" loading="lazy">
+              </figure>
+            </div>
+            <div class="product-media-controls">
+              <button type="button" class="product-media-button" data-carousel-prev aria-label="Image précédente"><span aria-hidden="true">‹</span></button>
+              <button type="button" class="product-media-button" data-carousel-next aria-label="Image suivante"><span aria-hidden="true">›</span></button>
+            </div>
+            <div class="product-media-dots"></div>
+          </div>
           <span class="tag">Lèvres</span>
           <h3>Perfect Pout Lip Essentials • W7</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
@@ -1936,6 +2575,146 @@
         parfum: 'Parfum'
       };
 
+      function initProductCarousels() {
+        const mediaBlocks = document.querySelectorAll('.product-media');
+        mediaBlocks.forEach((media) => {
+          const carousel = media.querySelector('.product-carousel');
+          const slides = Array.from(media.querySelectorAll('.product-slide'));
+          if (!carousel || slides.length === 0) return;
+
+          const dotsContainer = media.querySelector('.product-media-dots');
+          const prevButton = media.querySelector('[data-carousel-prev]');
+          const nextButton = media.querySelector('[data-carousel-next]');
+          let dots = [];
+          let currentIndex = 0;
+          let slideWidth = carousel.clientWidth;
+
+          const updateSlideWidth = () => {
+            slideWidth = carousel.clientWidth;
+          };
+
+          const updateDots = () => {
+            if (!dots.length) return;
+            dots.forEach((dot, index) => {
+              const isActive = index === currentIndex;
+              dot.classList.toggle('active', isActive);
+              dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+              dot.setAttribute('tabindex', isActive ? '0' : '-1');
+            });
+          };
+
+          const toggleButtons = () => {
+            if (!prevButton || !nextButton) return;
+            const atStart = currentIndex === 0;
+            const atEnd = currentIndex === slides.length - 1;
+            prevButton.disabled = atStart;
+            nextButton.disabled = atEnd;
+            prevButton.setAttribute('aria-disabled', atStart ? 'true' : 'false');
+            nextButton.setAttribute('aria-disabled', atEnd ? 'true' : 'false');
+          };
+
+          const scrollToIndex = (index, behavior = 'smooth') => {
+            const targetIndex = Math.max(0, Math.min(index, slides.length - 1));
+            currentIndex = targetIndex;
+            carousel.scrollTo({
+              left: slideWidth * targetIndex,
+              behavior
+            });
+            updateDots();
+            toggleButtons();
+          };
+
+          if (dotsContainer) {
+            dotsContainer.innerHTML = '';
+            dotsContainer.setAttribute('role', 'tablist');
+            dotsContainer.setAttribute('aria-label', 'Sélection d’image produit');
+            dots = slides.map((_, index) => {
+              const dot = document.createElement('button');
+              dot.type = 'button';
+              dot.className = 'product-media-dot';
+              dot.setAttribute('role', 'tab');
+              dot.setAttribute('aria-label', `Voir l’image ${index + 1}`);
+              dot.setAttribute('tabindex', index === 0 ? '0' : '-1');
+              dot.addEventListener('click', () => scrollToIndex(index));
+              dotsContainer.appendChild(dot);
+              return dot;
+            });
+          }
+
+          prevButton?.addEventListener('click', () => scrollToIndex(currentIndex - 1));
+          nextButton?.addEventListener('click', () => scrollToIndex(currentIndex + 1));
+
+          let isPointerDown = false;
+          let startX = 0;
+          let scrollStart = 0;
+
+          const startDrag = (event) => {
+            isPointerDown = true;
+            startX = event.pageX ?? (event.touches ? event.touches[0].pageX : 0);
+            scrollStart = carousel.scrollLeft;
+            carousel.classList.add('grabbing');
+          };
+
+          const moveDrag = (event) => {
+            if (!isPointerDown) return;
+            const currentX = event.pageX ?? (event.touches ? event.touches[0].pageX : 0);
+            const delta = startX - currentX;
+            carousel.scrollLeft = scrollStart + delta;
+          };
+
+          const endDrag = () => {
+            if (!isPointerDown) return;
+            isPointerDown = false;
+            carousel.classList.remove('grabbing');
+            const approximatedIndex = Math.round(carousel.scrollLeft / slideWidth);
+            scrollToIndex(approximatedIndex);
+          };
+
+          carousel.addEventListener('mousedown', (event) => {
+            event.preventDefault();
+            startDrag(event);
+          });
+
+          carousel.addEventListener('mousemove', moveDrag);
+          carousel.addEventListener('mouseleave', endDrag);
+          window.addEventListener('mouseup', endDrag);
+
+          carousel.addEventListener('touchstart', (event) => {
+            startDrag(event);
+          }, { passive: true });
+
+          carousel.addEventListener('touchmove', moveDrag, { passive: true });
+          carousel.addEventListener('touchend', endDrag);
+          carousel.addEventListener('touchcancel', endDrag);
+
+          carousel.addEventListener('scroll', () => {
+            const tentativeIndex = Math.round(carousel.scrollLeft / slideWidth);
+            if (tentativeIndex !== currentIndex) {
+              currentIndex = tentativeIndex;
+              updateDots();
+              toggleButtons();
+            }
+          }, { passive: true });
+
+          const handleResize = () => {
+            updateSlideWidth();
+            scrollToIndex(currentIndex, 'auto');
+          };
+
+          if ('ResizeObserver' in window) {
+            const observer = new ResizeObserver(handleResize);
+            observer.observe(carousel);
+          } else {
+            window.addEventListener('resize', handleResize);
+          }
+
+          updateSlideWidth();
+          updateDots();
+          toggleButtons();
+          scrollToIndex(0, 'auto');
+        });
+      }
+
       productCards.forEach((card) => {
         const attributeKey = card.dataset.attribute || 'toutes';
         const attributeLabel = categoryLabels[attributeKey] || attributeKey;
@@ -2014,6 +2793,7 @@
         }
       });
 
+      initProductCarousels();
       applyCategory('toutes', 'Toutes les catégories');
 
       const cartList = document.getElementById('cart-items');
