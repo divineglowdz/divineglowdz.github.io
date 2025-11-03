@@ -104,9 +104,8 @@
     }
 
     .order-wrapper {
-      display: grid;
-      gap: 24px;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      display: flex;
+      justify-content: center;
       align-items: stretch;
     }
 
@@ -118,6 +117,7 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+      width: 100%;
     }
 
     form {
@@ -194,50 +194,15 @@
       background: #fff6eb;
     }
 
-    .submit-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .btn {
-      padding: 14px 28px;
-      border-radius: 50px;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .btn-principal {
-      background: var(--accent);
-      color: var(--clair);
-      box-shadow: var(--ombre-douce);
-    }
-
-    .btn-principal:hover:enabled {
-      transform: translateY(-3px);
-      background: #ba8f60;
-    }
-
-    .btn-principal:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
-    }
-
-    .helper-text {
-      font-size: 0.85rem;
-      color: var(--texte-secondaire);
+    .embedded-summary {
+      margin-top: 10px;
+      background: rgba(255, 250, 241, 0.75);
     }
 
     .order-summary {
       border: 1px solid rgba(201, 164, 122, 0.28);
       border-radius: 18px;
-      padding: 18px 20px;
-      background: rgba(255, 250, 241, 0.55);
+      padding: 20px;
       display: grid;
       gap: 16px;
     }
@@ -325,6 +290,40 @@
       background: rgba(216, 84, 84, 0.08);
       border-radius: 12px;
       padding: 14px;
+    }
+
+    .submit-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-principal {
+      background: var(--accent);
+      color: var(--clair);
+      box-shadow: var(--ombre-douce);
+    }
+
+    .btn-principal:hover:enabled {
+      transform: translateY(-3px);
+      background: #ba8f60;
+    }
+
+    .btn-principal:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
     }
 
     footer {
@@ -578,6 +577,23 @@
             </label>
           </div>
 
+          <div class="order-summary embedded-summary" aria-live="polite">
+            <div class="summary-header">
+              <h2>Vos produits sélectionnés</h2>
+              <span class="helper-text" id="items-count">0 article</span>
+            </div>
+
+            <ul class="summary-list" id="summary-list" hidden></ul>
+
+            <div class="totals-block" id="totals-block" hidden>
+              <span><strong>Produits</strong><strong id="summary-subtotal">0 DA</strong></span>
+              <span><strong>Livraison</strong><strong id="summary-shipping">0 DA</strong></span>
+            </div>
+
+            <p class="summary-total" id="summary-total" hidden>Total&nbsp;: 0&nbsp;DA</p>
+            <p class="empty-cart-message" id="empty-cart-message">Votre panier est vide sur ce navigateur. Retournez sur la boutique pour ajouter des produits avant de finaliser votre commande.</p>
+          </div>
+
           <input type="hidden" name="total_produits" id="hidden-total-produits">
           <input type="hidden" name="livraison" id="hidden-livraison">
           <input type="hidden" name="total_commande" id="hidden-total-commande">
@@ -588,22 +604,6 @@
             <p class="helper-text">Un conseiller vous contactera pour confirmation et paiement.</p>
           </div>
         </form>
-
-        <aside class="card order-summary" aria-live="polite">
-          <div class="summary-header">
-            <h2>Vos produits sélectionnés</h2>
-            <span class="helper-text" id="items-count">0 article</span>
-          </div>
-
-          <ul class="summary-list" id="summary-list" hidden></ul>
-
-          <div class="totals-block" id="totals-block" hidden>
-            <span><strong>Produits</strong><strong id="summary-subtotal">0 DA</strong></span>
-            <span><strong>Livraison</strong><strong id="summary-shipping">0 DA</strong></span>
-          </div>
-          <p class="summary-total" id="summary-total" hidden>Total&nbsp;: 0&nbsp;DA</p>
-          <p class="empty-cart-message" id="empty-cart-message">Votre panier est vide sur ce navigateur. Retournez sur la boutique pour ajouter des produits avant de finaliser votre commande.</p>
-        </aside>
       </div>
     </section>
   </main>
@@ -848,10 +848,7 @@
         const wilayaRates = shippingTable[wilaya];
         if (!wilayaRates) return 0;
 
-        if (mode === 'À domicile') {
-          return wilayaRates.home;
-        }
-        return wilayaRates.desk;
+        return mode === 'À domicile' ? wilayaRates.home : wilayaRates.desk;
       };
 
       const updateTotals = () => {
