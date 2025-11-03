@@ -913,7 +913,7 @@
       height: 100vh;
       background: var(--clair);
       box-shadow: -4px 0 30px rgba(62, 43, 36, 0.25);
-      padding: 28px 26px 24px;
+      padding: 28px 26px;
       display: flex;
       flex-direction: column;
       gap: 20px;
@@ -1034,6 +1034,17 @@
       color: var(--rouge-erreur);
     }
 
+    .cart-footer {
+      position: sticky;
+      bottom: 0;
+      background: var(--clair);
+      padding: 14px 0 6px;
+      border-top: 1px solid rgba(201, 164, 122, 0.22);
+      display: grid;
+      gap: 12px;
+      box-shadow: 0 -8px 14px rgba(62, 43, 36, 0.08);
+    }
+
     .cart-summary {
       font-weight: 700;
       font-size: 1.1rem;
@@ -1042,7 +1053,6 @@
 
     .checkout-btn {
       width: 100%;
-      margin-top: 8px;
       text-align: center;
     }
 
@@ -1194,6 +1204,7 @@
       </div>
 
       <div class="catalogue-grid">
+        <!-- Produit 1 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="gloss-huda-faux-filler" data-product-name="Gloss Huda Beauty Faux Filler" data-price="5800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Gloss+Huda+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1238,6 +1249,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 2 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="juicy-bombshell-duo" data-product-name="Juicy Bombshell Lip Duo • Huda Beauty" data-price="7000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Juicy+Bombshell+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1273,6 +1286,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 3 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="fenty-riri-szn" data-product-name="It’s Riri SZN Coffret • Fenty Beauty" data-price="13000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Riri+SZN+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1308,6 +1323,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 4 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="blush-too-faced" data-product-name="Blush Too Faced" data-price="7500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Blush+Too+Faced+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1348,6 +1365,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 5 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="bronzer-too-faced" data-product-name="Bronzer Too Faced" data-price="7500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Bronzer+Too+Faced+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1390,6 +1409,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 6 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="fixateur-loreal" data-product-name="Fixateur L’Oréal" data-price="3200" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Fixateur+LOreal+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1413,8 +1434,7 @@
           <h3>Fixateur L’Oréal</h3>
           <p class="product-attribute">Attribut : Teint</p>
           <p class="description">Brume fixatrice légère pour prolonger la tenue de votre maquillage jusqu’au bout de la nuit.</p>
-          <p class="prix">3&nbsp;200&nbsp;DA</p>
-          <div class="options">
+          <p<div class="options">
             <h4>Choix disponible</h4>
             <ul>
               <li>Format standard</li>
@@ -1425,6 +1445,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 7 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-fixateur-100" data-product-name="Fixateur Charlotte Tilbury 100 ml" data-price="9800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Fixateur+CT+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1460,6 +1482,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 8 -->
         <article class="product-card" data-category="soin" data-attribute="soin" data-product-id="glow-recipe-glass-skin" data-product-name="Duo Glass Skin • Glow Recipe 40 ml" data-price="13000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Glass+Skin+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1495,6 +1519,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 9 -->
         <article class="product-card" data-category="soin" data-attribute="soin" data-product-id="byoma-so-clear" data-product-name="Kit Byoma So Clear Set" data-price="6800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Byoma+Kit+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1530,6 +1556,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 10 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="blush-sunkisser-maybelline" data-product-name="Blush Sunkisser • Maybelline" data-price="1800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Blush+Sunkisser+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1578,6 +1606,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 11 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="highlighter-sunkisser" data-product-name="Highlighter Sunkisser • Maybelline" data-price="1800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Highlighter+Sunkisser+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1611,13 +1641,15 @@
           <div class="product-options">
             <label for="highlighter-sunkisser-shade">Choisissez une teinte :</label>
             <select id="highlighter-sunkisser-shade" name="teinte">
-              <option value="">-- Sélectionnez une teinte --</option>
+              <option value="">-- Sélectionnez une теinte --</option>
               <option value="20">20</option>
             </select>
             <div class="error-message" id="highlighter-sunkisser-error">Veuillez sélectionner une teinte.</div>
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 12 -->
         <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="mascara-sky-high" data-product-name="Mascara Maybelline Sky High" data-price="1800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sky+High+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1660,6 +1692,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 13 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="nyx-buttermelt-glaze" data-product-name="NYX Buttermelt Glaze" data-price="1900" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=NYX+Glaze+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1682,7 +1716,7 @@
           <span class="tag">Teint</span>
           <h3>NYX Buttermelt Glaze Skin Tint</h3>
           <p class="product-attribute">Attribut : Lèvres</p>
-          <p class="description">un teint léger à la texture beurrée qui fond sur la peau pour un éclat naturel et lumineux, tout en offrant hydratation, protection solaire et confort au quotidien.</p>
+          <p class="description">Un teint léger à la texture beurrée qui fond sur la peau pour un éclat naturel et lumineux, tout en offrant hydratation, protection solaire et confort au quotidien.</p>
           <p class="prix">1&nbsp;900&nbsp;DA</p>
           <div class="options">
             <h4>Teinte disponible</h4>
@@ -1700,6 +1734,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 14 -->
         <article class="product-card" data-category="parfum" data-attribute="parfum" data-product-id="sol-de-janeiro-mist" data-product-name="Brume Sol de Janeiro" data-price="3200" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sol+de+Janeiro+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1752,6 +1788,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 15 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="tarte-setting-powder" data-product-name="Setting Powder Creaseless • Tarte" data-price="7800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Tarte+Powder+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1792,6 +1830,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 16 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="nars-afterglow-blush" data-product-name="Afterglow Liquid Blush • Nars" data-price="6800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Nars+Afterglow+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1834,6 +1874,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 17 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="rare-beauty-soft-pinch" data-product-name="Soft Pinch Blush Mat Effect • Rare Beauty" data-price="7500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Soft+Pinch+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1874,6 +1916,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 18 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="ct-plumpgasm" data-product-name="Big Lip Plumpgasm • Charlotte Tilbury" data-price="6500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Plumpgasm+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1914,6 +1958,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 19 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-glow-bronzer" data-product-name="Sun Kissed Glow Bronzer Crème • Charlotte Tilbury" data-price="9800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=CT+Bronzer+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1954,6 +2000,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 20 -->
         <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="tartelette-in-bloom" data-product-name="Palette Tartelette in Bloom" data-price="9000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Tartelette+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -1989,6 +2037,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 21 -->
         <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="mbm-ethereal-eyes" data-product-name="Palette Makeup by Mario Ethereal Eyes Moonlight" data-price="15500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MBM+Moonlight+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2024,6 +2074,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 22 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="huda-blush-filter" data-product-name="Blush Filter Liquide • Huda Beauty" data-price="7000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Huda+Blush+Filter+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2064,6 +2116,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 23 -->
         <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="too-faced-bts-naturally" data-product-name="Mascara Too Faced Better Than Sex Naturally" data-price="5200" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Better+Than+Sex+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2104,6 +2158,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 24 -->
         <article class="product-card" data-category="yeux" data-attribute="yeux" data-product-id="benefit-badgal-mini" data-product-name="Mini Mascara BADgal • Benefit" data-price="3500" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=BADgal+Mini+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2139,6 +2195,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 25 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-forest-lipstick" data-product-name="Forest Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MAC+Forest+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2179,6 +2237,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 26 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-lusterglass" data-product-name="Lusterglass Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Lusterglass+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2219,6 +2279,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 27 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="mac-matte-lipstick" data-product-name="Matte Lipstick • MAC" data-price="3800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=MAC+Matte+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2259,6 +2321,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 28 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="huda-lip-pencil" data-product-name="Crayon à Lèvres • Huda Beauty" data-price="4800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Huda+Lipliner+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2299,6 +2363,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 29 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="sephora-liquid-lip" data-product-name="Rouge à Lèvres Sephora Sans Transfert" data-price="2800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Sephora+Lip+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2339,6 +2405,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 30 -->
         <article class="product-card" data-category="teint" data-attribute="teint" data-product-id="ct-airbrush-powder" data-product-name="Poudre Airbrush Flawless Finish • Charlotte Tilbury" data-price="7000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Airbrush+Powder+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2379,6 +2447,8 @@
           </div>
           <button class="add-to-cart-btn" type="button">Ajouter au panier</button>
         </article>
+
+        <!-- Produit 31 -->
         <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="w7-perfect-pout" data-product-name="Perfect Pout Lip Essentials • W7" data-price="5000" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=W7+Perfect+Pout+1">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
@@ -2556,8 +2626,10 @@
     <ul id="cart-items" class="cart-items-list">
       <li class="cart-empty">Votre panier est vide pour le moment.</li>
     </ul>
-    <p id="cart-summary" class="cart-summary">Total&nbsp;: 0&nbsp;DA</p>
-    <button id="cart-checkout" class="btn btn-principal checkout-btn" type="button" disabled aria-disabled="true">Accéder au panier</button>
+    <div class="cart-footer">
+      <p id="cart-summary" class="cart-summary">Total&nbsp;: 0&nbsp;DA</p>
+      <button id="cart-checkout" class="btn btn-principal checkout-btn" type="button" disabled aria-disabled="true">Accéder au panier</button>
+    </div>
   </aside>
 
   <script>
