@@ -33,7 +33,7 @@
 
     header {
       background: radial-gradient(circle at top left, #fffaf1 0%, #f5ebdd 55%, #ede0cf 100%);
-      padding: 40px 5%;
+      padding: 40px 5% 50px;
     }
 
     nav {
@@ -41,7 +41,7 @@
       flex-direction: column;
       align-items: center;
       gap: 28px;
-      margin-bottom: 60px;
+      margin-bottom: 25px;
     }
 
     nav .logo {
@@ -53,7 +53,6 @@
     nav .logo img {
       width: 100%;
       height: auto;
-      display: block;
       object-fit: contain;
     }
 
@@ -138,10 +137,6 @@
       transform: translate(-50%, 0);
     }
 
-    nav .nav-submenu li {
-      list-style: none;
-    }
-
     nav .nav-submenu button {
       width: 100%;
       padding: 10px 12px;
@@ -166,6 +161,186 @@
       background: var(--accent);
       color: var(--clair);
       box-shadow: 0 10px 22px rgba(201, 164, 122, 0.25);
+    }
+
+    .nav-search-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin: 0 auto 24px;
+      width: 100%;
+      max-width: 840px;
+    }
+
+    .search-container {
+      position: relative;
+      flex: 1;
+      min-width: 260px;
+      max-width: 620px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 44px 12px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--accent-light);
+      background: var(--clair);
+      color: var(--texte-principal);
+      font-size: 1rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(201, 164, 122, 0.2);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--texte-secondaire);
+      pointer-events: none;
+      font-size: 1.1rem;
+    }
+
+    .search-results {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: var(--clair);
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(62, 43, 36, 0.18);
+      z-index: 100;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .search-result {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--accent-light);
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .search-result:last-child {
+      border-bottom: none;
+    }
+
+    .search-result:hover {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .filter-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: 1px solid var(--accent-light);
+      background: var(--clair);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .filter-toggle svg {
+      width: 22px;
+      height: 22px;
+      display: block;
+    }
+
+    .filter-toggle:hover,
+    .filter-toggle:focus-visible {
+      background: #f6ecda;
+      border-color: var(--accent);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .filter-toggle.open {
+      background: rgba(201, 164, 122, 0.18);
+      border-color: var(--accent);
+    }
+
+    .filter-label {
+      letter-spacing: 0.4px;
+    }
+
+    @media (max-width: 520px) {
+      .filter-label {
+        display: none;
+      }
+      .filter-toggle {
+        width: 54px;
+        height: 48px;
+        border-radius: 16px;
+      }
+    }
+
+    .filter-panel {
+      background: rgba(201, 164, 122, 0.12);
+      border: 1px solid rgba(201, 164, 122, 0.32);
+      border-radius: 18px;
+      padding: 18px;
+      display: grid;
+      gap: 18px;
+      max-width: 840px;
+      margin: 0 auto 28px;
+    }
+
+    .filter-panel[hidden] {
+      display: none !important;
+    }
+
+    .filter-section {
+      display: grid;
+      gap: 10px;
+    }
+
+    .filter-panel-title {
+      font-weight: 600;
+      color: var(--texte-principal);
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .filter-pill {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      background: var(--clair);
+      color: var(--texte-principal);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .filter-pill:hover,
+    .filter-pill:focus-visible {
+      background: var(--accent-light);
+      color: var(--accent);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .filter-pill.active {
+      background: var(--accent);
+      color: var(--clair);
+      box-shadow: 0 12px 26px rgba(201, 164, 122, 0.28);
     }
 
     .hero {
@@ -264,91 +439,9 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 18px;
-      margin-bottom: 32px;
-    }
-
-    .filter-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 22px;
-      border-radius: 999px;
-      border: 1px solid var(--accent-light);
-      background: var(--clair);
-      color: var(--accent);
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-    }
-
-    .filter-toggle::after {
-      content: "";
-      border: 5px solid transparent;
-      border-top-color: currentColor;
-      transition: transform 0.2s ease;
-    }
-
-    .filter-toggle:hover,
-    .filter-toggle:focus-visible {
-      background: #f6ecda;
-      border-color: var(--accent);
-      outline: none;
-      transform: translateY(-1px);
-    }
-
-    .filter-toggle.open::after {
-      transform: rotate(-180deg);
-    }
-
-    .filter-panel {
-      background: rgba(201, 164, 122, 0.12);
-      border: 1px solid rgba(201, 164, 122, 0.32);
-      border-radius: 18px;
-      padding: 18px;
-      display: grid;
+      justify-content: center;
       gap: 14px;
-      min-width: min(100%, 360px);
-    }
-
-    .filter-panel[hidden] {
-      display: none !important;
-    }
-
-    .filter-panel-title {
-      font-weight: 600;
-      color: var(--texte-principal);
-    }
-
-    .filter-options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .filter-pill {
-      border: none;
-      border-radius: 999px;
-      padding: 10px 18px;
-      background: var(--clair);
-      color: var(--texte-principal);
-      font-weight: 500;
-      cursor: pointer;
-      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .filter-pill:hover,
-    .filter-pill:focus-visible {
-      background: var(--accent-light);
-      color: var(--accent);
-      outline: none;
-      transform: translateY(-1px);
-    }
-
-    .filter-pill.active {
-      background: var(--accent);
-      color: var(--clair);
-      box-shadow: 0 12px 26px rgba(201, 164, 122, 0.28);
+      margin-bottom: 32px;
     }
 
     .filter-feedback {
@@ -357,10 +450,16 @@
     }
 
     .catalogue-grid {
-       display: grid;
-       gap: 40px 32px; /* plus d’air en vertical ET horizontal */
-       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
+      display: grid;
+      gap: 40px 32px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 680px) {
+      .catalogue-grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
     .product-card {
       background: var(--clair);
@@ -376,6 +475,12 @@
     .product-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 20px 46px rgba(62, 43, 36, 0.16);
+    }
+
+    .product-card.product-highlight {
+      box-shadow: 0 0 0 4px rgba(201, 164, 122, 0.32), 0 22px 48px rgba(62, 43, 36, 0.22);
+      transform: translateY(-8px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .product-card img {
@@ -1077,6 +1182,18 @@
       overflow: hidden;
     }
 
+    @media (max-width: 980px) {
+      .hero {
+        text-align: center;
+      }
+      .hero img {
+        order: -1;
+      }
+      .commande-cta {
+        padding: 30px 24px;
+      }
+    }
+
     @media (max-width: 720px) {
       nav .nav-submenu {
         left: 50%;
@@ -1090,18 +1207,6 @@
       }
       .filter-panel {
         width: 100%;
-      }
-    }
-
-    @media (max-width: 980px) {
-      .hero {
-        text-align: center;
-      }
-      .hero img {
-        order: -1;
-      }
-      .commande-cta {
-        padding: 30px 24px;
       }
     }
 
@@ -1163,6 +1268,44 @@
         </li>
       </ul>
     </nav>
+
+    <div class="nav-search-area">
+      <div class="search-container">
+        <input type="text" class="search-input" id="search-input" placeholder="Rechercher un produit...">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <div class="search-results" id="search-results"></div>
+      </div>
+      <button type="button" class="filter-toggle" aria-expanded="false" aria-controls="filter-panel">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 5h16M7 12h10M10 19h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span class="filter-label">Filtrer</span>
+      </button>
+    </div>
+
+    <div id="filter-panel" class="filter-panel" hidden role="group" aria-label="Filtrer les produits">
+      <div class="filter-section">
+        <p class="filter-panel-title">Catégories</p>
+        <div class="filter-options">
+          <button type="button" class="filter-pill" data-category="toutes" aria-pressed="false">Toutes les catégories</button>
+          <button type="button" class="filter-pill" data-category="teint" aria-pressed="false">Teint</button>
+          <button type="button" class="filter-pill" data-category="levres" aria-pressed="false">Lèvres</button>
+          <button type="button" class="filter-pill" data-category="soin" aria-pressed="false">Soin</button>
+          <button type="button" class="filter-pill" data-category="yeux" aria-pressed="false">Yeux</button>
+          <button type="button" class="filter-pill" data-category="parfum" aria-pressed="false">Parfum</button>
+        </div>
+      </div>
+      <div class="filter-section">
+        <p class="filter-panel-title">Plage de prix</p>
+        <div class="filter-options">
+          <button type="button" class="filter-pill" data-price="0-3000" aria-pressed="false">0 - 3 000 DA</button>
+          <button type="button" class="filter-pill" data-price="3000-6000" aria-pressed="false">3 000 - 6 000 DA</button>
+          <button type="button" class="filter-pill" data-price="6000-10000" aria-pressed="false">6 000 - 10 000 DA</button>
+          <button type="button" class="filter-pill" data-price="10000+" aria-pressed="false">+ 10 000 DA</button>
+        </div>
+      </div>
+    </div>
+
     <div class="hero">
       <div class="hero-text">
         <h1>Divine glow dz</h1>
@@ -1186,26 +1329,11 @@
       <p class="sous-titre">Explorez notre gamme de produits soigneusement sélectionnés pour vous offrir le meilleur de la beauté.</p>
 
       <div class="catalogue-toolbar">
-        <button type="button" class="filter-toggle" aria-expanded="false" aria-controls="filter-panel">
-          Filtrer les catégories
-        </button>
-        <div id="filter-panel" class="filter-panel" hidden role="group" aria-label="Filtre de catégories">
-          <p class="filter-panel-title">Choisissez une catégorie :</p>
-          <div class="filter-options">
-            <button type="button" class="filter-pill" data-category="toutes" aria-pressed="false">Toutes les catégories</button>
-            <button type="button" class="filter-pill" data-category="teint" aria-pressed="false">Teint</button>
-            <button type="button" class="filter-pill" data-category="levres" aria-pressed="false">Lèvres</button>
-            <button type="button" class="filter-pill" data-category="soin" aria-pressed="false">Soin</button>
-            <button type="button" class="filter-pill" data-category="yeux" aria-pressed="false">Yeux</button>
-            <button type="button" class="filter-pill" data-category="parfum" aria-pressed="false">Parfum</button>
-          </div>
-        </div>
         <p class="filter-feedback">Affichage : <span id="filter-feedback-value" aria-live="polite">Toutes les catégories</span></p>
       </div>
 
       <div class="catalogue-grid">
-        <!-- Produit 1 -->
-        <article class="product-card" data-category="levres" data-attribute="levres" data-product-id="gloss-huda-faux-filler" data-product-name="Gloss Huda Beauty Faux Filler" data-price="5800" data-image="https://via.placeholder.com/640x480/f2e3d2/3e2b24?text=Gloss+Huda+1">
+        <article id="gloss-huda-faux-filler" class="product-card" data-category="levres" data-attribute="levres" data-product-id="gloss-huda-faux-filler" data-product-name="Gloss Huda Beauty Faux Filler" data-price="5800" data-image="https://static.tildacdn.com/tild3863-3030-4434-a366-613430373735/1000105269.png">
           <div class="product-media">
             <div class="product-carousel" data-carousel>
               <figure class="product-slide">
@@ -3535,8 +3663,9 @@
         <h3>Kit prêt-à-partir</h3>
         <p>Crayon Huda Beauty, mini BADgal et brume Sol de Janeiro glissent dans votre sac pour des retouches éclat à toute heure.</p>
       </article>
-    </div>
-  </section>
+      </div>
+    </section>
+  </div>
 
   <section id="valeurs">
     <h2 class="titre-section">Nos engagements</h2>
@@ -3674,6 +3803,224 @@
         yeux: 'Yeux',
         parfum: 'Parfum'
       };
+
+      const searchInput = document.getElementById('search-input');
+      const searchResults = document.getElementById('search-results');
+      const filterToggle = document.querySelector('.filter-toggle');
+      const filterPanel = document.getElementById('filter-panel');
+      const filterFeedback = document.getElementById('filter-feedback-value');
+      const navDropdown = document.querySelector('.nav-dropdown');
+      const navDropdownToggle = navDropdown ? navDropdown.querySelector('.nav-dropdown-toggle') : null;
+      const navCategoryButtons = navDropdown ? Array.from(navDropdown.querySelectorAll('button[data-category]')) : [];
+
+      const categoryFilterPills = Array.from(document.querySelectorAll('.filter-pill[data-category]'));
+      const priceFilterPills = Array.from(document.querySelectorAll('.filter-pill[data-price]'));
+
+      let currentCategory = 'toutes';
+      let currentPriceRange = null;
+
+      const openFilterPanel = () => {
+        filterToggle?.setAttribute('aria-expanded', 'true');
+        filterToggle?.classList.add('open');
+        filterPanel?.removeAttribute('hidden');
+      };
+
+      const closeFilterPanel = () => {
+        filterToggle?.setAttribute('aria-expanded', 'false');
+        filterToggle?.classList.remove('open');
+        filterPanel?.setAttribute('hidden', '');
+      };
+
+      const getPriceLabel = (range) => {
+        const labels = {
+          '0-3000': '0 - 3 000 DA',
+          '3000-6000': '3 000 - 6 000 DA',
+          '6000-10000': '6 000 - 10 000 DA',
+          '10000+': '+ 10 000 DA'
+        };
+        return labels[range] || '';
+      };
+
+      const updateFilterFeedback = () => {
+        if (!filterFeedback) return;
+        let feedbackText = categoryLabels[currentCategory] || currentCategory;
+        if (currentPriceRange) {
+          feedbackText += ` | ${getPriceLabel(currentPriceRange)}`;
+        }
+        filterFeedback.textContent = feedbackText;
+      };
+
+      const updateCategoryPills = () => {
+        categoryFilterPills.forEach((pill) => {
+          const isActive = pill.dataset.category === currentCategory;
+          pill.classList.toggle('active', isActive);
+          pill.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+      };
+
+      const updateNavCategoryButtons = () => {
+        navCategoryButtons.forEach((btn) => {
+          const isActive = btn.dataset.category === currentCategory;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+      };
+
+      const updatePricePills = () => {
+        priceFilterPills.forEach((pill) => {
+          const isActive = pill.dataset.price === currentPriceRange;
+          pill.classList.toggle('active', isActive);
+          pill.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+      };
+
+      const refreshFilterUI = () => {
+        updateCategoryPills();
+        updateNavCategoryButtons();
+        updatePricePills();
+        updateFilterFeedback();
+      };
+
+      const productMatchesFilters = (card) => {
+        const categoryMatch = currentCategory === 'toutes' || card.dataset.category === currentCategory;
+        let priceMatch = true;
+
+        if (currentPriceRange) {
+          const price = parseInt(card.dataset.price, 10);
+          switch (currentPriceRange) {
+            case '0-3000':
+              priceMatch = price >= 0 && price <= 3000;
+              break;
+            case '3000-6000':
+              priceMatch = price > 3000 && price <= 6000;
+              break;
+            case '6000-10000':
+              priceMatch = price > 6000 && price <= 10000;
+              break;
+            case '10000+':
+              priceMatch = price > 10000;
+              break;
+            default:
+              priceMatch = true;
+          }
+        }
+
+        return categoryMatch && priceMatch;
+      };
+
+      const applyFilters = () => {
+        productCards.forEach((card) => {
+          card.style.display = productMatchesFilters(card) ? '' : 'none';
+        });
+        refreshFilterUI();
+      };
+
+      if (filterToggle) {
+        filterToggle.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (filterPanel?.hasAttribute('hidden')) {
+            openFilterPanel();
+          } else {
+            closeFilterPanel();
+          }
+        });
+      }
+
+      categoryFilterPills.forEach((pill) => {
+        pill.addEventListener('click', () => {
+          currentCategory = pill.dataset.category;
+          applyFilters();
+        });
+      });
+
+      priceFilterPills.forEach((pill) => {
+        pill.addEventListener('click', () => {
+          currentPriceRange = currentPriceRange === pill.dataset.price ? null : pill.dataset.price;
+          applyFilters();
+        });
+      });
+
+      navDropdownToggle?.addEventListener('click', () => {
+        const isOpen = navDropdown.classList.toggle('open');
+        navDropdownToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      navCategoryButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          currentCategory = btn.dataset.category;
+          applyFilters();
+          navDropdown.classList.remove('open');
+          navDropdownToggle?.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          const searchTerm = searchInput.value.trim().toLowerCase();
+          if (!searchTerm) {
+            searchResults.style.display = 'none';
+            searchResults.innerHTML = '';
+            return;
+          }
+
+          const matchedProducts = productCards.filter((card) => {
+            const productName = card.dataset.productName.toLowerCase();
+            return productName.includes(searchTerm);
+          });
+
+          searchResults.innerHTML = '';
+
+          if (matchedProducts.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'search-result';
+            emptyState.textContent = 'Aucun produit trouvé';
+            searchResults.appendChild(emptyState);
+            searchResults.style.display = 'block';
+            return;
+          }
+
+          matchedProducts.forEach((card) => {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'search-result';
+            resultItem.textContent = card.dataset.productName;
+            resultItem.addEventListener('click', () => {
+              currentCategory = 'toutes';
+              currentPriceRange = null;
+              applyFilters();
+              closeFilterPanel();
+              searchResults.innerHTML = '';
+              searchResults.style.display = 'none';
+              searchInput.value = '';
+              card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              card.classList.add('product-highlight');
+              setTimeout(() => card.classList.remove('product-highlight'), 2000);
+            });
+            searchResults.appendChild(resultItem);
+          });
+
+          searchResults.style.display = 'block';
+        });
+      }
+
+      document.addEventListener('click', (event) => {
+        if (navDropdown && !navDropdown.contains(event.target) && navDropdown.classList.contains('open')) {
+          navDropdown.classList.remove('open');
+          navDropdownToggle?.setAttribute('aria-expanded', 'false');
+        }
+
+        if (
+          filterPanel &&
+          !filterPanel.hasAttribute('hidden') &&
+          !filterPanel.contains(event.target) &&
+          !filterToggle?.contains(event.target)
+        ) {
+          closeFilterPanel();
+        }
+
+        if (event.target !== searchInput && !searchResults.contains(event.target)) {
+          searchResults.style.display = 'none';
+        }
+      });
 
       function initProductCarousels() {
         const mediaBlocks = document.querySelectorAll('.product-media');
@@ -3825,76 +4172,8 @@
         }
       });
 
-      const filterToggle = document.querySelector('.filter-toggle');
-      const filterPanel = document.getElementById('filter-panel');
-      const filterPills = Array.from(document.querySelectorAll('.filter-pill'));
-      const filterFeedback = document.getElementById('filter-feedback-value');
-      const navDropdown = document.querySelector('.nav-dropdown');
-      const navDropdownToggle = navDropdown ? navDropdown.querySelector('.nav-dropdown-toggle') : null;
-      const navCategoryButtons = navDropdown ? Array.from(navDropdown.querySelectorAll('button[data-category]')) : [];
-
-      const applyCategory = (category, label) => {
-        productCards.forEach((card) => {
-          const shouldShow = category === 'toutes' || card.dataset.category === category;
-          card.style.display = shouldShow ? '' : 'none';
-        });
-        filterFeedback.textContent = label;
-        syncActiveButtons(category);
-      };
-
-      const syncActiveButtons = (category) => {
-        filterPills.forEach((pill) => {
-          const isActive = pill.dataset.category === category;
-          pill.classList.toggle('active', isActive);
-          pill.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-        });
-        navCategoryButtons.forEach((btn) => {
-          const isActive = btn.dataset.category === category;
-          btn.classList.toggle('active', isActive);
-          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-        });
-      };
-
-      filterToggle?.addEventListener('click', () => {
-        const isExpanded = filterToggle.getAttribute('aria-expanded') === 'true';
-        const nextState = !isExpanded;
-        filterToggle.setAttribute('aria-expanded', String(nextState));
-        filterToggle.classList.toggle('open', nextState);
-        if (nextState) {
-          filterPanel?.removeAttribute('hidden');
-        } else {
-          filterPanel?.setAttribute('hidden', '');
-        }
-      });
-
-      filterPills.forEach((pill) => {
-        pill.addEventListener('click', () => {
-          applyCategory(pill.dataset.category, pill.textContent.trim());
-        });
-      });
-
-      navDropdownToggle?.addEventListener('click', () => {
-        const isOpen = navDropdown.classList.toggle('open');
-        navDropdownToggle.setAttribute('aria-expanded', String(isOpen));
-      });
-
-      navCategoryButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
-          applyCategory(btn.dataset.category, btn.textContent.trim());
-          navDropdown.classList.remove('open');
-          navDropdownToggle?.setAttribute('aria-expanded', 'false');
-        });
-      });
-
-      document.addEventListener('click', (event) => {
-        if (navDropdown && !navDropdown.contains(event.target) && navDropdown.classList.contains('open')) {
-          navDropdown.classList.remove('open');
-          navDropdownToggle?.setAttribute('aria-expanded', 'false');
-        }
-      });
-
       initProductCarousels();
-      applyCategory('toutes', 'Toutes les catégories');
+      applyFilters();
 
       const cartList = document.getElementById('cart-items');
       const cartSummary = document.getElementById('cart-summary');
@@ -4065,8 +4344,17 @@
       cartOverlay?.addEventListener('click', closeCart);
 
       document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && cartDrawer.classList.contains('open')) {
-          closeCart();
+        if (event.key === 'Escape') {
+          if (cartDrawer.classList.contains('open')) {
+            closeCart();
+          }
+          if (navDropdown && navDropdown.classList.contains('open')) {
+            navDropdown.classList.remove('open');
+            navDropdownToggle?.setAttribute('aria-expanded', 'false');
+          }
+          if (filterPanel && !filterPanel.hasAttribute('hidden')) {
+            closeFilterPanel();
+          }
         }
       });
 
@@ -4136,4 +4424,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
