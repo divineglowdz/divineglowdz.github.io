@@ -1,16 +1,17 @@
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { ProductCard } from '../components/ProductCard'
-import { getProducts } from '../lib/api'
+import { productCategories } from '../data/categories'
+import { getCachedProducts, getProducts } from '../lib/api'
 import type { Product } from '../types'
 
 export function ShopPage() {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<Product[]>(() => getCachedProducts())
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('Toutes')
   const [filtersOpen, setFiltersOpen] = useState(false)
   useEffect(() => { void getProducts().then(setProducts) }, [])
-  const categories = ['Toutes', ...new Set(products.map((product) => product.category))]
+  const categories = ['Toutes', ...productCategories]
   const filtered = useMemo(() => products.filter((product) => (category === 'Toutes' || product.category === category) && `${product.name} ${product.brand}`.toLowerCase().includes(query.toLowerCase())), [products, query, category])
   return <>
     <section className="legacy-shop-search"><div className="legacy-search-box"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un produit..." /><Search /></div><button className="legacy-filter-toggle" onClick={() => setFiltersOpen(!filtersOpen)}><SlidersHorizontal /> Filtrer</button>{filtersOpen && <div className="legacy-filter-panel"><p>Catégories</p><div>{categories.map((item) => <button key={item} className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div></div>}</section>

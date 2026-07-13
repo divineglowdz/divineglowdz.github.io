@@ -4,18 +4,19 @@ import { Link, useParams } from 'react-router-dom'
 import { formatPrice } from '../components/ProductCard'
 import { ProductVisual } from '../components/ProductVisual'
 import { useCart } from '../contexts/CartContext'
-import { getProduct, trackEvent } from '../lib/api'
+import { getCachedProduct, getProduct, trackEvent } from '../lib/api'
 import type { Product, ProductVariant } from '../types'
 
 export function ProductPage() {
   const { slug = '' } = useParams()
   const { addItem } = useCart()
-  const [product, setProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState(true)
+  const cachedProduct = getCachedProduct(slug)
+  const [product, setProduct] = useState<Product | null>(cachedProduct)
+  const [loading, setLoading] = useState(!cachedProduct)
   const [quantity, setQuantity] = useState(1)
   const [variant, setVariant] = useState<ProductVariant | undefined>()
   const [activeImage, setActiveImage] = useState(0)
-  useEffect(() => { void getProduct(slug).then((data) => { setProduct(data); setLoading(false); if (data) void trackEvent('product_view', { product_id: data.id }) }) }, [slug])
+  useEffect(() => { const instantProduct = getCachedProduct(slug); setProduct(instantProduct); setLoading(!instantProduct); void getProduct(slug).then((data) => { setProduct(data); setLoading(false); if (data) void trackEvent('product_view', { product_id: data.id }) }) }, [slug])
   const availableStock = useMemo(() => variant?.stock ?? product?.stock ?? 0, [product, variant])
   if (loading) return <div className="page-loading">Chargement...</div>
   if (!product) return <div className="empty-state page-empty"><h1>Produit introuvable</h1><Link className="button primary" to="/boutique">Retour a la boutique</Link></div>
@@ -29,7 +30,7 @@ export function ProductPage() {
           {images.length > 1 && <div className="gallery-thumbs">{images.map((image, index) => <button key={image.id || image.url} className={index === activeImage ? 'active' : ''} onClick={() => setActiveImage(index)}><img src={image.url} alt="" /></button>)}</div>}
         </div>
         <div className="product-info">
-          <span className="eyebrow">{product.brand}</span><h1>{product.name}</h1><strong className="detail-price">{formatPrice(product.price)}</strong>
+          <span className="eyebrow">{product.brand}</span><h1>{product.name}</h1><div className="detail-price-row">{product.compare_at_price && <del>{formatPrice(product.compare_at_price)}</del>}<strong className="detail-price">{formatPrice(product.price)}</strong></div>
           <p className="lead">{product.description}</p>
           <div className="product-benefits"><span><Check /> Produit authentique</span><span><Truck /> Livraison dans 58 wilayas</span></div>
           {!!product.product_variants.length && <div className="variant-picker"><label>Teinte / option</label><div>{product.product_variants.filter((item) => item.active !== false).map((item) => <button key={item.value} disabled={!item.stock} className={variant?.value === item.value ? 'active' : ''} onClick={() => setVariant(item)}>{item.color_hex && <i style={{ background: item.color_hex }} />}{item.value}<small>{item.stock ? `${item.stock} pcs` : 'Epuise'}</small></button>)}</div></div>}

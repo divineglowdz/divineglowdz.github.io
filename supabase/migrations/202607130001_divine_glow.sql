@@ -49,6 +49,7 @@ create table public.products (
   description text not null default '',
   details text not null default '',
   price integer not null check (price >= 0),
+  compare_at_price integer check (compare_at_price is null or compare_at_price > price),
   stock integer not null default 0 check (stock >= 0),
   accent text not null default '#d9929c',
   active boolean not null default true,

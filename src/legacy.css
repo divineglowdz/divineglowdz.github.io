@@ -56,6 +56,9 @@ body { font-family: 'Poppins', sans-serif; color: var(--texte-principal); backgr
 .legacy-options h4 { margin: 0; font-size: .9rem; }
 .legacy-options ul { margin: 0; padding-left: 20px; color: var(--texte-secondaire); font-size: .88rem; }
 .legacy-price { font-size: 1.2rem; font-weight: 600; color: var(--accent); margin-top: auto; }
+.legacy-price-row { display: flex; align-items: baseline; gap: 10px; margin-top: auto; flex-wrap: wrap; }
+.legacy-price-row .legacy-price { margin-top: 0; }
+.legacy-price-row del, .detail-price-row del { color: var(--texte-secondaire); font-size: .92rem; font-weight: 500; }
 .legacy-add-button { padding: 12px 24px; width: 100%; border-radius: 16px; border: none; background: var(--accent); color: var(--clair); font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform .2s, background .2s, box-shadow .2s; }
 .legacy-add-button:hover { transform: translateY(-2px); background: #ba8f60; box-shadow: 0 12px 28px rgba(201,164,122,.26); }
 .legacy-add-button:disabled { opacity: .55; cursor: not-allowed; }
@@ -104,6 +107,8 @@ body { font-family: 'Poppins', sans-serif; color: var(--texte-principal); backgr
 .product-info h1, .checkout-heading h1, .thank-you-page h1 { font-family: 'Poppins',sans-serif; font-weight: 700; }
 .product-info .eyebrow, .checkout-heading .eyebrow, .thank-you-page .eyebrow { color: var(--accent); }
 .detail-price, .availability { color: var(--accent); }
+.detail-price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 26px; flex-wrap: wrap; }
+.detail-price-row .detail-price { margin-bottom: 0; }
 .button.primary { background: var(--accent); color: var(--clair); border-radius: 16px; box-shadow: var(--ombre-douce); }
 .button.primary:hover { background: #ba8f60; }
 .button.secondary { border-color: var(--accent-light); color: var(--accent); border-radius: 16px; background: var(--clair); }

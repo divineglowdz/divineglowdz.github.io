@@ -1,11 +1,11 @@
 import { Shield, Trash2, UserPlus, Users } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
-import { getProfiles, manageUser } from '../../../lib/api'
+import { getCachedProfiles, getProfiles, manageUser } from '../../../lib/api'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { Profile } from '../../../types'
 
 export function UsersPanel() {
-  const [users, setUsers] = useState<Profile[]>([])
+  const [users, setUsers] = useState<Profile[]>(() => getCachedProfiles())
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ email: '', password: '', full_name: '', role: 'staff' })
   const [error, setError] = useState('')

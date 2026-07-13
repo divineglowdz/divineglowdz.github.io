@@ -1,14 +1,14 @@
 import { Edit3, Eye, Search, ShoppingBag, Trash2, X } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { formatPrice } from '../../../components/ProductCard'
-import { deleteOrder, getOrders, saveOrder } from '../../../lib/api'
+import { deleteOrder, getCachedOrders, getOrders, saveOrder } from '../../../lib/api'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { Order, OrderStatus } from '../../../types'
 
 const statuses: OrderStatus[] = ['nouvelle', 'confirmee', 'preparee', 'expediee', 'livree', 'annulee']
 
 export function OrdersPanel() {
-  const [orders, setOrders] = useState<Order[]>([])
+  const [orders, setOrders] = useState<Order[]>(() => getCachedOrders())
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('toutes')
   const [selected, setSelected] = useState<Order | null>(null)

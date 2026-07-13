@@ -9,6 +9,7 @@ export type Product = {
   description: string
   details: string
   price: number
+  compare_at_price: number | null
   stock: number
   category: string
   accent: string

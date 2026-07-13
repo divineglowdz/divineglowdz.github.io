@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ProductCard } from '../components/ProductCard'
-import { getProducts } from '../lib/api'
+import { getCachedProducts, getProducts } from '../lib/api'
 import type { Product } from '../types'
 
 export function HomePage() {
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<Product[]>(() => getCachedProducts())
   useEffect(() => { void getProducts().then(setProducts) }, [])
   return <>
     <section className="legacy-hero home-hero">

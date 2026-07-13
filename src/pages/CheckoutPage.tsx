@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { formatPrice } from '../components/ProductCard'
 import { ProductVisual } from '../components/ProductVisual'
 import { useCart } from '../contexts/CartContext'
-import { getDeliveryRates, placeOrder, trackEvent } from '../lib/api'
+import { getCachedDeliveryRates, getDeliveryRates, placeOrder, trackEvent } from '../lib/api'
 import type { DeliveryRate } from '../types'
 
 type CheckoutForm = { customer_name: string; phone: string; wilaya_code: string; commune: string; address: string; delivery_type: 'home' | 'office'; notes: string }
@@ -13,7 +13,7 @@ const initialForm: CheckoutForm = { customer_name: '', phone: '', wilaya_code: '
 export function CheckoutPage() {
   const cart = useCart()
   const navigate = useNavigate()
-  const [rates, setRates] = useState<DeliveryRate[]>([])
+  const [rates, setRates] = useState<DeliveryRate[]>(() => getCachedDeliveryRates())
   const [form, setForm] = useState(initialForm)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')

@@ -1,11 +1,11 @@
 import { Check, MapPin, Save, Search, Truck } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { getDeliveryRates, saveDeliveryRates } from '../../../lib/api'
+import { getCachedDeliveryRates, getDeliveryRates, saveDeliveryRates } from '../../../lib/api'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { DeliveryRate } from '../../../types'
 
 export function DeliveryPanel() {
-  const [rates, setRates] = useState<DeliveryRate[]>([])
+  const [rates, setRates] = useState<DeliveryRate[]>(() => getCachedDeliveryRates())
   const [query, setQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)

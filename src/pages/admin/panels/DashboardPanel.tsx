@@ -2,16 +2,18 @@ import { ArrowUpRight, Eye, MousePointerClick, PackageSearch, ScanEye, ShoppingC
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatPrice } from '../../../components/ProductCard'
-import { getAnalytics, getOrders, getProducts } from '../../../lib/api'
+import { getAnalytics, getCachedOrders, getCachedProducts, getOrders, getProducts } from '../../../lib/api'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { AnalyticsSummary, Order, Product } from '../../../types'
 
-const emptySummary: AnalyticsSummary = { views: 0, productViews: 0, addToCart: 0, orders: 0, revenue: 0, lowStock: 0 }
+const cachedProducts = getCachedProducts(true)
+const cachedOrders = getCachedOrders()
+const emptySummary: AnalyticsSummary = { views: 0, productViews: 0, addToCart: 0, orders: cachedOrders.length, revenue: cachedOrders.filter((order) => order.status !== 'annulee').reduce((sum, order) => sum + Number(order.total), 0), lowStock: cachedProducts.filter((product) => product.stock <= 5).length }
 
 export function DashboardPanel() {
   const [summary, setSummary] = useState(emptySummary)
-  const [products, setProducts] = useState<Product[]>([])
-  const [orders, setOrders] = useState<Order[]>([])
+  const [products, setProducts] = useState<Product[]>(cachedProducts)
+  const [orders, setOrders] = useState<Order[]>(cachedOrders.slice(0, 5))
   useEffect(() => { void (async () => { const nextProducts = await getProducts(true); setProducts(nextProducts); if (isSupabaseConfigured) { const [nextOrders, nextSummary] = await Promise.all([getOrders(), getAnalytics(nextProducts)]); setOrders(nextOrders.slice(0, 5)); setSummary(nextSummary) } })() }, [])
   const cards = [
     { label: 'Visites (30 j)', value: summary.views.toLocaleString('fr-DZ'), icon: Eye, tone: 'green' },

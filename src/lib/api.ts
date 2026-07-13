@@ -3,34 +3,78 @@ import { seedProducts } from '../data/seed'
 import type { AnalyticsSummary, DeliveryRate, Order, Product, Profile } from '../types'
 import { isSupabaseConfigured, supabase } from './supabase'
 
+const cacheKeys = {
+  publicProducts: 'divine-glow-products-public-v2',
+  adminProducts: 'divine-glow-products-admin-v2',
+  deliveryRates: 'divine-glow-delivery-rates-v1',
+  orders: 'divine-glow-orders-v1',
+  profiles: 'divine-glow-profiles-v1',
+}
+
+function readCache<T>(key: string, fallback: T): T {
+  try {
+    const value = localStorage.getItem(key)
+    return value ? JSON.parse(value) as T : fallback
+  } catch { return fallback }
+}
+
+function writeCache(key: string, value: unknown) {
+  try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* Storage can be unavailable in private mode. */ }
+}
+
 const normalizeProduct = (row: Record<string, unknown>) => ({
   ...row,
+  category: row.category === 'Primer' || row.category === 'Fixateur' ? 'Teint' : row.category,
+  compare_at_price: row.compare_at_price == null ? null : Number(row.compare_at_price),
   product_images: Array.isArray(row.product_images) ? row.product_images : [],
   product_variants: Array.isArray(row.product_variants) ? row.product_variants : [],
 }) as Product
 
+export function getCachedProducts(admin = false): Product[] {
+  const fallback = admin ? readCache<Product[]>(cacheKeys.publicProducts, seedProducts) : seedProducts
+  const products = readCache<Product[]>(admin ? cacheKeys.adminProducts : cacheKeys.publicProducts, fallback)
+  return products.map((product) => normalizeProduct(product as unknown as Record<string, unknown>)).filter((product) => admin || product.active)
+}
+
+export function getCachedProduct(slug: string): Product | null {
+  return getCachedProducts(true).find((product) => product.slug === slug && product.active) || null
+}
+
 export async function getProducts(admin = false): Promise<Product[]> {
-  if (!isSupabaseConfigured) return seedProducts
+  if (!isSupabaseConfigured) return getCachedProducts(admin)
   let query = supabase.from('products').select('*, product_images(*), product_variants(*)').order('created_at')
   if (!admin) query = query.eq('active', true)
   const { data, error } = await query
-  if (error) throw error
-  return (data || []).map((row) => normalizeProduct(row))
+  if (error) return getCachedProducts(admin)
+  const products = (data || []).map((row) => normalizeProduct(row))
+  writeCache(admin ? cacheKeys.adminProducts : cacheKeys.publicProducts, products)
+  if (admin) writeCache(cacheKeys.publicProducts, products.filter((product) => product.active))
+  return products
 }
 
 export async function getProduct(slug: string): Promise<Product | null> {
-  if (!isSupabaseConfigured) return seedProducts.find((product) => product.slug === slug) || null
+  if (!isSupabaseConfigured) return getCachedProduct(slug)
   const { data, error } = await supabase
     .from('products').select('*, product_images(*), product_variants(*)').eq('slug', slug).eq('active', true).maybeSingle()
-  if (error) throw error
-  return data ? normalizeProduct(data) : null
+  if (error) return getCachedProduct(slug)
+  if (!data) return null
+  const product = normalizeProduct(data)
+  const cached = getCachedProducts().filter((item) => item.id !== product.id)
+  writeCache(cacheKeys.publicProducts, [...cached, product])
+  return product
 }
 
 export async function getDeliveryRates(): Promise<DeliveryRate[]> {
-  if (!isSupabaseConfigured) return defaultDeliveryRates
+  if (!isSupabaseConfigured) return getCachedDeliveryRates()
   const { data, error } = await supabase.from('delivery_rates').select('*').order('wilaya_code')
-  if (error) throw error
-  return data?.length ? data : defaultDeliveryRates
+  if (error) return getCachedDeliveryRates()
+  const rates = data?.length ? data : defaultDeliveryRates
+  writeCache(cacheKeys.deliveryRates, rates)
+  return rates
+}
+
+export function getCachedDeliveryRates(): DeliveryRate[] {
+  return readCache<DeliveryRate[]>(cacheKeys.deliveryRates, defaultDeliveryRates)
 }
 
 export async function trackEvent(eventType: string, metadata: Record<string, unknown> = {}) {
@@ -62,25 +106,33 @@ export async function placeOrder(payload: Record<string, unknown>): Promise<{ or
 
 export async function getOrders(): Promise<Order[]> {
   const { data, error } = await supabase.from('orders').select('*, order_items(*)').order('created_at', { ascending: false })
-  if (error) throw error
-  return (data || []) as Order[]
+  if (error) return getCachedOrders()
+  const orders = (data || []) as Order[]
+  writeCache(cacheKeys.orders, orders)
+  return orders
+}
+
+export function getCachedOrders(): Order[] {
+  return readCache<Order[]>(cacheKeys.orders, [])
 }
 
 export async function saveOrder(id: string, updates: Partial<Order>) {
   const { error } = await supabase.from('orders').update(updates).eq('id', id)
   if (error) throw error
+  writeCache(cacheKeys.orders, getCachedOrders().map((order) => order.id === id ? { ...order, ...updates } : order))
 }
 
 export async function deleteOrder(id: string) {
   const { error } = await supabase.from('orders').delete().eq('id', id)
   if (error) throw error
+  writeCache(cacheKeys.orders, getCachedOrders().filter((order) => order.id !== id))
 }
 
 export async function saveProduct(product: Partial<Product>) {
   const payload = {
     id: product.id || undefined, slug: product.slug, name: product.name, brand: product.brand,
     category: product.category, description: product.description, details: product.details,
-    price: product.price, stock: product.stock, accent: product.accent, active: product.active, featured: product.featured,
+    price: product.price, compare_at_price: product.compare_at_price, stock: product.stock, accent: product.accent, active: product.active, featured: product.featured,
   }
   const { data, error } = await supabase.from('products').upsert(payload).select().single()
   if (error) throw error
@@ -93,12 +145,16 @@ export async function saveProduct(product: Partial<Product>) {
       if (variantError) throw variantError
     }
   }
+  localStorage.removeItem(cacheKeys.publicProducts)
+  localStorage.removeItem(cacheKeys.adminProducts)
   return data as Product
 }
 
 export async function deleteProduct(id: string) {
   const { error } = await supabase.from('products').delete().eq('id', id)
   if (error) throw error
+  localStorage.removeItem(cacheKeys.publicProducts)
+  localStorage.removeItem(cacheKeys.adminProducts)
 }
 
 export async function uploadProductImages(productId: string, files: File[]) {
@@ -126,17 +182,25 @@ export async function deleteProductImage(image: { id?: string; path?: string | n
 export async function saveDeliveryRates(rates: DeliveryRate[]) {
   const { error } = await supabase.from('delivery_rates').upsert(rates, { onConflict: 'wilaya_code' })
   if (error) throw error
+  writeCache(cacheKeys.deliveryRates, rates)
 }
 
 export async function getProfiles(): Promise<Profile[]> {
   const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false })
-  if (error) throw error
-  return (data || []) as Profile[]
+  if (error) return getCachedProfiles()
+  const profiles = (data || []) as Profile[]
+  writeCache(cacheKeys.profiles, profiles)
+  return profiles
+}
+
+export function getCachedProfiles(): Profile[] {
+  return readCache<Profile[]>(cacheKeys.profiles, [])
 }
 
 export async function manageUser(action: 'create' | 'update' | 'delete', payload: Record<string, unknown>) {
   const { data, error } = await supabase.functions.invoke('admin-users', { body: { action, ...payload } })
   if (error) throw error
+  localStorage.removeItem(cacheKeys.profiles)
   return data
 }
 
