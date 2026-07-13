@@ -1,4 +1,4 @@
-import { ArrowLeft, Eye, EyeOff, LockKeyhole, Sparkles } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff, LockKeyhole } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
@@ -24,7 +24,7 @@ export function AdminLoginPage() {
   }
   return (
     <main className="admin-login-page">
-      <div className="admin-login-brand"><div className="brand-mark"><Sparkles /></div><span>DIVINE GLOW</span><small>ADMINISTRATION</small></div>
+      <div className="admin-login-brand"><img className="admin-login-logo" src="https://i.ibb.co/k7R6BCs/Photo-Room-20251101-143835.png" alt="Logo Divine Glow DZ" /><small>ADMINISTRATION</small></div>
       <form className="admin-login-card" onSubmit={submit}><div className="login-icon"><LockKeyhole /></div><h1>Bienvenue</h1><p>Connectez-vous pour piloter la boutique.</p>
         <label>Adresse e-mail<input type="email" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
         <label>Mot de passe<div className="password-field"><input type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} /><button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Masquer' : 'Afficher'}>{showPassword ? <EyeOff /> : <Eye />}</button></div></label>

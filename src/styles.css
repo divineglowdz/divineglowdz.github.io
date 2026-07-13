@@ -247,8 +247,7 @@ textarea { min-height: 90px; resize: vertical; }
 .admin-loading { min-height: 100vh; display: grid; place-items: center; }
 .admin-login-page { min-height: 100vh; display: grid; grid-template-columns: minmax(300px, .8fr) minmax(420px, 1.2fr); background: #e8eeea; }
 .admin-login-brand { padding: 60px; background: #2e4540; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.admin-login-brand .brand-mark { width: 64px; height: 64px; background: white; color: #2e4540; margin-bottom: 24px; }
-.admin-login-brand span { font: 700 clamp(28px, 4vw, 48px) 'Playfair Display', serif; }
+.admin-login-logo { display: block; width: min(260px, 78%); height: auto; max-height: 240px; object-fit: contain; }
 .admin-login-brand small { letter-spacing: .24em; margin-top: 10px; color: #c8d8d0; }
 .admin-login-card { width: min(430px, calc(100% - 40px)); margin: auto; padding: 40px; background: white; border: 1px solid var(--line); display: grid; gap: 18px; }
 .login-icon { width: 46px; height: 46px; display: grid; place-items: center; background: var(--ink); color: white; }
@@ -518,8 +517,7 @@ textarea { min-height: 90px; resize: vertical; }
   .order-summary { padding: 18px; }
   .admin-login-page { grid-template-columns: 1fr; align-content: start; }
   .admin-login-brand { min-height: 170px; padding: 28px; }
-  .admin-login-brand .brand-mark { width: 42px; height: 42px; margin-bottom: 12px; }
-  .admin-login-brand span { font-size: 27px; }
+  .admin-login-logo { width: min(190px, 64%); max-height: 112px; }
   .admin-login-card { padding: 25px; margin-top: 25px; }
   .admin-content { padding: 18px 12px; }
   .metric-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
