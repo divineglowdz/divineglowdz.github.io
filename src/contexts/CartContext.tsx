@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { getVariantPrice } from '../lib/pricing'
 import type { CartItem, Product, ProductVariant } from '../types'
 import { trackEvent } from '../lib/api'
 
@@ -13,7 +14,7 @@ type CartContextValue = {
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
-const storageKey = 'divine-glow-cart-v2'
+const storageKey = 'divine-glow-cart-v3'
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
@@ -24,7 +25,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const value = useMemo<CartContextValue>(() => ({
     items,
     count: items.reduce((sum, item) => sum + item.quantity, 0),
-    subtotal: items.reduce((sum, item) => sum + item.product.price * item.quantity, 0),
+    subtotal: items.reduce((sum, item) => sum + getVariantPrice(item.product, item.variant) * item.quantity, 0),
     addItem(product, variant, quantity = 1) {
       setItems((current) => {
         const index = current.findIndex((item) => item.product.id === product.id && item.variant?.value === variant?.value)

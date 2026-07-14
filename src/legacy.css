@@ -58,6 +58,7 @@ body { font-family: 'Poppins', sans-serif; color: var(--texte-principal); backgr
 .legacy-price { font-size: 1.2rem; font-weight: 600; color: var(--accent); margin-top: auto; }
 .legacy-price-row { display: flex; align-items: baseline; gap: 10px; margin-top: auto; flex-wrap: wrap; }
 .legacy-price-row .legacy-price { margin-top: 0; }
+.legacy-price small, .detail-price small { display: block; color: var(--texte-secondaire); font-size: .72rem; font-weight: 500; line-height: 1.2; }
 .legacy-price-row del, .detail-price-row del { color: var(--texte-secondaire); font-size: .92rem; font-weight: 500; }
 .legacy-add-button { min-height: 48px; padding: 12px 24px; width: 100%; border-radius: 16px; border: none; background: var(--accent); color: var(--clair); font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform .2s, background .2s, box-shadow .2s; display: flex; align-items: center; justify-content: center; text-align: center; }
 .legacy-add-button:hover { transform: translateY(-2px); background: #ba8f60; box-shadow: 0 12px 28px rgba(201,164,122,.26); }

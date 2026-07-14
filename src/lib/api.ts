@@ -4,8 +4,8 @@ import type { AnalyticsSummary, DeliveryRate, Order, Product, Profile } from '..
 import { isSupabaseConfigured, supabase } from './supabase'
 
 const cacheKeys = {
-  publicProducts: 'divine-glow-products-public-v4',
-  adminProducts: 'divine-glow-products-admin-v4',
+  publicProducts: 'divine-glow-products-public-v5',
+  adminProducts: 'divine-glow-products-admin-v5',
   deliveryRates: 'divine-glow-delivery-rates-v1',
   orders: 'divine-glow-orders-v1',
   profiles: 'divine-glow-profiles-v1',
@@ -27,7 +27,12 @@ const normalizeProduct = (row: Record<string, unknown>) => ({
   category: row.category === 'Primer' || row.category === 'Fixateur' ? 'Teint' : row.category,
   compare_at_price: row.compare_at_price == null ? null : Number(row.compare_at_price),
   product_images: Array.isArray(row.product_images) ? row.product_images : [],
-  product_variants: Array.isArray(row.product_variants) ? row.product_variants : [],
+  product_variants: Array.isArray(row.product_variants)
+    ? row.product_variants.map((variant) => {
+      const item = variant as Record<string, unknown>
+      return { ...item, price: item.price == null ? null : Number(item.price), stock: Number(item.stock || 0) }
+    })
+    : [],
 }) as Product
 
 export function getCachedProducts(admin = false): Product[] {

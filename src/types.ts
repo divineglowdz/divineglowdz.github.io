@@ -6,6 +6,7 @@ export type ProductVariant = {
   color_hex?: string | null
   image_url?: string | null
   image_path?: string | null
+  price?: number | null
   stock: number
   active?: boolean
 }

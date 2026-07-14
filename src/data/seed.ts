@@ -1,4 +1,5 @@
 import type { Product } from '../types'
+import { catalogPowderProducts } from './catalogPowders'
 
 const localImage = (file: string, alt: string) => [{ url: `/assets/products/${file}`, alt, position: 0 }]
 
@@ -136,4 +137,5 @@ export const seedProducts: Product[] = [
       { id: '21000000-0000-4000-8000-000000001005', name: 'Teinte', value: '5 Neutral / Neutre', color_hex: '#c8946d', image_url: '/assets/products/charlotte-beautiful-skin-5-neutral.jpg', stock: 1, active: true },
     ],
   },
+  ...catalogPowderProducts,
 ]

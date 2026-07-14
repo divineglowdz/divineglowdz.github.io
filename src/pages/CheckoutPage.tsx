@@ -5,6 +5,7 @@ import { formatPrice } from '../components/ProductCard'
 import { ProductVisual } from '../components/ProductVisual'
 import { useCart } from '../contexts/CartContext'
 import { getCachedDeliveryRates, getDeliveryRates, placeOrder, trackEvent } from '../lib/api'
+import { getVariantPrice } from '../lib/pricing'
 import type { DeliveryRate } from '../types'
 
 type CheckoutForm = { customer_name: string; phone: string; wilaya_code: string; commune: string; address: string; delivery_type: 'home' | 'office'; notes: string }
@@ -27,7 +28,7 @@ export function CheckoutPage() {
     try {
       const result = await placeOrder({
         ...form, wilaya_name: selectedRate?.wilaya_name, delivery_price: deliveryPrice,
-        items: cart.items.map((item) => ({ product_id: item.product.id, product_name: item.product.name, variant_id: item.variant?.id, variant_name: item.variant?.value, quantity: item.quantity, unit_price: item.product.price })),
+        items: cart.items.map((item) => ({ product_id: item.product.id, product_name: item.product.name, variant_id: item.variant?.id, variant_name: item.variant?.value, quantity: item.quantity, unit_price: getVariantPrice(item.product, item.variant) })),
       })
       void trackEvent('order_complete', { order_number: result.order_number, total })
       cart.clear()
@@ -50,7 +51,7 @@ export function CheckoutPage() {
             <label>Adresse complete<input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></label><label>Note <span className="optional">facultatif</span><textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="Point de repere, horaire..." /></label>
           </div>
         </div>
-        <aside className="order-summary"><h2>Recapitulatif</h2><div className="summary-items">{cart.items.map((item, index) => <div className="summary-item" key={`${item.product.id}-${item.variant?.value || ''}`}><div className="summary-thumb"><ProductVisual product={item.product} compact /></div><div><b>{item.product.name}</b>{item.variant && <small>{item.variant.value}</small>}<strong>{formatPrice(item.product.price)}</strong><div className="mini-quantity"><button type="button" onClick={() => cart.updateQuantity(index, item.quantity - 1)}><Minus /></button><span>{item.quantity}</span><button type="button" onClick={() => cart.updateQuantity(index, item.quantity + 1)}><Plus /></button></div></div><button type="button" className="remove-button" onClick={() => cart.removeItem(index)} aria-label="Supprimer"><Trash2 /></button></div>)}</div>
+        <aside className="order-summary"><h2>Recapitulatif</h2><div className="summary-items">{cart.items.map((item, index) => <div className="summary-item" key={`${item.product.id}-${item.variant?.value || ''}`}><div className="summary-thumb"><ProductVisual product={item.product} variant={item.variant} compact /></div><div><b>{item.product.name}</b>{item.variant && <small>{item.variant.value}</small>}<strong>{formatPrice(getVariantPrice(item.product, item.variant))}</strong><div className="mini-quantity"><button type="button" onClick={() => cart.updateQuantity(index, item.quantity - 1)}><Minus /></button><span>{item.quantity}</span><button type="button" onClick={() => cart.updateQuantity(index, item.quantity + 1)}><Plus /></button></div></div><button type="button" className="remove-button" onClick={() => cart.removeItem(index)} aria-label="Supprimer"><Trash2 /></button></div>)}</div>
           <div className="summary-totals"><p><span>Sous-total</span><b>{formatPrice(cart.subtotal)}</b></p><p><span>Livraison</span><b>{formatPrice(deliveryPrice)}</b></p><p className="grand-total"><span>Total</span><b>{formatPrice(total)}</b></p></div>
           {error && <p className="form-error">{error}</p>}<button className="button primary checkout-submit" disabled={submitting}>{submitting ? 'Validation...' : 'Confirmer la commande'}</button><p className="secure-note"><ShieldCheck /> Paiement a la livraison</p>
         </aside>
