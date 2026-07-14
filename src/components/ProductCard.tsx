@@ -7,5 +7,17 @@ export const formatPrice = (value: number) => `${new Intl.NumberFormat('fr-DZ').
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
-  return <article className="legacy-card legacy-product-card"><Link className="legacy-product-media" to={`/produit/${product.slug}`}><ProductVisual product={product} compact /><span className="legacy-stock">{product.stock > 0 ? `${product.stock} en stock` : 'Épuisé'}</span></Link><span className="legacy-tag">{product.category}</span><Link to={`/produit/${product.slug}`}><h3>{product.name}</h3></Link><p>{product.description}</p>{product.product_variants.length > 0 && <div className="legacy-options"><h4>Teintes disponibles</h4><ul>{product.product_variants.map((variant) => <li key={variant.value}>{variant.value}</li>)}</ul></div>}<div className="legacy-price-row">{product.compare_at_price && <del>{formatPrice(product.compare_at_price)}</del>}<strong className="legacy-price">{formatPrice(product.price)}</strong></div><button className="legacy-add-button" disabled={!product.stock} onClick={() => addItem(product)}>Ajouter au panier</button></article>
+  const productUrl = `/produit/${product.slug}`
+
+  return <article className="legacy-card legacy-product-card">
+    <Link className="legacy-product-media" to={productUrl}><ProductVisual product={product} compact /><span className="legacy-stock">{product.stock > 0 ? `${product.stock} en stock` : 'Épuisé'}</span></Link>
+    <span className="legacy-tag">{product.category}</span>
+    <Link to={productUrl}><h3>{product.name}</h3></Link>
+    <p>{product.description}</p>
+    {product.product_variants.length > 0 && <div className="legacy-options"><h4>Teintes disponibles</h4><ul>{product.product_variants.map((variant) => <li key={variant.value}>{variant.value}</li>)}</ul></div>}
+    <div className="legacy-price-row">{product.compare_at_price && <del>{formatPrice(product.compare_at_price)}</del>}<strong className="legacy-price">{formatPrice(product.price)}</strong></div>
+    {product.product_variants.length
+      ? <Link className="legacy-add-button" to={productUrl}>Choisir une teinte</Link>
+      : <button className="legacy-add-button" disabled={!product.stock} onClick={() => addItem(product)}>Ajouter au panier</button>}
+  </article>
 }

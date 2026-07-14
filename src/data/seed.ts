@@ -1,5 +1,7 @@
 import type { Product } from '../types'
 
+const localImage = (file: string, alt: string) => [{ url: `/assets/products/${file}`, alt, position: 0 }]
+
 export const seedProducts: Product[] = [
   {
     id: '10000000-0000-4000-8000-000000000001', slug: 'primer-elf-power-grip',
@@ -28,5 +30,110 @@ export const seedProducts: Product[] = [
     description: 'Une base grip hydratante au packaging blanc, rose et bleu, pensee pour une tenue pro.',
     details: 'Fini floute, sensation confortable et adherence longue duree. Format 35 ml.',
     accent: '#ef7fa7', active: true, featured: true, product_images: [], product_variants: [],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000001', slug: 'elf-power-grip-niacinamide',
+    name: 'Power Grip Primer + 4% Niacinamide', brand: 'e.l.f.', category: 'Teint', price: 2500, compare_at_price: null, stock: 3,
+    description: 'Le primer gel orange enrichi en niacinamide qui hydrate, unifie et agrippe le maquillage.',
+    details: 'Une base gel hydratante à 4% de niacinamide, conçue pour lisser visuellement le teint et prolonger la tenue du maquillage.',
+    accent: '#ef8d4a', active: true, featured: true,
+    product_images: localImage('elf-power-grip-niacinamide.png', 'e.l.f. Power Grip Primer + 4% Niacinamide'), product_variants: [],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000002', slug: 'elf-mint-melt-cooling-face-primer',
+    name: 'Mint Melt Cooling Face Primer', brand: 'e.l.f.', category: 'Teint', price: 2500, compare_at_price: null, stock: 3,
+    description: 'Une base gel fraîche à la menthe qui prépare la peau et aide le maquillage à rester en place.',
+    details: 'Texture gel rafraîchissante avec effet grip. Elle laisse la peau confortable et prête pour une application uniforme du teint.',
+    accent: '#70cbb7', active: true, featured: true,
+    product_images: localImage('elf-mint-melt-primer.png', 'e.l.f. Mint Melt Cooling Face Primer'), product_variants: [],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000003', slug: 'elf-liquid-poreless-putty-primer',
+    name: 'Liquid Poreless Putty Primer', brand: 'e.l.f.', category: 'Teint', price: 2500, compare_at_price: null, stock: 3,
+    description: 'La base liquide rose clair qui lisse visuellement les pores et prépare un teint uniforme.',
+    details: 'La performance lissante du Poreless Putty Primer dans une texture liquide légère, facile à étaler et confortable.',
+    accent: '#efc1ce', active: true, featured: true,
+    product_images: localImage('elf-liquid-poreless-putty.png', 'e.l.f. Liquid Poreless Putty Primer rose clair'), product_variants: [],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000004', slug: 'elf-liquid-poreless-putty-primer-cica',
+    name: 'Liquid Poreless Putty Primer + Cica', brand: 'e.l.f.', category: 'Teint', price: 2500, compare_at_price: null, stock: 1,
+    description: 'La base liquide verte au cica qui lisse les pores tout en apaisant visuellement la peau.',
+    details: 'Une formule légère enrichie en cica, pensée pour préparer, lisser et apporter du confort avant le maquillage.',
+    accent: '#8bb68a', active: true, featured: true,
+    product_images: localImage('elf-liquid-poreless-putty-cica.png', 'e.l.f. Liquid Poreless Putty Primer + Cica'), product_variants: [],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000005', slug: 'huda-beauty-easy-blur-primer',
+    name: 'Easy Blur Primer', brand: 'Huda Beauty', category: 'Teint', price: 9000, compare_at_price: null, stock: 1,
+    description: 'Une base lissante sans silicone qui aide à flouter l’apparence des pores et de la texture.',
+    details: 'Primer lissant à la texture gel légère, conçu pour créer une base douce et uniforme avant le fond de teint.',
+    accent: '#e7a9c2', active: true, featured: true,
+    product_images: localImage('huda-easy-blur-primer.png', 'Huda Beauty Easy Blur Primer'), product_variants: [],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000006', slug: 'huda-beauty-mini-easy-blur-primer',
+    name: 'Mini Easy Blur Primer', brand: 'Huda Beauty', category: 'Teint', price: 5500, compare_at_price: null, stock: 2,
+    description: 'Le primer Easy Blur en format mini pratique, idéal pour les retouches et les déplacements.',
+    details: 'Format 10 ml de la base lissante sans silicone Easy Blur, avec la même texture légère et floutante.',
+    accent: '#e7a9c2', active: true, featured: true,
+    product_images: localImage('huda-mini-easy-blur-primer.png', 'Huda Beauty Mini Easy Blur Primer'), product_variants: [],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000007', slug: 'elf-halo-glow-liquid-filter',
+    name: 'Halo Glow Liquid Filter', brand: 'e.l.f.', category: 'Teint', price: 3500, compare_at_price: null, stock: 6,
+    description: 'Un booster d’éclat liquide modulable à porter seul, sous le maquillage ou mélangé au fond de teint.',
+    details: 'Une formule lumineuse polyvalente qui apporte un fini frais et éclatant sans effet lourd.',
+    accent: '#d9ad8d', active: true, featured: true,
+    product_images: localImage('elf-halo-glow-liquid-filter.png', 'e.l.f. Halo Glow Liquid Filter'),
+    product_variants: [
+      { id: '21000000-0000-4000-8000-000000000701', name: 'Teinte', value: '0 Fair Neutral Warm', color_hex: '#e4bc98', image_url: '/assets/products/elf-halo-glow-0.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000000702', name: 'Teinte', value: '01 Fair Neutral Peach', color_hex: '#eac6ac', image_url: '/assets/products/elf-halo-glow-1.png', stock: 2, active: true },
+      { id: '21000000-0000-4000-8000-000000000703', name: 'Teinte', value: '02 Fair/Light', color_hex: '#dcc1a6', image_url: '/assets/products/elf-halo-glow-2.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000000704', name: 'Teinte', value: '03 Light/Medium Cool', color_hex: '#d6ad91', image_url: '/assets/products/elf-halo-glow-3.png', stock: 2, active: true },
+    ],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000008', slug: 'loreal-true-match-lumi-glotion',
+    name: 'True Match Lumi Glotion', brand: "L'Oréal Paris", category: 'Teint', price: 2400, compare_at_price: null, stock: 8,
+    description: 'Un illuminateur liquide hydratant qui apporte un éclat naturel au visage et au corps.',
+    details: 'À porter seul, sous le maquillage ou sur les points de lumière pour un fini lumineux personnalisable.',
+    accent: '#b7795c', active: true, featured: true,
+    product_images: localImage('loreal-lumi-glotion.png', "L'Oréal Paris True Match Lumi Glotion"),
+    product_variants: [
+      { id: '21000000-0000-4000-8000-000000000801', name: 'Teinte', value: '903 Medium Glow', color_hex: '#c58f72', image_url: '/assets/products/loreal-lumi-glotion-903.png', stock: 4, active: true },
+      { id: '21000000-0000-4000-8000-000000000802', name: 'Teinte', value: '904 Deep Glow', color_hex: '#9a5e3d', image_url: '/assets/products/loreal-lumi-glotion-904.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000000803', name: 'Teinte', value: '905 Rich', color_hex: '#75401f', image_url: '/assets/products/loreal-lumi-glotion-905.png', stock: 3, active: true },
+    ],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000009', slug: 'nyx-make-em-wonder-foundation',
+    name: "Make 'Em Wonder Soft Matte Foundation", brand: 'NYX Professional Makeup', category: 'Teint', price: 2900, compare_at_price: null, stock: 10,
+    description: 'Un fond de teint soft matte léger et modulable pour un fini peau naturelle confortable.',
+    details: 'Une couvrance modulable et une texture légère conçues pour lisser visuellement le teint sans effet masque.',
+    accent: '#e43ca8', active: true, featured: true,
+    product_images: localImage('nyx-make-em-wonder.png', "NYX Make 'Em Wonder Soft Matte Foundation"),
+    product_variants: [
+      { id: '21000000-0000-4000-8000-000000000901', name: 'Teinte', value: '02 Fair Porcelain', color_hex: '#f4c4ad', image_url: '/assets/products/nyx-make-em-wonder-02.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000000902', name: 'Teinte', value: '06 Light', color_hex: '#efb692', image_url: '/assets/products/nyx-make-em-wonder-06.png', stock: 2, active: true },
+      { id: '21000000-0000-4000-8000-000000000903', name: 'Teinte', value: '08 Vanilla', color_hex: '#e5ae82', image_url: '/assets/products/nyx-make-em-wonder-08.png', stock: 3, active: true },
+      { id: '21000000-0000-4000-8000-000000000904', name: 'Teinte', value: '10 Nude', color_hex: '#d9a174', image_url: '/assets/products/nyx-make-em-wonder-10.png', stock: 2, active: true },
+      { id: '21000000-0000-4000-8000-000000000905', name: 'Teinte', value: '12 Natural', color_hex: '#c58b61', image_url: '/assets/products/nyx-make-em-wonder-12.png', stock: 2, active: true },
+    ],
+  },
+  {
+    id: '20000000-0000-4000-8000-000000000010', slug: 'charlotte-tilbury-beautiful-skin-foundation',
+    name: 'Beautiful Skin Foundation', brand: 'Charlotte Tilbury', category: 'Teint', price: 6500, compare_at_price: null, stock: 5,
+    description: 'Un fond de teint hydratant à couvrance moyenne modulable pour un fini lumineux naturel.',
+    details: 'Une formule confortable qui unifie le teint tout en conservant un aspect frais et lumineux.',
+    accent: '#c58f70', active: true, featured: true,
+    product_images: localImage('charlotte-beautiful-skin.png', 'Charlotte Tilbury Beautiful Skin Foundation'),
+    product_variants: [
+      { id: '21000000-0000-4000-8000-000000001001', name: 'Teinte', value: '2 Warm / Chaud', color_hex: '#f1c7a4', image_url: '/assets/products/charlotte-beautiful-skin-2-warm.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000001002', name: 'Teinte', value: '3 Neutral / Neutre', color_hex: '#e8bb99', image_url: '/assets/products/charlotte-beautiful-skin-3-neutral.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000001003', name: 'Teinte', value: '4 Neutral / Neutre', color_hex: '#dca982', image_url: '/assets/products/charlotte-beautiful-skin-4-neutral.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000001004', name: 'Teinte', value: '4 Warm / Chaud', color_hex: '#d6a073', image_url: '/assets/products/charlotte-beautiful-skin-4-warm.png', stock: 1, active: true },
+      { id: '21000000-0000-4000-8000-000000001005', name: 'Teinte', value: '5 Neutral / Neutre', color_hex: '#c8946d', image_url: '/assets/products/charlotte-beautiful-skin-5-neutral.png', stock: 1, active: true },
+    ],
   },
 ]

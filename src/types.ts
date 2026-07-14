@@ -1,5 +1,14 @@
 export type ProductImage = { id?: string; url: string; path?: string | null; alt: string; position: number }
-export type ProductVariant = { id?: string; name: string; value: string; color_hex?: string | null; stock: number; active?: boolean }
+export type ProductVariant = {
+  id?: string
+  name: string
+  value: string
+  color_hex?: string | null
+  image_url?: string | null
+  image_path?: string | null
+  stock: number
+  active?: boolean
+}
 
 export type Product = {
   id: string

@@ -4,8 +4,8 @@ import type { AnalyticsSummary, DeliveryRate, Order, Product, Profile } from '..
 import { isSupabaseConfigured, supabase } from './supabase'
 
 const cacheKeys = {
-  publicProducts: 'divine-glow-products-public-v2',
-  adminProducts: 'divine-glow-products-admin-v2',
+  publicProducts: 'divine-glow-products-public-v3',
+  adminProducts: 'divine-glow-products-admin-v3',
   deliveryRates: 'divine-glow-delivery-rates-v1',
   orders: 'divine-glow-orders-v1',
   profiles: 'divine-glow-profiles-v1',
@@ -184,6 +184,21 @@ export async function uploadProductImages(productId: string, files: File[]) {
     })
     if (error) throw error
   }
+}
+
+export async function uploadProductVariantImage(productId: string, variantValue: string, file: File, previousPath?: string | null) {
+  const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-')
+  const path = `${productId}/variants/${crypto.randomUUID()}-${safeName}`
+  const { error: uploadError } = await supabase.storage.from('product-images').upload(path, file)
+  if (uploadError) throw uploadError
+  const { data } = supabase.storage.from('product-images').getPublicUrl(path)
+  const { error } = await supabase.from('product_variants').update({ image_url: data.publicUrl, image_path: path }).eq('product_id', productId).eq('value', variantValue)
+  if (error) {
+    await supabase.storage.from('product-images').remove([path])
+    throw error
+  }
+  if (previousPath) await supabase.storage.from('product-images').remove([previousPath])
+  return { image_url: data.publicUrl, image_path: path }
 }
 
 export async function deleteProductImage(image: { id?: string; path?: string | null }) {
