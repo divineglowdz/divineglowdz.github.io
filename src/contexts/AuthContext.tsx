@@ -14,11 +14,11 @@ function readCachedProfile(): Profile | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const cachedProfile = readCachedProfile()
   const [session, setSession] = useState<Session | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(cachedProfile)
+  const [profile, setProfile] = useState<Profile | null>(isSupabaseConfigured ? cachedProfile : null)
   const [loading, setLoading] = useState(isSupabaseConfigured)
 
   useEffect(() => {
-    if (!isSupabaseConfigured) { setLoading(false); return }
+    if (!isSupabaseConfigured) { setSession(null); setProfile(null); setLoading(false); return }
     const loadProfile = async (nextSession: Session | null) => {
       setSession(nextSession)
       if (!nextSession) { setProfile(null); localStorage.removeItem(profileCacheKey); setLoading(false); return }
@@ -34,7 +34,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  return <AuthContext.Provider value={{ session, profile, loading, signOut: async () => { localStorage.removeItem(profileCacheKey); await supabase.auth.signOut() } }}>{children}</AuthContext.Provider>
+  const signOut = async () => {
+    localStorage.removeItem(profileCacheKey)
+    setSession(null)
+    setProfile(null)
+    if (isSupabaseConfigured) await supabase.auth.signOut()
+  }
+
+  return <AuthContext.Provider value={{ session, profile, loading, signOut }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
