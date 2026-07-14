@@ -40,7 +40,7 @@ export type Order = {
   status: OrderStatus
   notes?: string
   created_at: string
-  order_items?: Array<{ id?: string; product_id?: string; product_name: string; variant_name?: string; quantity: number; unit_price: number }>
+  order_items?: Array<{ id?: string; product_id?: string; product_name: string; variant_id?: string; variant_name?: string; quantity: number; unit_price: number }>
 }
 
 export type Profile = { id: string; email: string; full_name: string; role: 'admin' | 'staff'; active: boolean; created_at: string }

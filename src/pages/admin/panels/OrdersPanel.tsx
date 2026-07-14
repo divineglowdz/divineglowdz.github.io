@@ -1,9 +1,9 @@
-import { Edit3, Eye, Search, ShoppingBag, Trash2, X } from 'lucide-react'
+import { Edit3, Minus, Plus, Search, ShoppingBag, Trash2, X } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { formatPrice } from '../../../components/ProductCard'
-import { deleteOrder, getCachedOrders, getOrders, saveOrder } from '../../../lib/api'
+import { deleteOrder, getCachedOrders, getCachedProducts, getOrders, getProducts, saveOrder, saveOrderItems } from '../../../lib/api'
 import { isSupabaseConfigured } from '../../../lib/supabase'
-import type { Order, OrderStatus } from '../../../types'
+import type { Order, OrderStatus, Product } from '../../../types'
 
 const statuses: OrderStatus[] = ['nouvelle', 'confirmee', 'preparee', 'expediee', 'livree', 'annulee']
 
@@ -28,6 +28,39 @@ export function OrdersPanel() {
 
 function OrderModal({ order, onClose, onSaved }: { order: Order; onClose: () => void; onSaved: () => Promise<void> }) {
   const [form, setForm] = useState(order)
-  const submit = async (event: FormEvent) => { event.preventDefault(); await saveOrder(order.id, { customer_name: form.customer_name, phone: form.phone, commune: form.commune, address: form.address, status: form.status, notes: form.notes }); await onSaved() }
-  return <div className="modal-backdrop"><form className="admin-modal order-modal" onSubmit={submit}><div className="modal-heading"><div><span className="eyebrow">{order.order_number}</span><h2>Details de la commande</h2></div><button type="button" onClick={onClose}><X /></button></div><div className="order-modal-grid"><label>Client<input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} /></label><label>Telephone<input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label><label>Commune<input value={form.commune} onChange={(e) => setForm({ ...form, commune: e.target.value })} /></label><label>Statut<select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as OrderStatus })}>{statuses.map((item) => <option key={item}>{item}</option>)}</select></label></div><label>Adresse<input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></label><label>Notes<textarea value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></label><div className="order-lines"><h3>Articles</h3>{order.order_items?.map((item) => <div key={item.id || `${item.product_name}-${item.variant_name}`}><span><b>{item.product_name}</b><small>{item.variant_name || 'Sans option'} · x{item.quantity}</small></span><strong>{formatPrice(item.unit_price * item.quantity)}</strong></div>)}</div><div className="order-modal-total"><span>Total</span><strong>{formatPrice(order.total)}</strong></div><div className="modal-actions"><button type="button" className="button secondary" onClick={onClose}>Fermer</button><button className="button primary">Enregistrer</button></div></form></div>
+  const [items, setItems] = useState<NonNullable<Order['order_items']>>(() => structuredClone(order.order_items || []))
+  const [products, setProducts] = useState<Product[]>(() => getCachedProducts(true))
+  const [newProductId, setNewProductId] = useState('')
+  const [newVariantId, setNewVariantId] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  useEffect(() => { void getProducts(true).then(setProducts) }, [])
+  const selectedProduct = products.find((product) => product.id === newProductId)
+  const availableVariants = selectedProduct?.product_variants.filter((variant) => variant.active !== false) || []
+  const subtotal = items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0)
+  const total = subtotal + form.delivery_price
+
+  const updateQuantity = (index: number, quantity: number) => setItems((current) => current.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: Math.max(1, quantity) } : item))
+  const addProduct = () => {
+    if (!selectedProduct || (availableVariants.length && !newVariantId)) return
+    const variant = availableVariants.find((item) => item.id === newVariantId)
+    const existingIndex = items.findIndex((item) => item.product_id === selectedProduct.id && (item.variant_id || '') === (variant?.id || ''))
+    if (existingIndex >= 0) updateQuantity(existingIndex, items[existingIndex].quantity + 1)
+    else setItems((current) => [...current, { id: crypto.randomUUID(), product_id: selectedProduct.id, product_name: selectedProduct.name, variant_id: variant?.id, variant_name: variant?.value, quantity: 1, unit_price: selectedProduct.price }])
+    setNewProductId('')
+    setNewVariantId('')
+  }
+  const submit = async (event: FormEvent) => {
+    event.preventDefault(); setError(''); setSaving(true)
+    try {
+      if (!items.length) throw new Error('La commande doit contenir au moins un produit.')
+      await saveOrderItems(order.id, items)
+      await saveOrder(order.id, { customer_name: form.customer_name, phone: form.phone, commune: form.commune, address: form.address, status: form.status, notes: form.notes })
+      await onSaved()
+    } catch (reason) { setError(reason instanceof Error ? reason.message : 'Modification impossible') } finally { setSaving(false) }
+  }
+  return <div className="modal-backdrop"><form className="admin-modal order-modal" onSubmit={submit}><div className="modal-heading"><div><span className="eyebrow">{order.order_number}</span><h2>Details de la commande</h2></div><button type="button" onClick={onClose}><X /></button></div><div className="order-modal-grid"><label>Client<input value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} /></label><label>Telephone<input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label><label>Commune<input value={form.commune} onChange={(e) => setForm({ ...form, commune: e.target.value })} /></label><label>Statut<select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as OrderStatus })}>{statuses.map((item) => <option key={item}>{item}</option>)}</select></label></div><label>Adresse<input value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} /></label><label>Notes<textarea value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></label>
+    <div className="order-lines editable-order-lines"><div className="order-lines-heading"><h3>Articles</h3><small>Le stock et le total sont recalcules automatiquement.</small></div>{items.map((item, index) => <div className="order-edit-line" key={item.id || `${item.product_id}-${item.variant_id}-${index}`}><span><b>{item.product_name}</b><small>{item.variant_name || 'Sans option'} · {formatPrice(item.unit_price)}</small></span><div className="order-quantity"><button type="button" onClick={() => updateQuantity(index, item.quantity - 1)} aria-label="Diminuer la quantite"><Minus /></button><input type="number" min="1" value={item.quantity} onChange={(event) => updateQuantity(index, Number(event.target.value))} /><button type="button" onClick={() => updateQuantity(index, item.quantity + 1)} aria-label="Augmenter la quantite"><Plus /></button></div><strong>{formatPrice(item.unit_price * item.quantity)}</strong><button type="button" className="table-icon danger" onClick={() => setItems((current) => current.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Supprimer ${item.product_name}`}><Trash2 /></button></div>)}
+      <div className="order-product-adder"><select value={newProductId} onChange={(event) => { setNewProductId(event.target.value); setNewVariantId('') }}><option value="">Choisir un produit</option>{products.map((product) => <option key={product.id} value={product.id}>{product.name} · {formatPrice(product.price)}</option>)}</select>{availableVariants.length > 0 && <select value={newVariantId} onChange={(event) => setNewVariantId(event.target.value)}><option value="">Choisir une teinte</option>{availableVariants.map((variant) => <option key={variant.id || variant.value} value={variant.id}>{variant.value} · {variant.stock} pcs</option>)}</select>}<button type="button" className="button secondary small" onClick={addProduct} disabled={!selectedProduct || (!!availableVariants.length && !newVariantId)}><Plus /> Ajouter</button></div>
+    </div><div className="order-modal-total"><span>Total avec livraison</span><strong>{formatPrice(total)}</strong></div>{error && <p className="form-error">{error}</p>}<div className="modal-actions"><button type="button" className="button secondary" onClick={onClose}>Fermer</button><button className="button primary" disabled={saving}>{saving ? 'Enregistrement...' : 'Enregistrer'}</button></div></form></div>
 }

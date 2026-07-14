@@ -122,6 +122,21 @@ export async function saveOrder(id: string, updates: Partial<Order>) {
   writeCache(cacheKeys.orders, getCachedOrders().map((order) => order.id === id ? { ...order, ...updates } : order))
 }
 
+export async function saveOrderItems(orderId: string, items: NonNullable<Order['order_items']>) {
+  const payload = items.map((item) => ({
+    product_id: item.product_id,
+    variant_id: item.variant_id || null,
+    quantity: item.quantity,
+    unit_price: item.unit_price,
+  }))
+  const { data, error } = await supabase.rpc('admin_update_order_items', { target_order_id: orderId, items: payload })
+  if (error) throw error
+  localStorage.removeItem(cacheKeys.orders)
+  localStorage.removeItem(cacheKeys.publicProducts)
+  localStorage.removeItem(cacheKeys.adminProducts)
+  return data as { subtotal: number; total: number }
+}
+
 export async function deleteOrder(id: string) {
   const { error } = await supabase.from('orders').delete().eq('id', id)
   if (error) throw error
@@ -199,7 +214,17 @@ export function getCachedProfiles(): Profile[] {
 
 export async function manageUser(action: 'create' | 'update' | 'delete', payload: Record<string, unknown>) {
   const { data, error } = await supabase.functions.invoke('admin-users', { body: { action, ...payload } })
-  if (error) throw error
+  if (error) {
+    let message = error.message
+    const response = (error as { context?: Response }).context
+    if (response) {
+      try {
+        const body = await response.clone().json() as { error?: string }
+        if (body.error) message = body.error
+      } catch { /* Keep the original function error. */ }
+    }
+    throw new Error(message)
+  }
   localStorage.removeItem(cacheKeys.profiles)
   return data
 }

@@ -62,7 +62,14 @@ body { font-family: 'Poppins', sans-serif; color: var(--texte-principal); backgr
 .legacy-add-button { padding: 12px 24px; width: 100%; border-radius: 16px; border: none; background: var(--accent); color: var(--clair); font-weight: 600; font-size: 1rem; cursor: pointer; transition: transform .2s, background .2s, box-shadow .2s; }
 .legacy-add-button:hover { transform: translateY(-2px); background: #ba8f60; box-shadow: 0 12px 28px rgba(201,164,122,.26); }
 .legacy-add-button:disabled { opacity: .55; cursor: not-allowed; }
-.discover-card, .legacy-collections-grid .legacy-card { background: linear-gradient(160deg, #fffaf1, #f2e5d4 95%); align-items: flex-start; }
+.legacy-collections-grid .legacy-card { background: linear-gradient(160deg, #fffaf1, #f2e5d4 95%); align-items: flex-start; }
+.discover-banner { width: auto; margin: 56px -5.5556% 0; padding: clamp(34px, 5vw, 62px) max(5%, calc((100vw - 1380px) / 2)); background: #f2e8dc; box-shadow: inset 12px 12px 24px #d8cbbd, inset -12px -12px 24px #fffdf8; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+.discover-banner-copy { max-width: 720px; }
+.discover-banner h3 { margin: 12px 0 8px; font-size: clamp(1.45rem, 3vw, 2.2rem); line-height: 1.25; }
+.discover-banner p { margin: 0; color: var(--texte-secondaire); }
+.discover-banner-button { flex: 0 0 auto; min-height: 58px; padding: 16px 28px; border-radius: 18px; background: #f2e8dc; color: var(--accent); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; box-shadow: 9px 9px 18px #d8cbbd, -9px -9px 18px #fffdf8; transition: transform .2s, box-shadow .2s, color .2s; }
+.discover-banner-button:hover { color: #a8794c; transform: translateY(-2px); box-shadow: 11px 11px 22px #d3c5b6, -11px -11px 22px #fffdf8; }
+.discover-banner-button:active { transform: translateY(1px); box-shadow: inset 6px 6px 12px #d8cbbd, inset -6px -6px 12px #fffdf8; }
 .legacy-values { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); }
 .legacy-values > div { display: flex; gap: 18px; align-items: flex-start; }
 .legacy-values > div > span { background: var(--accent); color: var(--clair); min-width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; font-weight: 700; }
@@ -159,6 +166,8 @@ body { font-family: 'Poppins', sans-serif; color: var(--texte-principal); backgr
   .legacy-section { padding: 60px 5%; }
   .legacy-product-grid, .legacy-catalogue-grid { grid-template-columns: 1fr; }
   .legacy-card { border-radius: 20px; padding: 20px; }
+  .discover-banner { margin-top: 42px; padding-top: 38px; padding-bottom: 38px; flex-direction: column; align-items: stretch; gap: 26px; }
+  .discover-banner-button { width: 100%; text-align: center; }
   .legacy-product-placeholder { min-height: 320px; }
   .floating-cart-button { width: 56px; height: 56px; bottom: 18px; right: 18px; }
   .legacy-shop-search { padding-bottom: 22px; }

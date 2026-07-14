@@ -12,7 +12,7 @@ export default { async fetch(request: Request) {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const authHeader = request.headers.get('Authorization') || ''
-    const admin = createClient(supabaseUrl, serviceKey, { global: { headers: { Authorization: authHeader } } })
+    const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } })
     const token = authHeader.replace('Bearer ', '')
     const { data: { user }, error: authError } = await admin.auth.getUser(token)
     if (authError || !user) throw new Error('Non autorise')
