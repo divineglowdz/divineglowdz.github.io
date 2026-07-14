@@ -4,8 +4,8 @@ import type { AnalyticsSummary, DeliveryRate, Order, Product, Profile } from '..
 import { isSupabaseConfigured, supabase } from './supabase'
 
 const cacheKeys = {
-  publicProducts: 'divine-glow-products-public-v3',
-  adminProducts: 'divine-glow-products-admin-v3',
+  publicProducts: 'divine-glow-products-public-v4',
+  adminProducts: 'divine-glow-products-admin-v4',
   deliveryRates: 'divine-glow-delivery-rates-v1',
   orders: 'divine-glow-orders-v1',
   profiles: 'divine-glow-profiles-v1',

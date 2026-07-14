@@ -29,7 +29,7 @@ export function ShopPage() {
         <p>Votre destination pour une beauté éclatante et des soins d'exception. Découvrez notre sélection de produits de haute qualité pour sublimer votre peau et vos looks.</p>
         <div className="legacy-cta"><a className="legacy-btn primary" href="#catalogue">Découvrir nos produits</a><a className="legacy-btn secondary" href="#contact">Nous contacter</a></div>
       </div>
-      <img src="/assets/shop-hero.png" alt="Produits authentiques Divine Glow DZ et livraison offerte dès 15 000 DA" />
+      <img src="/assets/shop-hero.jpg" alt="Produits authentiques Divine Glow DZ et livraison offerte dès 15 000 DA" />
     </section>
 
     <section id="catalogue" className="legacy-section legacy-catalogue">
