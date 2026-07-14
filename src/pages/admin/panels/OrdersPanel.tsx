@@ -1,6 +1,7 @@
 import { Edit3, Minus, Plus, Search, ShoppingBag, Trash2, X } from 'lucide-react'
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { formatPrice } from '../../../components/ProductCard'
+import { useAuth } from '../../../contexts/AuthContext'
 import { deleteOrder, getCachedOrders, getCachedProducts, getOrders, getProducts, saveOrder, saveOrderItems } from '../../../lib/api'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { Order, OrderStatus, Product } from '../../../types'
@@ -8,6 +9,8 @@ import type { Order, OrderStatus, Product } from '../../../types'
 const statuses: OrderStatus[] = ['nouvelle', 'confirmee', 'preparee', 'expediee', 'livree', 'annulee']
 
 export function OrdersPanel() {
+  const { profile } = useAuth()
+  const isAdmin = profile?.role === 'admin'
   const [orders, setOrders] = useState<Order[]>(() => getCachedOrders())
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('toutes')
@@ -19,9 +22,9 @@ export function OrdersPanel() {
     return matches && (status === 'toutes' || order.status === status)
   }), [orders, query, status])
   const quickStatus = async (order: Order, nextStatus: OrderStatus) => { await saveOrder(order.id, { status: nextStatus }); await load() }
-  const remove = async (order: Order) => { if (!confirm(`Supprimer definitivement la commande ${order.order_number} ?`)) return; await deleteOrder(order.id); await load() }
+  const remove = async (order: Order) => { if (!isAdmin || !confirm(`Supprimer definitivement la commande ${order.order_number} ?`)) return; await deleteOrder(order.id); await load() }
   return <div className="admin-panel-stack"><div className="panel-intro"><div><h2>Commandes</h2><p>Consultez, modifiez et suivez toutes les commandes.</p></div></div>
-    <section className="admin-surface no-padding"><div className="table-toolbar"><div className="search-field admin-search"><Search /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nom, telephone ou numero" /></div><select value={status} onChange={(event) => setStatus(event.target.value)}><option value="toutes">Tous les statuts</option>{statuses.map((item) => <option key={item} value={item}>{item}</option>)}</select></div><div className="admin-table-wrap"><table className="admin-table orders-table"><thead><tr><th>Commande</th><th>Client</th><th>Wilaya</th><th>Total</th><th>Statut</th><th>Date</th><th /></tr></thead><tbody>{filtered.map((order) => <tr key={order.id}><td><b>{order.order_number}</b><small>{order.order_items?.reduce((sum, item) => sum + item.quantity, 0) || 0} article(s)</small></td><td><b>{order.customer_name}</b><small>{order.phone}</small></td><td>{order.wilaya_name}<small>{order.delivery_type === 'home' ? 'Domicile' : 'Bureau'}</small></td><td><b>{formatPrice(order.total)}</b></td><td><select className={`status-select ${order.status}`} value={order.status} onChange={(event) => void quickStatus(order, event.target.value as OrderStatus)}>{statuses.map((item) => <option key={item}>{item}</option>)}</select></td><td>{new Date(order.created_at).toLocaleDateString('fr-DZ')}</td><td><div className="row-actions"><button className="table-icon" onClick={() => setSelected(order)} title="Voir et modifier"><Edit3 /></button><button className="table-icon danger" onClick={() => void remove(order)} title="Supprimer"><Trash2 /></button></div></td></tr>)}</tbody></table></div>{!filtered.length && <div className="surface-empty"><ShoppingBag /><p>Aucune commande trouvee.</p></div>}</section>
+    <section className="admin-surface no-padding"><div className="table-toolbar"><div className="search-field admin-search"><Search /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nom, telephone ou numero" /></div><select value={status} onChange={(event) => setStatus(event.target.value)}><option value="toutes">Tous les statuts</option>{statuses.map((item) => <option key={item} value={item}>{item}</option>)}</select></div><div className="admin-table-wrap"><table className="admin-table orders-table"><thead><tr><th>Commande</th><th>Client</th><th>Wilaya</th><th>Total</th><th>Statut</th><th>Date</th><th /></tr></thead><tbody>{filtered.map((order) => <tr key={order.id}><td><b>{order.order_number}</b><small>{order.order_items?.reduce((sum, item) => sum + item.quantity, 0) || 0} article(s)</small></td><td><b>{order.customer_name}</b><small>{order.phone}</small></td><td>{order.wilaya_name}<small>{order.delivery_type === 'home' ? 'Domicile' : 'Bureau'}</small></td><td><b>{formatPrice(order.total)}</b></td><td><select className={`status-select ${order.status}`} value={order.status} onChange={(event) => void quickStatus(order, event.target.value as OrderStatus)}>{statuses.map((item) => <option key={item}>{item}</option>)}</select></td><td>{new Date(order.created_at).toLocaleDateString('fr-DZ')}</td><td><div className="row-actions"><button className="table-icon" onClick={() => setSelected(order)} title="Voir et modifier"><Edit3 /></button>{isAdmin && <button className="table-icon danger" onClick={() => void remove(order)} title="Supprimer"><Trash2 /></button>}</div></td></tr>)}</tbody></table></div>{!filtered.length && <div className="surface-empty"><ShoppingBag /><p>Aucune commande trouvee.</p></div>}</section>
     {selected && <OrderModal order={selected} onClose={() => setSelected(null)} onSaved={async () => { setSelected(null); await load() }} />}
   </div>
 }
