@@ -148,9 +148,24 @@ export async function deleteOrder(id: string) {
   writeCache(cacheKeys.orders, getCachedOrders().filter((order) => order.id !== id))
 }
 
+async function getAvailableProductSlug(baseSlug: string | undefined, productId?: string) {
+  const base = baseSlug?.trim() || 'produit-' + Date.now().toString().slice(-6)
+  let candidate = base
+  let suffix = 2
+
+  while (true) {
+    const { data, error } = await supabase.from('products').select('id').eq('slug', candidate).maybeSingle()
+    if (error) throw error
+    if (!data || data.id === productId) return candidate
+    candidate = base + '-' + suffix
+    suffix += 1
+  }
+}
+
 export async function saveProduct(product: Partial<Product>) {
+  const slug = await getAvailableProductSlug(product.slug, product.id)
   const payload = {
-    slug: product.slug, name: product.name, brand: product.brand,
+    slug, name: product.name, brand: product.brand,
     category: product.category, description: product.description, details: product.details,
     price: product.price, compare_at_price: product.compare_at_price, stock: product.stock, accent: product.accent, active: product.active, featured: product.featured,
   }
