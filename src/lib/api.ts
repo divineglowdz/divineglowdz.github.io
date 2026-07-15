@@ -1,7 +1,7 @@
 import { defaultDeliveryRates } from '../data/algeria'
 import { seedProducts } from '../data/seed'
 import type { AnalyticsSummary, DeliveryRate, Order, Product, Profile } from '../types'
-import { isSupabaseConfigured, isSupabasePaused, supabase } from './supabase'
+import { isSupabaseConfigured, supabase } from './supabase'
 
 const cacheKeys = {
   publicProducts: 'divine-glow-products-public-v5',
@@ -36,7 +36,6 @@ const normalizeProduct = (row: Record<string, unknown>) => ({
 }) as Product
 
 export function getCachedProducts(admin = false): Product[] {
-  if (isSupabasePaused) return seedProducts.filter((product) => admin || product.active)
   const fallback = admin ? readCache<Product[]>(cacheKeys.publicProducts, seedProducts) : seedProducts
   const products = readCache<Product[]>(admin ? cacheKeys.adminProducts : cacheKeys.publicProducts, fallback)
   return products.map((product) => normalizeProduct(product as unknown as Record<string, unknown>)).filter((product) => admin || product.active)
@@ -104,7 +103,6 @@ function getSessionId() {
 }
 
 export async function placeOrder(payload: Record<string, unknown>): Promise<{ order_number: string }> {
-  if (isSupabasePaused) throw new Error('Les commandes sont temporairement suspendues.')
   if (!isSupabaseConfigured) return { order_number: `DG-${Date.now().toString().slice(-6)}` }
   const { data, error } = await supabase.rpc('place_order', { payload })
   if (error) throw error

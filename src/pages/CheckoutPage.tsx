@@ -6,7 +6,6 @@ import { ProductVisual } from '../components/ProductVisual'
 import { useCart } from '../contexts/CartContext'
 import { getCachedDeliveryRates, getDeliveryRates, placeOrder, trackEvent } from '../lib/api'
 import { getVariantPrice } from '../lib/pricing'
-import { isSupabasePaused } from '../lib/supabase'
 import type { DeliveryRate } from '../types'
 
 type CheckoutForm = { customer_name: string; phone: string; wilaya_code: string; commune: string; address: string; delivery_type: 'home' | 'office'; notes: string }
@@ -25,9 +24,7 @@ export function CheckoutPage() {
   const total = cart.subtotal + deliveryPrice
 
   const submit = async (event: FormEvent) => {
-    event.preventDefault(); setError('')
-    if (isSupabasePaused) { setError('Les commandes sont temporairement suspendues.'); return }
-    setSubmitting(true)
+    event.preventDefault(); setSubmitting(true); setError('')
     try {
       const result = await placeOrder({
         ...form, wilaya_name: selectedRate?.wilaya_name, delivery_price: deliveryPrice,
@@ -56,7 +53,7 @@ export function CheckoutPage() {
         </div>
         <aside className="order-summary"><h2>Recapitulatif</h2><div className="summary-items">{cart.items.map((item, index) => <div className="summary-item" key={`${item.product.id}-${item.variant?.value || ''}`}><div className="summary-thumb"><ProductVisual product={item.product} variant={item.variant} compact /></div><div><b>{item.product.name}</b>{item.variant && <small>{item.variant.value}</small>}<strong>{formatPrice(getVariantPrice(item.product, item.variant))}</strong><div className="mini-quantity"><button type="button" onClick={() => cart.updateQuantity(index, item.quantity - 1)}><Minus /></button><span>{item.quantity}</span><button type="button" onClick={() => cart.updateQuantity(index, item.quantity + 1)}><Plus /></button></div></div><button type="button" className="remove-button" onClick={() => cart.removeItem(index)} aria-label="Supprimer"><Trash2 /></button></div>)}</div>
           <div className="summary-totals"><p><span>Sous-total</span><b>{formatPrice(cart.subtotal)}</b></p><p><span>Livraison</span><b>{formatPrice(deliveryPrice)}</b></p><p className="grand-total"><span>Total</span><b>{formatPrice(total)}</b></p></div>
-          {(isSupabasePaused || error) && <p className="form-error">{error || 'Les commandes sont temporairement suspendues.'}</p>}<button className="button primary checkout-submit" disabled={submitting || isSupabasePaused}>{isSupabasePaused ? 'Commandes temporairement suspendues' : submitting ? 'Validation...' : 'Confirmer la commande'}</button><p className="secure-note"><ShieldCheck /> Paiement a la livraison</p>
+          {error && <p className="form-error">{error}</p>}<button className="button primary checkout-submit" disabled={submitting}>{submitting ? 'Validation...' : 'Confirmer la commande'}</button><p className="secure-note"><ShieldCheck /> Paiement a la livraison</p>
         </aside>
       </form>
     </section>
