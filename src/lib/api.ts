@@ -150,17 +150,33 @@ export async function deleteOrder(id: string) {
 
 export async function saveProduct(product: Partial<Product>) {
   const payload = {
-    id: product.id || undefined, slug: product.slug, name: product.name, brand: product.brand,
+    slug: product.slug, name: product.name, brand: product.brand,
     category: product.category, description: product.description, details: product.details,
     price: product.price, compare_at_price: product.compare_at_price, stock: product.stock, accent: product.accent, active: product.active, featured: product.featured,
   }
-  const { data, error } = await supabase.from('products').upsert(payload).select().single()
+  const request = product.id
+    ? supabase.from('products').update(payload).eq('id', product.id)
+    : supabase.from('products').insert(payload)
+  const { data, error } = await request.select().single()
   if (error) throw error
+
   if (product.product_variants) {
-    await supabase.from('product_variants').delete().eq('product_id', data.id)
-    if (product.product_variants.length) {
+    const { error: deleteError } = await supabase.from('product_variants').delete().eq('product_id', data.id)
+    if (deleteError) throw deleteError
+    const variants = product.product_variants.map((variant) => ({
+      product_id: data.id,
+      name: variant.name || 'Teinte',
+      value: variant.value.trim(),
+      color_hex: variant.color_hex || null,
+      image_url: variant.image_url || null,
+      image_path: variant.image_path || null,
+      price: variant.price ?? null,
+      stock: Number(variant.stock) || 0,
+      active: variant.active !== false,
+    }))
+    if (variants.length) {
       const { error: variantError } = await supabase.from('product_variants').insert(
-        product.product_variants.map((variant) => ({ ...variant, id: undefined, product_id: data.id })),
+        variants,
       )
       if (variantError) throw variantError
     }

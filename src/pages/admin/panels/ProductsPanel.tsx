@@ -15,6 +15,15 @@ const blankProduct: Product = {
 }
 
 const slugify = (value: string) => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const errorMessage = (reason: unknown) => {
+  if (reason instanceof Error) return reason.message
+  if (reason && typeof reason === 'object') {
+    const detail = reason as { message?: unknown; details?: unknown; hint?: unknown }
+    const message = [detail.message, detail.details, detail.hint].find((value) => typeof value === 'string' && value.length)
+    if (typeof message === 'string') return message
+  }
+  return 'Enregistrement impossible. Verifiez les champs du produit.'
+}
 
 export function ProductsPanel() {
   const [products, setProducts] = useState<Product[]>(() => getCachedProducts(true))
@@ -129,7 +138,7 @@ function ProductModal({ product, onClose, onSaved }: { product: Product; onClose
       }
       await onSaved()
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Enregistrement impossible')
+      setError(errorMessage(reason))
     } finally {
       setSaving(false)
     }
