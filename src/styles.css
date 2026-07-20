@@ -448,8 +448,11 @@ textarea { min-height: 90px; resize: vertical; }
 .order-quantity button { border: 0; background: #faf8f4; display: grid; place-items: center; cursor: pointer; }
 .order-quantity button svg { width: 12px; }
 .order-quantity input { min-height: 30px; height: 30px; padding: 3px; border-width: 0 1px; text-align: center; }
-.order-product-adder { display: grid !important; grid-template-columns: minmax(160px, 1fr) minmax(130px, .8fr) auto; align-items: end; gap: 8px !important; }
-.order-product-adder select { min-height: 38px; }
+.order-product-adder { display: grid !important; grid-template-columns: minmax(250px, 1fr) minmax(190px, 1fr) auto; align-items: start; gap: 10px !important; }
+.order-product-search { position: relative; }.order-product-search svg { position: absolute; left: 11px; top: 11px; width: 16px; color: var(--muted); }.order-product-search input { min-height: 40px; padding-left: 36px; }
+.order-product-suggestions { position: absolute; z-index: 8; top: calc(100% + 6px); left: 0; right: 0; max-height: 264px; overflow-y: auto; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: #fff; box-shadow: 0 14px 30px rgba(28,37,48,.13); }
+.order-product-suggestions button { width: 100%; display: flex; justify-content: space-between; gap: 14px; padding: 10px; border: 0; border-radius: 6px; background: transparent; text-align: left; cursor: pointer; }.order-product-suggestions button:hover { background: #f5f1eb; }.order-product-suggestions span, .order-product-suggestions strong, .order-product-choice > div { display: grid; gap: 2px; }.order-product-suggestions b, .order-product-choice b { font-size: 11px; }.order-product-suggestions small, .order-product-choice small { font-size: 9px; color: var(--muted); }.order-product-suggestions strong { color: var(--accent); text-align: right; font-size: 11px; }
+.order-product-choice { padding: 9px; border: 1px solid var(--line); border-radius: 8px; background: #fdfbf8; }.order-variant-choices { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }.order-variant-choices button { display: grid; gap: 2px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer; text-align: left; }.order-variant-choices button.active { border-color: var(--accent); background: var(--accent-light); }.order-variant-choices b { font-size: 10px; }.order-variant-choices small { color: var(--muted); font-size: 8px; }
 .order-modal-total { display: flex; justify-content: space-between; font-size: 17px; }
 .sidebar-backdrop { display: none; }
 
