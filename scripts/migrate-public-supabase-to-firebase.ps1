@@ -23,7 +23,8 @@ function ConvertTo-FirestoreValue($Value) {
 }
 
 $authPayload = @{ email = $FirebaseEmail; password = $FirebasePassword; returnSecureToken = $true } | ConvertTo-Json
-$auth = Invoke-RestMethod -Method Post -ContentType 'application/json' -Body $authPayload -Uri "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$FirebaseApiKey"
+$authBytes = [System.Text.Encoding]::UTF8.GetBytes($authPayload)
+$auth = Invoke-RestMethod -Method Post -ContentType 'application/json; charset=utf-8' -Body $authBytes -Uri "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$FirebaseApiKey"
 $supabaseHeaders = @{ apikey = $SupabaseAnonKey; Authorization = "Bearer $SupabaseAnonKey" }
 $firestoreHeaders = @{ Authorization = "Bearer $($auth.idToken)" }
 
@@ -40,7 +41,8 @@ function Copy-Documents($Collection, $Rows, $IdProperty) {
     $row.PSObject.Properties | ForEach-Object { $fields[$_.Name] = ConvertTo-FirestoreValue $_.Value }
     $body = @{ fields = $fields } | ConvertTo-Json -Depth 100 -Compress
     $url = "https://firestore.googleapis.com/v1/projects/$FirebaseProjectId/databases/(default)/documents/$Collection/$id"
-    Invoke-RestMethod -Method Patch -Headers $firestoreHeaders -ContentType 'application/json' -Body $body -Uri $url | Out-Null
+    $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
+    Invoke-RestMethod -Method Patch -Headers $firestoreHeaders -ContentType 'application/json; charset=utf-8' -Body $bodyBytes -Uri $url | Out-Null
   }
 }
 
