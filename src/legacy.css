@@ -108,6 +108,20 @@ body { font-family: 'Poppins', sans-serif; color: var(--texte-principal); backgr
 .legacy-feedback { max-width: 1380px; margin: 0 auto 24px; color: var(--texte-secondaire); }
 .legacy-catalogue-grid { max-width: 1380px; margin: auto; display: grid; gap: 26px; grid-template-columns: repeat(auto-fill,minmax(270px,1fr)); }
 
+.commitment-page, .contact-page { padding: 0 5% 88px; }
+.commitment-hero, .contact-hero { text-align: center; max-width: 760px; margin: 0 auto; padding: 48px 0 68px; }
+.commitment-hero h1, .contact-hero h1 { margin: 14px 0; font-size: clamp(2.2rem, 5vw, 4rem); line-height: 1.08; }
+.commitment-hero p, .contact-hero p { color: var(--texte-secondaire); font-size: 1.05rem; margin: 0 auto 28px; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); font-weight: 700; font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; }.eyebrow svg { width: 16px; height: 16px; }
+.commitment-grid { max-width: 1180px; margin: 0 auto 48px; display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0,1fr)); }
+.commitment-card, .contact-form { background: var(--clair); border: 1px solid #eadcc9; border-radius: 8px; padding: 28px; box-shadow: 0 12px 28px rgba(62,43,36,.07); }
+.commitment-card > span { width: 42px; height: 42px; display: grid; place-items: center; color: var(--accent); background: var(--accent-light); border-radius: 8px; }.commitment-card h2 { margin: 22px 0 9px; font-size: 1.18rem; }.commitment-card p, .commitment-story p, .commitment-promise p { margin: 0; color: var(--texte-secondaire); }
+.commitment-story { max-width: 1180px; margin: 0 auto 26px; padding: 42px; display: grid; grid-template-columns: 1.2fr .8fr; gap: 46px; align-items: center; background: #f1e5d8; border-radius: 8px; }.commitment-story h2, .commitment-promise h2 { margin: 12px 0; font-size: clamp(1.7rem,3vw,2.5rem); line-height: 1.18; }.commitment-checklist { display: grid; gap: 12px; }.commitment-checklist p { display: flex; gap: 10px; align-items: flex-start; color: var(--texte-principal); font-weight: 600; }.commitment-checklist svg { flex: 0 0 auto; width: 19px; color: var(--accent); }
+.commitment-promise { max-width: 1180px; margin: auto; padding: 36px 42px; border-radius: 8px; background: #3e2b24; color: #fffaf1; display: flex; align-items: center; gap: 24px; }.commitment-promise > svg { width: 42px; height: 42px; color: #e5b7a4; flex: 0 0 auto; }.commitment-promise > div { flex: 1; }.commitment-promise .eyebrow { color: #e5b7a4; }.commitment-promise p { color: #eadaca; }
+.contact-layout { max-width: 1120px; margin: auto; display: grid; grid-template-columns: .72fr 1.28fr; gap: 22px; align-items: stretch; }.contact-aside { background: #3e2b24; color: #fffaf1; padding: 34px; border-radius: 8px; display: grid; align-content: start; gap: 28px; }.contact-aside > div > svg { width: 20px; color: #e5b7a4; }.contact-aside h2 { margin: 8px 0 3px; font-size: 1rem; }.contact-aside a, .contact-aside p { color: #eadaca; margin: 0; }.contact-reply { margin-top: 8px; padding-top: 24px; border-top: 1px solid rgba(255,250,241,.2); display: flex; gap: 12px; }.contact-reply p { font-size: .88rem; }
+.contact-form { padding: 34px; }.contact-form-heading h2 { margin: 8px 0 28px; font-size: 1.65rem; }.contact-fields { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }.contact-form label { display: grid; gap: 7px; margin-bottom: 18px; color: var(--texte-principal); font-weight: 600; font-size: .9rem; }.contact-form input, .contact-form select, .contact-form textarea { width: 100%; border: 1px solid #dfcfbb; border-radius: 6px; background: #fffdf9; color: var(--texte-principal); font: inherit; font-weight: 400; padding: 12px; outline-color: var(--accent); }.contact-form textarea { resize: vertical; }.contact-success { min-height: 330px; display: grid; place-items: center; align-content: center; text-align: center; gap: 10px; }.contact-success svg { width: 42px; height: 42px; color: #77a883; }.contact-success h3, .contact-success p { margin: 0; }.contact-success p { color: var(--texte-secondaire); }
+.message-list { display: grid; gap: 14px; }.message-list article { padding: 20px; border: 1px solid #eadcc9; border-radius: 8px; background: #fffdf9; }.message-list header, .message-list footer { display: flex; gap: 14px; justify-content: space-between; align-items: center; }.message-list header div { display: grid; gap: 2px; }.message-list header span, .message-list time { color: var(--texte-secondaire); font-size: .84rem; }.message-list p { margin: 16px 0; white-space: pre-wrap; }.message-list footer { justify-content: flex-start; flex-wrap: wrap; }.message-list a { display: inline-flex; gap: 7px; align-items: center; color: var(--accent); font-size: .88rem; }.message-list a svg { width: 15px; }
+
 /* New dynamic pages in the original visual language */
 .product-page, .checkout-page { color: var(--texte-principal); }
 .product-gallery-main, .order-summary, .form-section { background: var(--clair); border-color: #e7dbc8; border-radius: 22px; box-shadow: 0 14px 32px rgba(62,43,36,.08); }
@@ -159,6 +173,7 @@ body { font-family: 'Poppins', sans-serif; color: var(--texte-principal); backgr
   .shop-hero img { max-height: 360px; }
 }
 @media (max-width: 600px) {
+  .commitment-grid, .contact-layout, .commitment-story { grid-template-columns: 1fr; }.commitment-promise { align-items: flex-start; flex-wrap: wrap; padding: 28px; }.contact-fields { grid-template-columns: 1fr; }.contact-form, .contact-aside, .commitment-story { padding: 26px; }
   .legacy-header { padding-top: 28px; }
   .legacy-nav { gap: 20px; padding-bottom: 34px; }
   .legacy-logo { width: 92px; }

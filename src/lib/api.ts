@@ -1,6 +1,6 @@
 import { defaultDeliveryRates } from '../data/algeria'
 import { seedProducts } from '../data/seed'
-import type { AnalyticsSummary, DeliveryRate, Order, Product, Profile } from '../types'
+import type { AnalyticsSummary, ContactMessage, DeliveryRate, Order, Product, Profile } from '../types'
 import { isCloudinaryPath, uploadProductImage } from './cloudinary'
 import { firebaseConfig, firebaseDb, isFirebaseActive } from './firebase'
 import { isSupabaseConfigured, supabase } from './supabase'
@@ -252,6 +252,24 @@ export async function deleteOrder(id: string) {
   const { error } = await supabase.from('orders').delete().eq('id', id)
   if (error) throw error
   writeCache(cacheKeys.orders, getCachedOrders().filter((order) => order.id !== id))
+}
+
+export async function sendContactMessage(message: Omit<ContactMessage, 'id' | 'created_at'>) {
+  await trackEvent('contact_message', message as unknown as Record<string, unknown>)
+}
+
+export async function getContactMessages(): Promise<ContactMessage[]> {
+  if (isFirebaseActive) {
+    const snapshot = await getDocs(collection(requireFirebase(), 'analytics_events'))
+    return snapshot.docs.map((item) => ({ id: item.id, ...item.data() } as Record<string, unknown>))
+      .filter((item) => item.event_type === 'contact_message')
+      .map((item) => ({ id: String(item.id), created_at: String(item.created_at || ''), ...(item.metadata as Omit<ContactMessage, 'id' | 'created_at'>) }))
+      .sort((left, right) => right.created_at.localeCompare(left.created_at))
+  }
+  if (!isSupabaseConfigured) return []
+  const { data, error } = await supabase.from('analytics_events').select('id,created_at,metadata').eq('event_type', 'contact_message').order('created_at', { ascending: false })
+  if (error) throw error
+  return (data || []).map((item) => ({ id: item.id, created_at: item.created_at, ...(item.metadata as Omit<ContactMessage, 'id' | 'created_at'>) }))
 }
 
 async function getAvailableProductSlug(baseSlug: string | undefined, productId?: string) {

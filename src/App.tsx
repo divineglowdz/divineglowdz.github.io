@@ -7,6 +7,8 @@ import { ShopPage } from './pages/ShopPage'
 import { ProductPage } from './pages/ProductPage'
 import { CheckoutPage } from './pages/CheckoutPage'
 import { ThankYouPage } from './pages/ThankYouPage'
+import { EngagementPage } from './pages/EngagementPage'
+import { ContactPage } from './pages/ContactPage'
 import { AdminLoginPage } from './pages/admin/AdminLoginPage'
 import { AdminPage } from './pages/admin/AdminPage'
 import { AdminRoute } from './pages/admin/AdminRoute'
@@ -25,6 +27,8 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/boutique" element={<ShopPage />} />
+          <Route path="/engagements" element={<EngagementPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/produit/:slug" element={<ProductPage />} />
           <Route path="/commande" element={<CheckoutPage />} />
           <Route path="/merci" element={<ThankYouPage />} />

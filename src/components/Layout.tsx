@@ -14,8 +14,8 @@ export function Layout() {
           <ul>
             <li><Link to="/boutique">Boutique</Link></li>
             <li><Link to="/#collections">Collections</Link></li>
-            <li><Link to="/#valeurs">Engagements</Link></li>
-            <li><Link to="/#produits">Produits</Link></li>
+            <li><Link to="/engagements">Engagements</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
           </ul>
         </nav>
       </header>

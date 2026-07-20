@@ -55,3 +55,4 @@ export type Order = {
 
 export type Profile = { id: string; email: string; full_name: string; role: 'admin' | 'staff'; active: boolean; created_at: string }
 export type AnalyticsSummary = { views: number; productViews: number; addToCart: number; orders: number; revenue: number; lowStock: number }
+export type ContactMessage = { id: string; name: string; email: string; phone?: string; subject: string; message: string; created_at: string }
