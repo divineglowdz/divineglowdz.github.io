@@ -30,6 +30,8 @@ jobs:
         env:
           VITE_SUPABASE_URL: https://qshoamspyclfzsiarbzg.supabase.co
           VITE_SUPABASE_ANON_KEY: sb_publishable_jquRWkBwQBTNe-do77Ohuw_5h_GG1Gx
+          VITE_CLOUDINARY_CLOUD_NAME: bivvwru7
+          VITE_CLOUDINARY_UPLOAD_PRESET: divine_glow_products
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
