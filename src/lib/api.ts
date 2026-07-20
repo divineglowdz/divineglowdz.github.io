@@ -27,9 +27,19 @@ function writeCache(key: string, value: unknown) {
   try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* Storage can be unavailable in private mode. */ }
 }
 
+function normalizeCategory(value: unknown) {
+  const category = String(value || '')
+  if (category === 'Primer' || category === 'Fixateur') return 'Teint'
+
+  // Older imported records lost the accented character in "Lèvres".
+  if (category.replace(/\s+/g, '').toLowerCase() === 'lvres') return 'Lèvres'
+
+  return category
+}
+
 const normalizeProduct = (row: Record<string, unknown>) => ({
   ...row,
-  category: row.category === 'Primer' || row.category === 'Fixateur' ? 'Teint' : row.category,
+  category: normalizeCategory(row.category),
   compare_at_price: row.compare_at_price == null ? null : Number(row.compare_at_price),
   product_images: Array.isArray(row.product_images) ? row.product_images : [],
   product_variants: Array.isArray(row.product_variants)
