@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { formatPrice } from '../../../components/ProductCard'
 import { ProductVisual } from '../../../components/ProductVisual'
 import { productCategories } from '../../../data/categories'
-import { deleteProduct, deleteProductImage, getCachedProducts, getProducts, saveProduct, uploadProductImages, uploadProductVariantImage } from '../../../lib/api'
+import { deleteProduct, deleteProductImage, getCachedProducts, getProducts, removeLegacyProductStorage, saveProduct, uploadProductImages, uploadProductVariantImage } from '../../../lib/api'
 import { getProductPriceRange } from '../../../lib/pricing'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { Product, ProductVariant } from '../../../types'
@@ -29,6 +29,7 @@ export function ProductsPanel() {
   const [products, setProducts] = useState<Product[]>(() => getCachedProducts(true))
   const [query, setQuery] = useState('')
   const [editing, setEditing] = useState<Product | null>(null)
+  const [cleaningStorage, setCleaningStorage] = useState(false)
   const load = async () => setProducts(await getProducts(true))
 
   useEffect(() => { void load() }, [])
@@ -44,10 +45,24 @@ export function ProductsPanel() {
     await load()
   }
 
+  const cleanLegacyStorage = async () => {
+    if (!isSupabaseConfigured || !confirm('Supprimer definitivement les anciennes photos encore dans Supabase ? Les produits utilisent deja Cloudinary.')) return
+    setCleaningStorage(true)
+    try {
+      const total = await removeLegacyProductStorage()
+      alert(`${total} ancienne(s) photo(s) Supabase supprimee(s).`)
+    } catch (reason) {
+      alert(errorMessage(reason))
+    } finally {
+      setCleaningStorage(false)
+    }
+  }
+
   return (
     <div className="admin-panel-stack">
       <div className="panel-intro">
         <div><h2>Catalogue</h2><p>Ajoutez, modifiez, masquez ou supprimez vos produits et leurs teintes.</p></div>
+        <button className="button secondary small" onClick={() => void cleanLegacyStorage()} disabled={!isSupabaseConfigured || cleaningStorage}><Trash2 />{cleaningStorage ? 'Nettoyage...' : 'Nettoyer Supabase'}</button>
         <button className="button primary small" onClick={() => setEditing({ ...blankProduct })} disabled={!isSupabaseConfigured}><PackagePlus /> Nouveau produit</button>
       </div>
       <section className="admin-surface no-padding">

@@ -241,6 +241,28 @@ export async function deleteProductImage(image: { id?: string; path?: string | n
   }
 }
 
+export async function removeLegacyProductStorage() {
+  const bucket = supabase.storage.from('product-images')
+  const paths: string[] = []
+
+  const collect = async (prefix = ''): Promise<void> => {
+    const { data, error } = await bucket.list(prefix, { limit: 1000 })
+    if (error) throw error
+    for (const item of data || []) {
+      const path = prefix ? `${prefix}/${item.name}` : item.name
+      if (item.id) paths.push(path)
+      else await collect(path)
+    }
+  }
+
+  await collect()
+  for (let index = 0; index < paths.length; index += 1000) {
+    const { error } = await bucket.remove(paths.slice(index, index + 1000))
+    if (error) throw error
+  }
+  return paths.length
+}
+
 export async function saveDeliveryRates(rates: DeliveryRate[]) {
   const { error } = await supabase.from('delivery_rates').upsert(rates, { onConflict: 'wilaya_code' })
   if (error) throw error
