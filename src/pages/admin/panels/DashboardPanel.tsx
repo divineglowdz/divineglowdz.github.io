@@ -1,9 +1,9 @@
 import { ArrowUpRight, Eye, MousePointerClick, PackageSearch, ScanEye, ShoppingCart, TrendingUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatPrice } from '../../../components/ProductCard'
 import { getAnalytics, getCachedOrders, getCachedProducts, getOrders, getProducts } from '../../../lib/api'
-import { isSupabaseConfigured } from '../../../lib/supabase'
+import { isSupabaseConfigured, supabase } from '../../../lib/supabase'
 import type { AnalyticsSummary, Order, Product } from '../../../types'
 
 const cachedProducts = getCachedProducts(true)
@@ -14,7 +14,29 @@ export function DashboardPanel() {
   const [summary, setSummary] = useState(emptySummary)
   const [products, setProducts] = useState<Product[]>(cachedProducts)
   const [orders, setOrders] = useState<Order[]>(cachedOrders.slice(0, 5))
-  useEffect(() => { void (async () => { const nextProducts = await getProducts(true); setProducts(nextProducts); if (isSupabaseConfigured) { const [nextOrders, nextSummary] = await Promise.all([getOrders(), getAnalytics(nextProducts)]); setOrders(nextOrders.slice(0, 5)); setSummary(nextSummary) } })() }, [])
+  const refresh = useCallback(async () => {
+    const nextProducts = await getProducts(true)
+    setProducts(nextProducts)
+    if (!isSupabaseConfigured) return
+    const [nextOrders, nextSummary] = await Promise.all([getOrders(), getAnalytics(nextProducts)])
+    setOrders(nextOrders.slice(0, 5))
+    setSummary(nextSummary)
+  }, [])
+
+  useEffect(() => {
+    void refresh()
+    const refreshOnFocus = () => void refresh()
+    const interval = window.setInterval(() => void refresh(), 15000)
+    window.addEventListener('focus', refreshOnFocus)
+    const channel = isSupabaseConfigured
+      ? supabase.channel('admin-dashboard-analytics').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'analytics_events' }, refreshOnFocus).subscribe()
+      : null
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('focus', refreshOnFocus)
+      if (channel) void supabase.removeChannel(channel)
+    }
+  }, [refresh])
   const cards = [
     { label: 'Visites (30 j)', value: summary.views.toLocaleString('fr-DZ'), icon: Eye, tone: 'green' },
     { label: 'Fiches consultees', value: summary.productViews.toLocaleString('fr-DZ'), icon: ScanEye, tone: 'pink' },
