@@ -92,7 +92,7 @@ export async function getProducts(admin = false): Promise<Product[]> {
 export async function getProduct(slug: string): Promise<Product | null> {
   if (isFirebaseActive) {
     try {
-      const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'products'), where('slug', '==', slug), limit(1)))
+      const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'products'), where('slug', '==', slug), where('active', '==', true), limit(1)))
       const item = snapshot.docs[0]
       if (!item) return null
       const product = firebaseProduct(item.data(), item.id)

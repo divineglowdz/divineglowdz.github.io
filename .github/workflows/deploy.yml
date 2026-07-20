@@ -38,7 +38,7 @@ jobs:
           VITE_FIREBASE_STORAGE_BUCKET: divine-glow-dz.firebasestorage.app
           VITE_FIREBASE_MESSAGING_SENDER_ID: "482720009466"
           VITE_FIREBASE_APP_ID: 1:482720009466:web:12642219bb70e1c7c60d43
-          VITE_FIREBASE_ENABLED: "false"
+          VITE_FIREBASE_ENABLED: "true"
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
