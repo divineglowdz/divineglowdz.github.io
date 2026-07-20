@@ -5,6 +5,7 @@ import { ProductVisual } from '../../../components/ProductVisual'
 import { productCategories } from '../../../data/categories'
 import { deleteProduct, deleteProductImage, getCachedProducts, getProducts, saveProduct, uploadProductImages, uploadProductVariantImage } from '../../../lib/api'
 import { getProductPriceRange } from '../../../lib/pricing'
+import { isFirebaseActive } from '../../../lib/firebase'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { Product, ProductVariant } from '../../../types'
 
@@ -26,6 +27,7 @@ const errorMessage = (reason: unknown) => {
 }
 
 export function ProductsPanel() {
+  const isDataConfigured = isFirebaseActive || isSupabaseConfigured
   const [products, setProducts] = useState<Product[]>(() => getCachedProducts(true))
   const [query, setQuery] = useState('')
   const [editing, setEditing] = useState<Product | null>(null)
@@ -39,7 +41,7 @@ export function ProductsPanel() {
   )
 
   const remove = async (product: Product) => {
-    if (!isSupabaseConfigured || !confirm(`Supprimer definitivement ${product.name} ?`)) return
+    if (!isDataConfigured || !confirm(`Supprimer definitivement ${product.name} ?`)) return
     await deleteProduct(product.id)
     await load()
   }
@@ -48,7 +50,7 @@ export function ProductsPanel() {
     <div className="admin-panel-stack">
       <div className="panel-intro">
         <div><h2>Catalogue</h2><p>Ajoutez, modifiez, masquez ou supprimez vos produits et leurs teintes.</p></div>
-        <button className="button primary small" onClick={() => setEditing({ ...blankProduct })} disabled={!isSupabaseConfigured}><PackagePlus /> Nouveau produit</button>
+        <button className="button primary small" onClick={() => setEditing({ ...blankProduct })} disabled={!isDataConfigured}><PackagePlus /> Nouveau produit</button>
       </div>
       <section className="admin-surface no-padding">
         <div className="table-toolbar">
@@ -145,7 +147,7 @@ function ProductModal({ product, onClose, onSaved }: { product: Product; onClose
   }
 
   const removeImage = async (image: Product['product_images'][number]) => {
-    await deleteProductImage(image)
+    await deleteProductImage(form.id, image)
     setForm((current) => ({ ...current, product_images: current.product_images.filter((item) => item !== image) }))
   }
 

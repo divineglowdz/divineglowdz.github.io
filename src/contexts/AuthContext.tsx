@@ -1,9 +1,13 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import type { Session } from '@supabase/supabase-js'
+import type { Session as SupabaseSession } from '@supabase/supabase-js'
+import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
+import { firebaseAuth, firebaseDb, isFirebaseActive } from '../lib/firebase'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import type { Profile } from '../types'
 
-type AuthValue = { session: Session | null; profile: Profile | null; loading: boolean; signOut: () => Promise<void> }
+type AppSession = { user: { id: string } }
+type AuthValue = { session: AppSession | SupabaseSession | null; profile: Profile | null; loading: boolean; signOut: () => Promise<void> }
 const AuthContext = createContext<AuthValue | null>(null)
 const profileCacheKey = 'divine-glow-current-profile-v1'
 
@@ -13,13 +17,30 @@ function readCachedProfile(): Profile | null {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const cachedProfile = readCachedProfile()
-  const [session, setSession] = useState<Session | null>(null)
+  const [session, setSession] = useState<AppSession | SupabaseSession | null>(null)
   const [profile, setProfile] = useState<Profile | null>(cachedProfile)
-  const [loading, setLoading] = useState(isSupabaseConfigured)
+  const [loading, setLoading] = useState(isFirebaseActive || isSupabaseConfigured)
 
   useEffect(() => {
+    if (isFirebaseActive) {
+      if (!firebaseAuth || !firebaseDb) { setLoading(false); return }
+      const database = firebaseDb
+      const loadProfile = async (user: { uid: string } | null) => {
+        setSession(user ? { user: { id: user.uid } } : null)
+        if (!user) { setProfile(null); localStorage.removeItem(profileCacheKey); setLoading(false); return }
+        if (cachedProfile?.id === user.uid) setProfile(cachedProfile)
+        const snapshot = await getDoc(doc(database, 'profiles', user.uid))
+        const nextProfile = snapshot.exists() ? { ...snapshot.data(), id: snapshot.id } as Profile : null
+        setProfile(nextProfile)
+        if (nextProfile) localStorage.setItem(profileCacheKey, JSON.stringify(nextProfile))
+        else localStorage.removeItem(profileCacheKey)
+        setLoading(false)
+      }
+      const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => { void loadProfile(user) })
+      return unsubscribe
+    }
     if (!isSupabaseConfigured) { setLoading(false); return }
-    const loadProfile = async (nextSession: Session | null) => {
+    const loadProfile = async (nextSession: SupabaseSession | null) => {
       setSession(nextSession)
       if (!nextSession) { setProfile(null); localStorage.removeItem(profileCacheKey); setLoading(false); return }
       if (cachedProfile?.id === nextSession.user.id) { setProfile(cachedProfile); setLoading(false) }
@@ -34,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => listener.subscription.unsubscribe()
   }, [])
 
-  return <AuthContext.Provider value={{ session, profile, loading, signOut: async () => { localStorage.removeItem(profileCacheKey); await supabase.auth.signOut() } }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ session, profile, loading, signOut: async () => { localStorage.removeItem(profileCacheKey); if (isFirebaseActive && firebaseAuth) await firebaseSignOut(firebaseAuth); else await supabase.auth.signOut() } }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

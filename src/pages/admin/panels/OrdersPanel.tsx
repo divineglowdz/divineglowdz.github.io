@@ -4,6 +4,7 @@ import { formatPrice } from '../../../components/ProductCard'
 import { useAuth } from '../../../contexts/AuthContext'
 import { deleteOrder, getCachedOrders, getCachedProducts, getOrders, getProducts, saveOrder, saveOrderItems } from '../../../lib/api'
 import { getVariantPrice } from '../../../lib/pricing'
+import { isFirebaseActive } from '../../../lib/firebase'
 import { isSupabaseConfigured } from '../../../lib/supabase'
 import type { Order, OrderStatus, Product } from '../../../types'
 
@@ -16,7 +17,7 @@ export function OrdersPanel() {
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('toutes')
   const [selected, setSelected] = useState<Order | null>(null)
-  const load = async () => { if (isSupabaseConfigured) setOrders(await getOrders()) }
+  const load = async () => { if (isFirebaseActive || isSupabaseConfigured) setOrders(await getOrders()) }
   useEffect(() => { void load() }, [])
   const filtered = useMemo(() => orders.filter((order) => {
     const matches = `${order.order_number} ${order.customer_name} ${order.phone} ${order.wilaya_name}`.toLowerCase().includes(query.toLowerCase())

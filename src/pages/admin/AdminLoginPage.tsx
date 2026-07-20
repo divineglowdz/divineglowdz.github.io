@@ -2,7 +2,9 @@ import { ArrowLeft, Eye, EyeOff, LockKeyhole } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { firebaseAuth, isFirebaseActive } from '../../lib/firebase'
 import { isSupabaseConfigured, supabase } from '../../lib/supabase'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 
 export function AdminLoginPage() {
   const navigate = useNavigate()
@@ -15,9 +17,11 @@ export function AdminLoginPage() {
   if (session && profile?.active) return <Navigate to="/admin" replace />
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setError('')
-    if (!isSupabaseConfigured) { setError('Supabase doit etre configure avant la connexion.'); return }
+    if (!isFirebaseActive && !isSupabaseConfigured) { setError('La base de donnees doit etre configuree avant la connexion.'); return }
     setLoading(true)
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+    const authError = isFirebaseActive
+      ? await signInWithEmailAndPassword(firebaseAuth!, email, password).then(() => null).catch((reason: Error) => reason)
+      : (await supabase.auth.signInWithPassword({ email, password })).error
     setLoading(false)
     if (authError) setError('Identifiants incorrects ou acces non autorise.')
     else navigate('/admin')
