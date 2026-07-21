@@ -13,7 +13,7 @@ export function ProductCard({ product }: { product: Product }) {
   const variants = product.product_variants.filter((variant) => variant.active !== false)
 
   return <article className="legacy-card legacy-product-card">
-    <Link className="legacy-product-media" to={productUrl}><ProductVisual product={product} compact /><span className="legacy-stock">{product.stock > 0 ? `${product.stock} en stock` : 'Épuisé'}</span></Link>
+    <Link className="legacy-product-media" to={productUrl}><ProductVisual product={product} compact />{product.stock <= 0 && <span className="legacy-stock">Épuisé</span>}</Link>
     <span className="legacy-tag">{product.category}</span>
     <Link to={productUrl}><h3>{product.name}</h3></Link>
     <p>{product.description}</p>

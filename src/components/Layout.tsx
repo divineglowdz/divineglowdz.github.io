@@ -1,6 +1,7 @@
-import { ShoppingCart, X } from 'lucide-react'
+import { ChevronDown, ShoppingCart, X } from 'lucide-react'
 import { Link, Outlet } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
+import { productCategories } from '../data/categories'
 
 export function Layout() {
   const { count } = useCart()
@@ -13,6 +14,7 @@ export function Layout() {
           </Link>
           <ul>
             <li><Link to="/boutique">Boutique</Link></li>
+            <li className="nav-dropdown"><button type="button">Catégories <ChevronDown /></button><div className="category-menu">{productCategories.map((category) => <Link key={category} to={`/boutique?categorie=${encodeURIComponent(category)}`}>{category}</Link>)}</div></li>
             <li><Link to="/#collections">Collections</Link></li>
             <li><Link to="/engagements">Engagements</Link></li>
             <li><Link to="/contact">Contact</Link></li>

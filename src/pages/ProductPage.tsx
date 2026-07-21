@@ -48,12 +48,12 @@ export function ProductPage() {
           <span className="eyebrow">{product.brand}</span><h1>{product.name}</h1><div className="detail-price-row">{product.compare_at_price && <del>{formatPrice(product.compare_at_price)}</del>}<strong className="detail-price">{!variant && priceRange && priceRange.min !== priceRange.max && <small>A partir de</small>}{formatPrice(variant ? displayedPrice : priceRange?.min ?? displayedPrice)}</strong></div>
           <p className="lead">{product.description}</p>
           <div className="product-benefits"><span><Check /> Produit authentique</span><span><Truck /> Livraison dans 58 wilayas</span></div>
-          {!!product.product_variants.length && <div className="variant-picker"><label>Teinte / option</label><div>{product.product_variants.filter((item) => item.active !== false).map((item) => <button key={item.value} disabled={!item.stock} className={variant?.value === item.value ? 'active' : ''} onClick={() => { setVariant(item); setActiveImage(0); setQuantity(1) }}>{item.color_hex && <i style={{ background: item.color_hex }} />}{item.value}<small>{formatPrice(getVariantPrice(product, item))} · {item.stock ? `${item.stock} pcs` : 'Epuise'}</small></button>)}</div></div>}
+          {!!product.product_variants.length && <div className="variant-picker"><label>Teinte / option</label><div>{product.product_variants.filter((item) => item.active !== false).map((item) => <button key={item.value} disabled={!item.stock} className={variant?.value === item.value ? 'active' : ''} onClick={() => { setVariant(item); setActiveImage(0); setQuantity(1) }}>{item.color_hex && <i style={{ background: item.color_hex }} />}{item.value}<small>{formatPrice(getVariantPrice(product, item))}{!item.stock && ' · Épuisé'}</small></button>)}</div></div>}
           <div className="purchase-row">
             <div className="quantity-control"><button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Diminuer"><Minus /></button><span>{quantity}</span><button onClick={() => setQuantity(Math.min(availableStock, quantity + 1))} aria-label="Augmenter"><Plus /></button></div>
             <button className="button primary add-detail" disabled={!availableStock || (!!product.product_variants.length && !variant)} onClick={() => addItem(product, variant, quantity)}><ShoppingBag /> Ajouter au panier</button>
           </div>
-          <p className={`availability ${availableStock <= 5 ? 'low' : ''}`}>{availableStock ? `${availableStock} piece${availableStock > 1 ? 's' : ''} disponible${availableStock > 1 ? 's' : ''}` : 'Produit epuise'}</p>
+          {!availableStock && <p className="availability low">Produit épuisé</p>}
           <details open><summary>Details du produit</summary><p>{product.details}</p></details>
           <details><summary>Livraison et paiement</summary><p>Livraison a domicile ou au bureau. Paiement a la livraison. Le tarif exact apparait lors de la commande.</p></details>
         </div>

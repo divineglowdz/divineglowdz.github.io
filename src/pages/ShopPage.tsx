@@ -1,19 +1,30 @@
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ProductCard } from '../components/ProductCard'
 import { productCategories } from '../data/categories'
 import { getCachedProducts, getProducts } from '../lib/api'
 import type { Product } from '../types'
 
 export function ShopPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [products, setProducts] = useState<Product[]>(() => getCachedProducts())
   const [query, setQuery] = useState('')
-  const [category, setCategory] = useState('Toutes')
+  const [category, setCategory] = useState(() => searchParams.get('categorie') || 'Toutes')
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   useEffect(() => { void getProducts().then(setProducts) }, [])
 
   const categories = ['Toutes', ...productCategories]
+  useEffect(() => {
+    const next = searchParams.get('categorie') || 'Toutes'
+    setCategory(categories.includes(next as (typeof categories)[number]) ? next : 'Toutes')
+  }, [searchParams])
+  const selectCategory = (next: string) => {
+    setCategory(next)
+    if (next === 'Toutes') setSearchParams({})
+    else setSearchParams({ categorie: next })
+  }
   const filtered = useMemo(
     () => products.filter((product) =>
       (category === 'Toutes' || product.category === category)
@@ -39,7 +50,7 @@ export function ShopPage() {
       <div className="legacy-shop-search" aria-label="Recherche et filtres du catalogue">
         <div className="legacy-search-box"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un produit..." /><Search /></div>
         <button type="button" className="legacy-filter-toggle" aria-expanded={filtersOpen} onClick={() => setFiltersOpen(!filtersOpen)}><SlidersHorizontal /> Filtrer</button>
-        {filtersOpen && <div className="legacy-filter-panel"><p>Catégories</p><div>{categories.map((item) => <button type="button" key={item} className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div></div>}
+        {filtersOpen && <div className="legacy-filter-panel"><p>Catégories</p><div>{categories.map((item) => <button type="button" key={item} className={category === item ? 'active' : ''} onClick={() => selectCategory(item)}>{item}</button>)}</div></div>}
       </div>
 
       <p className="legacy-feedback">Affichage : <b>{category === 'Toutes' ? 'Toutes les catégories' : category}</b> · {filtered.length} produit(s)</p>
