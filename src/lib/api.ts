@@ -27,6 +27,15 @@ function writeCache(key: string, value: unknown) {
   try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* Storage can be unavailable in private mode. */ }
 }
 
+function withoutUndefined<T>(value: T): T {
+  if (value === undefined) return null as T
+  if (value === null || typeof value !== 'object') return value
+  if (Array.isArray(value)) return value.map((item) => withoutUndefined(item)) as T
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([key, item]) => [key, withoutUndefined(item)]),
+  ) as T
+}
+
 function normalizeCategory(value: unknown) {
   const category = String(value || '')
   if (category === 'Primer' || category === 'Fixateur') return 'Teint'
@@ -149,7 +158,7 @@ export async function trackEvent(eventType: string, metadata: Record<string, unk
   if (isFirebaseActive) {
     try {
       await addDoc(collection(requireFirebase(), 'analytics_events'), {
-        event_type: eventType, path: window.location.pathname, session_id: getSessionId(), metadata, created_at: new Date().toISOString(),
+        event_type: eventType, path: window.location.pathname, session_id: getSessionId(), metadata: withoutUndefined(metadata), created_at: new Date().toISOString(),
       })
     } catch { /* Analytics never blocks a customer action. */ }
     return
@@ -178,7 +187,7 @@ export async function placeOrder(payload: Record<string, unknown>): Promise<{ or
     const items = Array.isArray(payload.items) ? payload.items : []
     const subtotal = items.reduce((sum, item) => sum + Number((item as Record<string, unknown>).unit_price || 0) * Number((item as Record<string, unknown>).quantity || 0), 0)
     const deliveryPrice = Number(payload.delivery_price || 0)
-    const result = { ...payload, order_number: orderNumber(), subtotal, total: subtotal + deliveryPrice, status: 'nouvelle', created_at: new Date().toISOString(), order_items: items }
+    const result = withoutUndefined({ ...payload, order_number: orderNumber(), subtotal, total: subtotal + deliveryPrice, status: 'nouvelle', created_at: new Date().toISOString(), order_items: items })
     const reference = await addDoc(collection(requireFirebase(), 'orders'), result)
     writeCache(cacheKeys.orders, [{ ...result, id: reference.id } as Order, ...getCachedOrders()])
     return { order_number: result.order_number }
@@ -211,7 +220,8 @@ export function getCachedOrders(): Order[] {
 
 export async function saveOrder(id: string, updates: Partial<Order>) {
   if (isFirebaseActive) {
-    await updateDoc(doc(requireFirebase(), 'orders', id), updates)
+    const cleanUpdates = withoutUndefined(updates)
+    await updateDoc(doc(requireFirebase(), 'orders', id), cleanUpdates)
     writeCache(cacheKeys.orders, getCachedOrders().map((order) => order.id === id ? { ...order, ...updates } : order))
     return
   }
@@ -225,7 +235,7 @@ export async function saveOrderItems(orderId: string, items: NonNullable<Order['
     const subtotal = items.reduce((sum, item) => sum + Number(item.unit_price) * Number(item.quantity), 0)
     const current = getCachedOrders().find((order) => order.id === orderId)
     const total = subtotal + Number(current?.delivery_price || 0)
-    await updateDoc(doc(requireFirebase(), 'orders', orderId), { order_items: items, subtotal, total })
+    await updateDoc(doc(requireFirebase(), 'orders', orderId), withoutUndefined({ order_items: items, subtotal, total }))
     writeCache(cacheKeys.orders, getCachedOrders().map((order) => order.id === orderId ? { ...order, order_items: items, subtotal, total } : order))
     return { subtotal, total }
   }
@@ -307,7 +317,7 @@ export async function saveProduct(product: Partial<Product>) {
     const product_images = product.product_images || (existing?.data()?.product_images as Product['product_images'] | undefined) || []
     const product_variants = (product.product_variants || []).map((variant) => ({ ...variant, id: variant.id || crypto.randomUUID() }))
     const created_at = existing?.data()?.created_at || new Date().toISOString()
-    await setDoc(doc(requireFirebase(), 'products', id), { ...payload, product_images, product_variants, created_at }, { merge: true })
+    await setDoc(doc(requireFirebase(), 'products', id), withoutUndefined({ ...payload, product_images, product_variants, created_at }), { merge: true })
     localStorage.removeItem(cacheKeys.publicProducts)
     localStorage.removeItem(cacheKeys.adminProducts)
     return { ...payload, id, product_images, product_variants, created_at } as Product

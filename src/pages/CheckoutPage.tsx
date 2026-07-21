@@ -27,8 +27,8 @@ export function CheckoutPage() {
     event.preventDefault(); setSubmitting(true); setError('')
     try {
       const result = await placeOrder({
-        ...form, wilaya_name: selectedRate?.wilaya_name, delivery_price: deliveryPrice,
-        items: cart.items.map((item) => ({ product_id: item.product.id, product_name: item.product.name, variant_id: item.variant?.id, variant_name: item.variant?.value, quantity: item.quantity, unit_price: getVariantPrice(item.product, item.variant) })),
+        ...form, wilaya_name: selectedRate?.wilaya_name || '', delivery_price: deliveryPrice,
+        items: cart.items.map((item) => ({ product_id: item.product.id, product_name: item.product.name, variant_id: item.variant?.id || null, variant_name: item.variant?.value || null, quantity: item.quantity, unit_price: getVariantPrice(item.product, item.variant) })),
       })
       void trackEvent('order_complete', { order_number: result.order_number, total })
       cart.clear()
