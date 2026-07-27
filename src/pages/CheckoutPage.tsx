@@ -5,6 +5,7 @@ import { formatPrice } from '../components/ProductCard'
 import { ProductVisual } from '../components/ProductVisual'
 import { useCart } from '../contexts/CartContext'
 import { getCachedDeliveryRates, getDeliveryRates, placeOrder, trackEvent } from '../lib/api'
+import { checkSubmission, cleanText } from '../lib/formProtection'
 import { getVariantPrice } from '../lib/pricing'
 import type { DeliveryRate } from '../types'
 
@@ -18,6 +19,8 @@ export function CheckoutPage() {
   const [form, setForm] = useState(initialForm)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [startedAt] = useState(() => Date.now())
+  const [website, setWebsite] = useState('')
   useEffect(() => { void getDeliveryRates().then(setRates) }, [])
   const selectedRate = useMemo(() => rates.find((rate) => rate.wilaya_code === form.wilaya_code), [rates, form.wilaya_code])
   const deliveryPrice = selectedRate ? (form.delivery_type === 'home' ? selectedRate.home_price : selectedRate.office_price) : 0
@@ -26,8 +29,9 @@ export function CheckoutPage() {
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setSubmitting(true); setError('')
     try {
+      checkSubmission('order', startedAt, website)
       const result = await placeOrder({
-        ...form, wilaya_name: selectedRate?.wilaya_name || '', delivery_price: deliveryPrice,
+        customer_name: cleanText(form.customer_name, 80), phone: cleanText(form.phone, 30), wilaya_code: form.wilaya_code, commune: cleanText(form.commune, 80), address: cleanText(form.address, 180), delivery_type: form.delivery_type, notes: cleanText(form.notes, 500), wilaya_name: selectedRate?.wilaya_name || '', delivery_price: deliveryPrice,
         items: cart.items.map((item) => ({ product_id: item.product.id, product_name: item.product.name, variant_id: item.variant?.id || null, variant_name: item.variant?.value || null, quantity: item.quantity, unit_price: getVariantPrice(item.product, item.variant) })),
       })
       void trackEvent('order_complete', { order_number: result.order_number, total })
@@ -41,6 +45,7 @@ export function CheckoutPage() {
     <section className="checkout-page content-section">
       <div className="checkout-heading"><span className="eyebrow">Finaliser</span><h1>Votre commande</h1></div>
       <form className="checkout-layout" onSubmit={submit}>
+        <label className="spam-trap" aria-hidden="true">Site web<input tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} /></label>
         <div className="checkout-form-panel">
           <div className="form-section"><div className="form-section-title"><span>1</span><div><h2>Vos coordonnees</h2><p>Pour confirmer et livrer votre commande.</p></div></div>
             <div className="form-grid"><label>Nom complet<input required value={form.customer_name} onChange={(e) => setForm({ ...form, customer_name: e.target.value })} /></label><label>Telephone<input required inputMode="tel" placeholder="05 00 00 00 00" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></label></div>

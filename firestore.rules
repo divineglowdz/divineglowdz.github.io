@@ -18,6 +18,55 @@ service cloud.firestore {
       return role() == 'admin' || role() == 'staff';
     }
 
+    function isText(value, maximum) {
+      return value is string && value.size() <= maximum;
+    }
+
+    function validOrder() {
+      return request.resource.data.keys().hasOnly([
+        'customer_name', 'phone', 'wilaya_code', 'wilaya_name', 'commune', 'address',
+        'delivery_type', 'notes', 'delivery_price', 'items', 'order_number', 'subtotal',
+        'total', 'status', 'created_at', 'order_items'
+      ])
+        && request.resource.data.keys().hasAll([
+          'customer_name', 'phone', 'wilaya_code', 'wilaya_name', 'commune', 'address',
+          'delivery_type', 'delivery_price', 'order_number', 'subtotal', 'total', 'status',
+          'created_at', 'order_items'
+        ])
+        && isText(request.resource.data.customer_name, 80)
+        && isText(request.resource.data.phone, 30)
+        && isText(request.resource.data.wilaya_code, 4)
+        && isText(request.resource.data.wilaya_name, 80)
+        && isText(request.resource.data.commune, 80)
+        && isText(request.resource.data.address, 180)
+        && (!('notes' in request.resource.data) || isText(request.resource.data.notes, 500))
+        && request.resource.data.delivery_type in ['home', 'office']
+        && request.resource.data.delivery_price is number && request.resource.data.delivery_price >= 0
+        && request.resource.data.subtotal is number && request.resource.data.subtotal >= 0
+        && request.resource.data.total is number && request.resource.data.total == request.resource.data.subtotal + request.resource.data.delivery_price
+        && isText(request.resource.data.order_number, 32)
+        && request.resource.data.status == 'nouvelle'
+        && isText(request.resource.data.created_at, 40)
+        && request.resource.data.order_items is list && request.resource.data.order_items.size() >= 1 && request.resource.data.order_items.size() <= 20;
+    }
+
+    function validAnalyticsEvent() {
+      return request.resource.data.keys().hasOnly(['event_type', 'path', 'session_id', 'metadata', 'created_at'])
+        && request.resource.data.keys().hasAll(['event_type', 'path', 'session_id', 'metadata', 'created_at'])
+        && request.resource.data.event_type in ['page_view', 'product_view', 'add_to_cart', 'order_complete', 'contact_message']
+        && isText(request.resource.data.path, 160)
+        && isText(request.resource.data.session_id, 100)
+        && request.resource.data.metadata is map && request.resource.data.metadata.size() <= 8
+        && isText(request.resource.data.created_at, 40)
+        && (request.resource.data.event_type != 'contact_message' || (
+          request.resource.data.metadata.keys().hasAll(['name', 'email', 'subject', 'message'])
+          && isText(request.resource.data.metadata.name, 80)
+          && isText(request.resource.data.metadata.email, 120)
+          && isText(request.resource.data.metadata.subject, 80)
+          && isText(request.resource.data.metadata.message, 1500)
+        ));
+    }
+
     match /products/{productId} {
       allow read: if resource.data.active == true || isStaff();
       allow create, update, delete: if isAdmin();
@@ -29,13 +78,13 @@ service cloud.firestore {
     }
 
     match /orders/{orderId} {
-      allow create: if true;
+      allow create: if validOrder();
       allow read, update: if isStaff();
       allow delete: if isAdmin();
     }
 
     match /analytics_events/{eventId} {
-      allow create: if true;
+      allow create: if validAnalyticsEvent();
       allow read: if isAdmin();
       allow update, delete: if false;
     }

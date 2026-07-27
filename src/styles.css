@@ -175,6 +175,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .variant-picker small { color: var(--muted); font-size: 9px; }
 .purchase-row { display: flex; gap: 10px; margin-top: 24px; }
 .quantity-control { height: 50px; display: grid; grid-template-columns: 38px 38px 38px; border: 1px solid var(--line); background: white; }
+.spam-trap { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
 .quantity-control button { border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
 .quantity-control button svg { width: 15px; }
 .quantity-control span { display: grid; place-items: center; font-weight: 700; }
