@@ -185,6 +185,7 @@ function getSessionId() {
 export async function placeOrder(payload: Record<string, unknown>): Promise<{ order_number: string }> {
   if (isFirebaseActive) {
     const items = Array.isArray(payload.items) ? payload.items : []
+    await validateFirebaseOrderStock(items)
     const subtotal = items.reduce((sum, item) => sum + Number((item as Record<string, unknown>).unit_price || 0) * Number((item as Record<string, unknown>).quantity || 0), 0)
     const deliveryPrice = Number(payload.delivery_price || 0)
     const result = withoutUndefined({ ...payload, order_number: orderNumber(), subtotal, total: subtotal + deliveryPrice, status: 'nouvelle', created_at: new Date().toISOString(), order_items: items })
@@ -262,6 +263,33 @@ export async function deleteOrder(id: string) {
   const { error } = await supabase.from('orders').delete().eq('id', id)
   if (error) throw error
   writeCache(cacheKeys.orders, getCachedOrders().filter((order) => order.id !== id))
+}
+
+async function validateFirebaseOrderStock(items: unknown[]) {
+  const requested = new Map<string, { quantity: number; variantId: string | null; productName: string }>()
+  for (const item of items) {
+    const row = item as Record<string, unknown>
+    const productId = String(row.product_id || '')
+    const variantId = row.variant_id ? String(row.variant_id) : null
+    const quantity = Number(row.quantity || 0)
+    if (!productId || !Number.isInteger(quantity) || quantity < 1) throw new Error('La quantité d’un article est invalide.')
+    const key = `${productId}:${variantId || 'product'}`
+    const current = requested.get(key)
+    requested.set(key, { quantity: (current?.quantity || 0) + quantity, variantId, productName: String(row.product_name || 'Ce produit') })
+  }
+
+  const database = requireFirebase()
+  await Promise.all([...requested.entries()].map(async ([key, item]) => {
+    const productId = key.slice(0, key.indexOf(':'))
+    const snapshot = await getDoc(doc(database, 'products', productId))
+    if (!snapshot.exists()) throw new Error(`${item.productName} n’est plus disponible.`)
+    const product = firebaseProduct(snapshot.data(), snapshot.id)
+    if (!product.active) throw new Error(`${product.name} n’est plus disponible.`)
+    const variant = item.variantId ? product.product_variants.find((candidate) => candidate.id === item.variantId) : undefined
+    if (item.variantId && (!variant || variant.active === false)) throw new Error(`L’option sélectionnée pour ${product.name} n’est plus disponible.`)
+    const stock = variant ? variant.stock : product.stock
+    if (stock < item.quantity) throw new Error(`${product.name} n’a plus assez de stock. Ajustez votre panier puis réessayez.`)
+  }))
 }
 
 export async function sendContactMessage(message: Omit<ContactMessage, 'id' | 'created_at'>) {

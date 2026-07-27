@@ -16,9 +16,21 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null)
 const storageKey = 'divine-glow-cart-v3'
 
+function availableStock(item: Pick<CartItem, 'product' | 'variant'>) {
+  return Math.max(0, Number(item.variant?.stock ?? item.product.stock) || 0)
+}
+
+function normalizeCart(items: CartItem[]) {
+  return items.flatMap((item) => {
+    const stock = availableStock(item)
+    const quantity = Math.min(Math.max(0, Number(item.quantity) || 0), stock)
+    return quantity > 0 ? [{ ...item, quantity }] : []
+  })
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem(storageKey) || '[]') as CartItem[] } catch { return [] }
+    try { return normalizeCart(JSON.parse(localStorage.getItem(storageKey) || '[]') as CartItem[]) } catch { return [] }
   })
   useEffect(() => localStorage.setItem(storageKey, JSON.stringify(items)), [items])
 
@@ -28,13 +40,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     subtotal: items.reduce((sum, item) => sum + getVariantPrice(item.product, item.variant) * item.quantity, 0),
     addItem(product, variant, quantity = 1) {
       setItems((current) => {
+        const stock = Math.max(0, Number(variant?.stock ?? product.stock) || 0)
+        if (!stock) return current
         const index = current.findIndex((item) => item.product.id === product.id && item.variant?.value === variant?.value)
-        if (index < 0) return [...current, { product, variant, quantity }]
-        return current.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: Math.min(item.quantity + quantity, variant?.stock ?? product.stock) } : item)
+        if (index < 0) return [...current, { product, variant, quantity: Math.min(Math.max(1, quantity), stock) }]
+        return current.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: Math.min(item.quantity + quantity, stock) } : item)
       })
       void trackEvent('add_to_cart', { product_id: product.id, variant: variant?.value })
     },
-    updateQuantity(index, quantity) { setItems((current) => current.map((item, i) => i === index ? { ...item, quantity: Math.max(1, quantity) } : item)) },
+    updateQuantity(index, quantity) {
+      setItems((current) => current.flatMap((item, i) => {
+        if (i !== index) return [item]
+        const stock = availableStock(item)
+        const nextQuantity = Math.min(Math.max(0, quantity), stock)
+        return nextQuantity > 0 ? [{ ...item, quantity: nextQuantity }] : []
+      }))
+    },
     removeItem(index) { setItems((current) => current.filter((_, i) => i !== index)) },
     clear() { setItems([]) },
   }), [items])
