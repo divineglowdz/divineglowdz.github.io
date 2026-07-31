@@ -2,11 +2,11 @@ import { defaultDeliveryRates } from '../data/algeria'
 import { seedProducts } from '../data/seed'
 import type { AnalyticsSummary, ContactMessage, DeliveryRate, Order, Product, Profile } from '../types'
 import { isCloudinaryPath, uploadProductImage } from './cloudinary'
-import { firebaseConfig, firebaseDb, isFirebaseActive } from './firebase'
+import { firebaseAuth, firebaseConfig, firebaseDb, isFirebaseActive } from './firebase'
 import { isSupabaseConfigured, supabase } from './supabase'
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query as firebaseQuery, setDoc, updateDoc, where } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query as firebaseQuery, runTransaction, setDoc, updateDoc, where } from 'firebase/firestore'
 import { getApp, getApps, initializeApp } from 'firebase/app'
-import { createUserWithEmailAndPassword, getAuth, signOut as firebaseSignOut } from 'firebase/auth'
+import { createUserWithEmailAndPassword, getAuth, signInAnonymously, signOut as firebaseSignOut } from 'firebase/auth'
 
 const cacheKeys = {
   publicProducts: 'divine-glow-products-public-v5',
@@ -185,18 +185,87 @@ function getSessionId() {
 export async function placeOrder(payload: Record<string, unknown>): Promise<{ order_number: string }> {
   if (isFirebaseActive) {
     const items = Array.isArray(payload.items) ? payload.items : []
-    await validateFirebaseOrderStock(items)
-    const subtotal = items.reduce((sum, item) => sum + Number((item as Record<string, unknown>).unit_price || 0) * Number((item as Record<string, unknown>).quantity || 0), 0)
-    const deliveryPrice = Number(payload.delivery_price || 0)
-    const result = withoutUndefined({ ...payload, order_number: orderNumber(), subtotal, total: subtotal + deliveryPrice, status: 'nouvelle', created_at: new Date().toISOString(), order_items: items })
-    const reference = await addDoc(collection(requireFirebase(), 'orders'), result)
-    writeCache(cacheKeys.orders, [{ ...result, id: reference.id } as Order, ...getCachedOrders()])
-    return { order_number: result.order_number }
+    const result = await reserveFirestoreOrder(withoutUndefined({ ...payload, items }))
+    localStorage.removeItem(cacheKeys.publicProducts)
+    localStorage.removeItem(cacheKeys.adminProducts)
+    return result
   }
   if (!isSupabaseConfigured) return { order_number: `DG-${Date.now().toString().slice(-6)}` }
   const { data, error } = await supabase.rpc('place_order', { payload })
   if (error) throw error
   return data as { order_number: string }
+}
+
+async function reserveFirestoreOrder(payload: Record<string, unknown>): Promise<{ order_number: string }> {
+  const rawItems = Array.isArray(payload.items) ? payload.items : []
+  if (!rawItems.length || rawItems.length > 20) throw new Error('Votre panier est invalide.')
+
+  const requests = new Map<string, { productId: string; variantId: string | null; quantity: number }>()
+  for (const rawItem of rawItems) {
+    const item = rawItem as Record<string, unknown>
+    const productId = String(item.product_id || '')
+    const variantId = item.variant_id ? String(item.variant_id) : null
+    const quantity = Number(item.quantity || 0)
+    if (!productId || !Number.isInteger(quantity) || quantity < 1 || quantity > 20) throw new Error('Une quantite est invalide.')
+    const key = `${productId}:${variantId || 'product'}`
+    const current = requests.get(key)
+    requests.set(key, { productId, variantId, quantity: (current?.quantity || 0) + quantity })
+  }
+
+  if (!firebaseAuth) throw new Error('Le service de commande n est pas configure.')
+  if (!firebaseAuth.currentUser) await signInAnonymously(firebaseAuth)
+  const database = requireFirebase()
+  const result = await runTransaction(database, async (transaction) => {
+    const grouped = new Map<string, { total: number; variants: Map<string, number> }>()
+    for (const request of requests.values()) {
+      const current = grouped.get(request.productId) || { total: 0, variants: new Map<string, number>() }
+      current.total += request.quantity
+      if (request.variantId) current.variants.set(request.variantId, (current.variants.get(request.variantId) || 0) + request.quantity)
+      grouped.set(request.productId, current)
+    }
+
+    const entries = [...grouped.entries()]
+    const references = entries.map(([productId]) => doc(database, 'products', productId))
+    const snapshots = await Promise.all(references.map((reference) => transaction.get(reference)))
+    const orderItems: NonNullable<Order['order_items']> = []
+    let subtotal = 0
+
+    for (const [index, [productId, requested]] of entries.entries()) {
+      const snapshot = snapshots[index]
+      if (!snapshot.exists()) throw new Error('Un produit de votre panier n est plus disponible.')
+      const product = firebaseProduct(snapshot.data(), productId)
+      if (!product.active || product.stock < requested.total) throw new Error(`${product.name} n a plus assez de stock.`)
+      const variants = product.product_variants.map((variant) => ({ ...variant }))
+      if (variants.length && requested.variants.size !== requestsForProduct(requests, productId).length) throw new Error(`Choisissez une teinte pour ${product.name}.`)
+
+      for (const [variantId, quantity] of requested.variants) {
+        const variant = variants.find((candidate) => candidate.id === variantId)
+        if (!variant || variant.active === false || variant.stock < quantity) throw new Error(`La teinte choisie pour ${product.name} est epuisee.`)
+        variant.stock -= quantity
+      }
+
+      for (const request of requestsForProduct(requests, productId)) {
+        const variant = request.variantId ? variants.find((candidate) => candidate.id === request.variantId) : undefined
+        const unitPrice = variant?.price == null ? product.price : variant.price
+        orderItems.push({ product_id: product.id, product_name: product.name, variant_id: variant?.id || undefined, variant_name: variant?.value || undefined, quantity: request.quantity, unit_price: unitPrice })
+        subtotal += unitPrice * request.quantity
+      }
+
+      transaction.update(references[index], { stock: product.stock - requested.total, product_variants: variants })
+    }
+
+    const deliveryPrice = Math.max(0, Number(payload.delivery_price || 0))
+    const order = withoutUndefined({ ...payload, items: orderItems, order_number: orderNumber(), subtotal, total: subtotal + deliveryPrice, status: 'nouvelle', created_at: new Date().toISOString(), order_items: orderItems })
+    const orderReference = doc(collection(database, 'orders'))
+    transaction.set(orderReference, order)
+    return { order_number: order.order_number }
+  })
+
+  return result
+}
+
+function requestsForProduct(requests: Map<string, { productId: string; variantId: string | null; quantity: number }>, productId: string) {
+  return [...requests.values()].filter((request) => request.productId === productId)
 }
 
 export async function getOrders(): Promise<Order[]> {
