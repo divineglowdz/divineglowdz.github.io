@@ -89,6 +89,31 @@ function firebaseProduct(row: Record<string, unknown>, id: string): Product {
   return normalizeProduct(firebaseRecord<Record<string, unknown>>(id, row))
 }
 
+const publicCatalogReference = () => doc(requireFirebase(), 'public_catalog', 'main')
+
+async function getPublicCatalogProducts(): Promise<Product[] | null> {
+  try {
+    const snapshot = await getDoc(publicCatalogReference())
+    const products = snapshot.data()?.products
+    if (!Array.isArray(products)) return null
+    return products.map((product) => normalizeProduct(product as Record<string, unknown>))
+  } catch {
+    return null
+  }
+}
+
+async function syncPublicCatalog(products: Product[]) {
+  await setDoc(publicCatalogReference(), withoutUndefined({
+    products,
+    updated_at: new Date().toISOString(),
+  }))
+}
+
+async function syncPublicCatalogFromDatabase() {
+  const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'products'), orderBy('created_at')))
+  await syncPublicCatalog(snapshot.docs.map((item) => firebaseProduct(item.data(), item.id)))
+}
+
 function orderNumber() {
   return `DG-${Date.now().toString().slice(-6)}`
 }
@@ -108,11 +133,20 @@ export async function getProducts(admin = false): Promise<Product[]> {
     const key = admin ? cacheKeys.adminProducts : cacheKeys.publicProducts
     if (!admin && isCacheFresh(key, cacheLifetime.products)) return getCachedProducts()
     try {
+      if (!admin) {
+        const catalogProducts = await getPublicCatalogProducts()
+        if (catalogProducts) {
+          const products = catalogProducts.filter((product) => product.active)
+          writeCache(cacheKeys.publicProducts, products)
+          return products
+        }
+      }
       const source = collection(requireFirebase(), 'products')
       const snapshot = await getDocs(admin ? firebaseQuery(source, orderBy('created_at')) : firebaseQuery(source, where('active', '==', true)))
       const products = snapshot.docs.map((item) => firebaseProduct(item.data(), item.id)).filter((product) => admin || product.active).sort((left, right) => String(left.created_at || '').localeCompare(String(right.created_at || '')))
       writeCache(admin ? cacheKeys.adminProducts : cacheKeys.publicProducts, products)
       if (admin) writeCache(cacheKeys.publicProducts, products.filter((product) => product.active))
+      if (admin) void syncPublicCatalog(products).catch(() => undefined)
       return products
     } catch { return getCachedProducts(admin) }
   }
@@ -132,6 +166,12 @@ export async function getProduct(slug: string): Promise<Product | null> {
     const cachedProduct = getCachedProduct(slug)
     if (cachedProduct && isCacheFresh(cacheKeys.publicProducts, cacheLifetime.products)) return cachedProduct
     try {
+      const catalogProducts = await getPublicCatalogProducts()
+      const catalogProduct = catalogProducts?.find((product) => product.slug === slug && product.active)
+      if (catalogProduct) {
+        writeCache(cacheKeys.publicProducts, catalogProducts!.filter((product) => product.active))
+        return catalogProduct
+      }
       const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'products'), where('slug', '==', slug), where('active', '==', true), limit(1)))
       const item = snapshot.docs[0]
       if (!item) return null
@@ -445,6 +485,7 @@ export async function saveProduct(product: Partial<Product>) {
     const product_variants = (product.product_variants || []).map((variant) => ({ ...variant, id: variant.id || crypto.randomUUID() }))
     const created_at = existing?.data()?.created_at || new Date().toISOString()
     await setDoc(doc(requireFirebase(), 'products', id), withoutUndefined({ ...payload, product_images, product_variants, created_at }), { merge: true })
+    await syncPublicCatalogFromDatabase().catch(() => undefined)
     localStorage.removeItem(cacheKeys.publicProducts)
     localStorage.removeItem(cacheKeys.adminProducts)
     return { ...payload, id, product_images, product_variants, created_at } as Product
@@ -484,6 +525,7 @@ export async function saveProduct(product: Partial<Product>) {
 export async function deleteProduct(id: string) {
   if (isFirebaseActive) {
     await deleteDoc(doc(requireFirebase(), 'products', id))
+    await syncPublicCatalogFromDatabase().catch(() => undefined)
     localStorage.removeItem(cacheKeys.publicProducts)
     localStorage.removeItem(cacheKeys.adminProducts)
     return
@@ -504,6 +546,7 @@ export async function uploadProductImages(productId: string, files: File[]) {
       return { id: crypto.randomUUID(), path: image.path, url: image.url, alt: file.name, position: current.length + index }
     }))
     await updateDoc(reference, { product_images: [...current, ...images] })
+    await syncPublicCatalogFromDatabase().catch(() => undefined)
     return
   }
   for (const [index, file] of files.entries()) {
@@ -522,6 +565,7 @@ export async function uploadProductVariantImage(productId: string, variantValue:
     const existing = await getDoc(reference)
     const variants = ((existing.data()?.product_variants || []) as Product['product_variants']).map((variant) => variant.value === variantValue ? { ...variant, image_url: image.url, image_path: image.path } : variant)
     await updateDoc(reference, { product_variants: variants })
+    await syncPublicCatalogFromDatabase().catch(() => undefined)
     return { image_url: image.url, image_path: image.path }
   }
   const { error } = await supabase.from('product_variants').update({ image_url: image.url, image_path: image.path }).eq('product_id', productId).eq('value', variantValue)
@@ -540,6 +584,7 @@ export async function deleteProductImage(productId: string, image: { id?: string
     const existing = await getDoc(reference)
     const images = ((existing.data()?.product_images || []) as Product['product_images']).filter((item) => item.id !== image.id && item.url !== (image as Product['product_images'][number]).url)
     await updateDoc(reference, { product_images: images })
+    await syncPublicCatalogFromDatabase().catch(() => undefined)
     return
   }
   if (image.id) {
