@@ -16,6 +16,11 @@ const cacheKeys = {
   profiles: 'divine-glow-profiles-v1',
 }
 
+const cacheLifetime = {
+  products: 15 * 60 * 1000,
+  deliveryRates: 24 * 60 * 60 * 1000,
+}
+
 function readCache<T>(key: string, fallback: T): T {
   try {
     const value = localStorage.getItem(key)
@@ -24,7 +29,19 @@ function readCache<T>(key: string, fallback: T): T {
 }
 
 function writeCache(key: string, value: unknown) {
-  try { localStorage.setItem(key, JSON.stringify(value)) } catch { /* Storage can be unavailable in private mode. */ }
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+    localStorage.setItem(`${key}:updated-at`, String(Date.now()))
+  } catch { /* Storage can be unavailable in private mode. */ }
+}
+
+function isCacheFresh(key: string, lifetime: number) {
+  try {
+    const updatedAt = Number(localStorage.getItem(`${key}:updated-at`) || 0)
+    return Boolean(localStorage.getItem(key)) && updatedAt > 0 && Date.now() - updatedAt < lifetime
+  } catch {
+    return false
+  }
 }
 
 function withoutUndefined<T>(value: T): T {
@@ -88,6 +105,8 @@ export function getCachedProduct(slug: string): Product | null {
 
 export async function getProducts(admin = false): Promise<Product[]> {
   if (isFirebaseActive) {
+    const key = admin ? cacheKeys.adminProducts : cacheKeys.publicProducts
+    if (!admin && isCacheFresh(key, cacheLifetime.products)) return getCachedProducts()
     try {
       const source = collection(requireFirebase(), 'products')
       const snapshot = await getDocs(admin ? firebaseQuery(source, orderBy('created_at')) : firebaseQuery(source, where('active', '==', true)))
@@ -110,6 +129,8 @@ export async function getProducts(admin = false): Promise<Product[]> {
 
 export async function getProduct(slug: string): Promise<Product | null> {
   if (isFirebaseActive) {
+    const cachedProduct = getCachedProduct(slug)
+    if (cachedProduct && isCacheFresh(cacheKeys.publicProducts, cacheLifetime.products)) return cachedProduct
     try {
       const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'products'), where('slug', '==', slug), where('active', '==', true), limit(1)))
       const item = snapshot.docs[0]
@@ -134,6 +155,7 @@ export async function getProduct(slug: string): Promise<Product | null> {
 
 export async function getDeliveryRates(): Promise<DeliveryRate[]> {
   if (isFirebaseActive) {
+    if (isCacheFresh(cacheKeys.deliveryRates, cacheLifetime.deliveryRates)) return getCachedDeliveryRates()
     try {
       const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'delivery_rates'), where('active', '==', true)))
       const rates = snapshot.docs.map((item) => firebaseRecord<DeliveryRate>(item.id, item.data())).filter((rate) => rate.active).sort((left, right) => left.wilaya_code.localeCompare(right.wilaya_code))
@@ -184,11 +206,19 @@ function getSessionId() {
 
 export async function placeOrder(payload: Record<string, unknown>): Promise<{ order_number: string }> {
   if (isFirebaseActive) {
-    const items = Array.isArray(payload.items) ? payload.items : []
-    const result = await reserveFirestoreOrder(withoutUndefined({ ...payload, items }))
-    localStorage.removeItem(cacheKeys.publicProducts)
-    localStorage.removeItem(cacheKeys.adminProducts)
-    return result
+    try {
+      const items = Array.isArray(payload.items) ? payload.items : []
+      const result = await reserveFirestoreOrder(withoutUndefined({ ...payload, items }))
+      localStorage.removeItem(cacheKeys.publicProducts)
+      localStorage.removeItem(cacheKeys.adminProducts)
+      return result
+    } catch (reason) {
+      const code = String((reason as { code?: string })?.code || '')
+      if (code === 'resource-exhausted' || code === 'auth/quota-exceeded') {
+        throw new Error('La boutique est momentanement tres sollicitee. Reessayez un peu plus tard.')
+      }
+      throw reason
+    }
   }
   if (!isSupabaseConfigured) return { order_number: `DG-${Date.now().toString().slice(-6)}` }
   const { data, error } = await supabase.rpc('place_order', { payload })
