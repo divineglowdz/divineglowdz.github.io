@@ -91,20 +91,30 @@ function firebaseProduct(row: Record<string, unknown>, id: string): Product {
 
 const publicCatalogReference = () => doc(requireFirebase(), 'public_catalog', 'main')
 
-async function getPublicCatalogProducts(): Promise<Product[] | null> {
+type PublicCatalog = { products: Product[]; deliveryRates: DeliveryRate[] }
+
+async function getPublicCatalog(): Promise<PublicCatalog | null> {
   try {
     const snapshot = await getDoc(publicCatalogReference())
-    const products = snapshot.data()?.products
-    if (!Array.isArray(products)) return null
-    return products.map((product) => normalizeProduct(product as Record<string, unknown>))
+    const data = snapshot.data()
+    if (!Array.isArray(data?.products)) return null
+    return {
+      products: data.products.map((product) => normalizeProduct(product as Record<string, unknown>)),
+      deliveryRates: Array.isArray(data.delivery_rates)
+        ? data.delivery_rates.map((rate) => rate as DeliveryRate)
+        : [],
+    }
   } catch {
     return null
   }
 }
 
 async function syncPublicCatalog(products: Product[]) {
+  const ratesSnapshot = await getDocs(collection(requireFirebase(), 'delivery_rates'))
+  const delivery_rates = ratesSnapshot.docs.map((item) => firebaseRecord<DeliveryRate>(item.id, item.data()))
   await setDoc(publicCatalogReference(), withoutUndefined({
     products,
+    delivery_rates,
     updated_at: new Date().toISOString(),
   }))
 }
@@ -134,12 +144,13 @@ export async function getProducts(admin = false): Promise<Product[]> {
     if (!admin && isCacheFresh(key, cacheLifetime.products)) return getCachedProducts()
     try {
       if (!admin) {
-        const catalogProducts = await getPublicCatalogProducts()
-        if (catalogProducts) {
-          const products = catalogProducts.filter((product) => product.active)
+        const catalog = await getPublicCatalog()
+        if (catalog) {
+          const products = catalog.products.filter((product) => product.active)
           writeCache(cacheKeys.publicProducts, products)
           return products
         }
+        return getCachedProducts()
       }
       const source = collection(requireFirebase(), 'products')
       const snapshot = await getDocs(admin ? firebaseQuery(source, orderBy('created_at')) : firebaseQuery(source, where('active', '==', true)))
@@ -166,20 +177,12 @@ export async function getProduct(slug: string): Promise<Product | null> {
     const cachedProduct = getCachedProduct(slug)
     if (cachedProduct && isCacheFresh(cacheKeys.publicProducts, cacheLifetime.products)) return cachedProduct
     try {
-      const catalogProducts = await getPublicCatalogProducts()
-      const catalogProduct = catalogProducts?.find((product) => product.slug === slug && product.active)
-      if (catalogProduct) {
-        writeCache(cacheKeys.publicProducts, catalogProducts!.filter((product) => product.active))
-        return catalogProduct
+      const catalog = await getPublicCatalog()
+      if (catalog) {
+        writeCache(cacheKeys.publicProducts, catalog.products.filter((product) => product.active))
+        return catalog.products.find((product) => product.slug === slug && product.active) || null
       }
-      const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'products'), where('slug', '==', slug), where('active', '==', true), limit(1)))
-      const item = snapshot.docs[0]
-      if (!item) return null
-      const product = firebaseProduct(item.data(), item.id)
-      if (!product.active) return null
-      const cached = getCachedProducts().filter((entry) => entry.id !== product.id)
-      writeCache(cacheKeys.publicProducts, [...cached, product])
-      return product
+      return cachedProduct
     } catch { return getCachedProduct(slug) }
   }
   if (!isSupabaseConfigured) return getCachedProduct(slug)
@@ -193,10 +196,19 @@ export async function getProduct(slug: string): Promise<Product | null> {
   return product
 }
 
-export async function getDeliveryRates(): Promise<DeliveryRate[]> {
+export async function getDeliveryRates(admin = false): Promise<DeliveryRate[]> {
   if (isFirebaseActive) {
-    if (isCacheFresh(cacheKeys.deliveryRates, cacheLifetime.deliveryRates)) return getCachedDeliveryRates()
+    if (!admin && isCacheFresh(cacheKeys.deliveryRates, cacheLifetime.deliveryRates)) return getCachedDeliveryRates()
     try {
+      if (!admin) {
+        const catalog = await getPublicCatalog()
+        if (catalog?.deliveryRates.length) {
+          const rates = catalog.deliveryRates.filter((rate) => rate.active).sort((left, right) => left.wilaya_code.localeCompare(right.wilaya_code))
+          writeCache(cacheKeys.deliveryRates, rates)
+          return rates
+        }
+        return getCachedDeliveryRates()
+      }
       const snapshot = await getDocs(firebaseQuery(collection(requireFirebase(), 'delivery_rates'), where('active', '==', true)))
       const rates = snapshot.docs.map((item) => firebaseRecord<DeliveryRate>(item.id, item.data())).filter((rate) => rate.active).sort((left, right) => left.wilaya_code.localeCompare(right.wilaya_code))
       const result = rates.length ? rates : defaultDeliveryRates
@@ -599,6 +611,7 @@ export async function deleteProductImage(productId: string, image: { id?: string
 export async function saveDeliveryRates(rates: DeliveryRate[]) {
   if (isFirebaseActive) {
     await Promise.all(rates.map((rate) => setDoc(doc(requireFirebase(), 'delivery_rates', rate.wilaya_code), rate)))
+    await syncPublicCatalogFromDatabase().catch(() => undefined)
     writeCache(cacheKeys.deliveryRates, rates)
     return
   }

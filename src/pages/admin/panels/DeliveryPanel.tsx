@@ -11,7 +11,7 @@ export function DeliveryPanel() {
   const [query, setQuery] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
-  useEffect(() => { void getDeliveryRates().then(setRates) }, [])
+  useEffect(() => { void getDeliveryRates(true).then(setRates) }, [])
   const visible = useMemo(() => rates.filter((rate) => `${rate.wilaya_code} ${rate.wilaya_name}`.toLowerCase().includes(query.toLowerCase())), [rates, query])
   const update = (code: string, field: keyof DeliveryRate, value: number | boolean) => setRates((current) => current.map((rate) => rate.wilaya_code === code ? { ...rate, [field]: value } : rate))
   const save = async () => { if (!isDataConfigured) return; setSaving(true); await saveDeliveryRates(rates); setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2000) }
