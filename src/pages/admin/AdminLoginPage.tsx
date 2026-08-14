@@ -14,11 +14,19 @@ export function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  if (session && profile?.active) return <Navigate to="/admin" replace />
+  const [recoveryMode] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('type') === 'recovery')
+  if (!recoveryMode && session && profile?.active) return <Navigate to="/admin" replace />
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setError('')
     if (!isFirebaseActive && !isSupabaseConfigured) { setError('La base de donnees doit etre configuree avant la connexion.'); return }
     setLoading(true)
+    if (recoveryMode) {
+      const { error: recoveryError } = await supabase.auth.updateUser({ password })
+      setLoading(false)
+      if (recoveryError) setError('Le lien de reinitialisation est invalide ou a expire. Demandez-en un nouveau.')
+      else { window.history.replaceState({}, document.title, '/admin/login'); navigate('/admin') }
+      return
+    }
     const authError = isFirebaseActive
       ? await signInWithEmailAndPassword(firebaseAuth!, email, password).then(() => null).catch((reason: Error) => reason)
       : (await supabase.auth.signInWithPassword({ email, password })).error
@@ -29,10 +37,10 @@ export function AdminLoginPage() {
   return (
     <main className="admin-login-page">
       <div className="admin-login-brand"><img className="admin-login-logo" src="https://i.ibb.co/k7R6BCs/Photo-Room-20251101-143835.png" alt="Logo Divine Glow DZ" /><small>ADMINISTRATION</small></div>
-      <form className="admin-login-card" onSubmit={submit}><div className="login-icon"><LockKeyhole /></div><h1>Bienvenue</h1><p>Connectez-vous pour piloter la boutique.</p>
-        <label>Adresse e-mail<input type="email" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-        <label>Mot de passe<div className="password-field"><input type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} /><button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Masquer' : 'Afficher'}>{showPassword ? <EyeOff /> : <Eye />}</button></div></label>
-        {error && <p className="form-error">{error}</p>}<button className="button primary" disabled={loading}>{loading ? 'Connexion...' : 'Se connecter'}</button><Link className="back-link" to="/"><ArrowLeft /> Retour a la boutique</Link>
+      <form className="admin-login-card" onSubmit={submit}><div className="login-icon"><LockKeyhole /></div><h1>{recoveryMode ? 'Nouveau mot de passe' : 'Bienvenue'}</h1><p>{recoveryMode ? 'Choisissez le mot de passe de votre acces administrateur.' : 'Connectez-vous pour piloter la boutique.'}</p>
+        {!recoveryMode && <label>Adresse e-mail<input type="email" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} /></label>}
+        <label>{recoveryMode ? 'Nouveau mot de passe' : 'Mot de passe'}<div className="password-field"><input type={showPassword ? 'text' : 'password'} required minLength={6} autoComplete={recoveryMode ? 'new-password' : 'current-password'} value={password} onChange={(event) => setPassword(event.target.value)} /><button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Masquer' : 'Afficher'}>{showPassword ? <EyeOff /> : <Eye />}</button></div></label>
+        {error && <p className="form-error">{error}</p>}<button className="button primary" disabled={loading}>{loading ? 'Enregistrement...' : recoveryMode ? 'Enregistrer le mot de passe' : 'Se connecter'}</button><Link className="back-link" to="/"><ArrowLeft /> Retour a la boutique</Link>
       </form>
     </main>
   )
