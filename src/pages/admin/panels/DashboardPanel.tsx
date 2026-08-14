@@ -1,15 +1,17 @@
-import { ArrowUpRight, Eye, MousePointerClick, PackageSearch, ScanEye, ShoppingCart, TrendingUp } from 'lucide-react'
+import { ArrowUpRight, PackageSearch, ShoppingCart, TrendingUp } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatPrice } from '../../../components/ProductCard'
-import { getAnalytics, getCachedOrders, getCachedProducts, getOrders, getProducts } from '../../../lib/api'
+import { getCachedOrders, getCachedProducts, getOrders, getProducts } from '../../../lib/api'
 import { isFirebaseActive } from '../../../lib/firebase'
-import { isSupabaseConfigured, supabase } from '../../../lib/supabase'
-import type { AnalyticsSummary, Order, Product } from '../../../types'
+import { isSupabaseConfigured } from '../../../lib/supabase'
+import type { Order, Product } from '../../../types'
 
 const cachedProducts = getCachedProducts(true)
 const cachedOrders = getCachedOrders()
-const emptySummary: AnalyticsSummary = { views: 0, productViews: 0, addToCart: 0, orders: cachedOrders.length, revenue: cachedOrders.filter((order) => order.status !== 'annulee').reduce((sum, order) => sum + Number(order.total), 0), lowStock: cachedProducts.filter((product) => product.stock <= 5).length }
+type DashboardSummary = { orders: number; revenue: number; lowStock: number }
+const makeSummary = (orders: Order[], products: Product[]): DashboardSummary => ({ orders: orders.length, revenue: orders.filter((order) => order.status !== 'annulee').reduce((sum, order) => sum + Number(order.total), 0), lowStock: products.filter((product) => product.stock <= 5).length })
+const emptySummary = makeSummary(cachedOrders, cachedProducts)
 
 export function DashboardPanel() {
   const [summary, setSummary] = useState(emptySummary)
@@ -19,29 +21,20 @@ export function DashboardPanel() {
     const nextProducts = await getProducts(true)
     setProducts(nextProducts)
     if (!isFirebaseActive && !isSupabaseConfigured) return
-    const [nextOrders, nextSummary] = await Promise.all([getOrders(), getAnalytics(nextProducts)])
+    const nextOrders = await getOrders()
     setOrders(nextOrders.slice(0, 5))
-    setSummary(nextSummary)
+    setSummary(makeSummary(nextOrders, nextProducts))
   }, [])
 
   useEffect(() => {
     void refresh()
     const refreshOnFocus = () => void refresh()
-    const interval = window.setInterval(() => void refresh(), 15000)
     window.addEventListener('focus', refreshOnFocus)
-    const channel = !isFirebaseActive && isSupabaseConfigured
-      ? supabase.channel('admin-dashboard-analytics').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'analytics_events' }, refreshOnFocus).subscribe()
-      : null
     return () => {
-      window.clearInterval(interval)
       window.removeEventListener('focus', refreshOnFocus)
-      if (channel) void supabase.removeChannel(channel)
     }
   }, [refresh])
   const cards = [
-    { label: 'Visites (30 j)', value: summary.views.toLocaleString('fr-DZ'), icon: Eye, tone: 'green' },
-    { label: 'Fiches consultees', value: summary.productViews.toLocaleString('fr-DZ'), icon: ScanEye, tone: 'pink' },
-    { label: 'Ajouts au panier', value: summary.addToCart.toLocaleString('fr-DZ'), icon: MousePointerClick, tone: 'gold' },
     { label: 'Commandes', value: summary.orders.toLocaleString('fr-DZ'), icon: ShoppingCart, tone: 'gold' },
     { label: 'Chiffre d’affaires', value: formatPrice(summary.revenue), icon: TrendingUp, tone: 'pink' },
     { label: 'Stock faible', value: String(summary.lowStock), icon: PackageSearch, tone: 'red' },

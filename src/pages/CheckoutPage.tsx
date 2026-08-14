@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { formatPrice } from '../components/ProductCard'
 import { ProductVisual } from '../components/ProductVisual'
 import { useCart } from '../contexts/CartContext'
-import { getCachedDeliveryRates, getDeliveryRates, placeOrder, trackEvent } from '../lib/api'
+import { getCachedDeliveryRates, getDeliveryRates, placeOrder } from '../lib/api'
 import { checkSubmission, cleanText } from '../lib/formProtection'
 import { getVariantPrice } from '../lib/pricing'
 import type { DeliveryRate } from '../types'
@@ -34,7 +34,6 @@ export function CheckoutPage() {
         customer_name: cleanText(form.customer_name, 80), phone: cleanText(form.phone, 30), wilaya_code: form.wilaya_code, commune: cleanText(form.commune, 80), address: cleanText(form.address, 180), delivery_type: form.delivery_type, notes: cleanText(form.notes, 500), wilaya_name: selectedRate?.wilaya_name || '', delivery_price: deliveryPrice,
         items: cart.items.map((item) => ({ product_id: item.product.id, product_name: item.product.name, variant_id: item.variant?.id || null, variant_name: item.variant?.value || null, quantity: item.quantity, unit_price: getVariantPrice(item.product, item.variant) })),
       })
-      void trackEvent('order_complete', { order_number: result.order_number, total })
       cart.clear()
       navigate('/merci', { state: result })
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Impossible de valider la commande.') } finally { setSubmitting(false) }

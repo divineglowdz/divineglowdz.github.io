@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { trackEvent } from './lib/api'
 import { Layout } from './components/Layout'
 import { HomePage } from './pages/HomePage'
 import { ShopPage } from './pages/ShopPage'
@@ -15,7 +14,7 @@ import { AdminRoute } from './pages/admin/AdminRoute'
 
 function PageTracker() {
   const location = useLocation()
-  useEffect(() => { window.scrollTo(0, 0); void trackEvent('page_view') }, [location.pathname])
+  useEffect(() => { window.scrollTo(0, 0) }, [location.pathname])
   return null
 }
 

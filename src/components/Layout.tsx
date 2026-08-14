@@ -24,7 +24,7 @@ export function Layout() {
       <main><Outlet /></main>
       <footer className="legacy-footer">
         <div><h4>À propos</h4><p>Divine Glow DZ — Boutique en ligne de cosmétiques et maquillage authentiques. Retrouvez toutes vos marques préférées, des produits de qualité, à prix abordables, avec livraison rapide partout en Algérie. ✨</p></div>
-        <div><h4>Contact</h4><a className="contact-chip" href="mailto:divineglowdz1@gmail.com">divineglowdz1@gmail.com</a><a className="contact-chip" href="tel:+213559764690">+213 55 97 64 690</a><p>Alger, Algérie</p></div>
+        <div><h4>Contact</h4><a className="contact-chip" href="mailto:divineglowdz1@gmail.com">divineglowdz1@gmail.com</a><a className="contact-chip" href="tel:+213564012589">0564 01 25 89</a><p>Alger, Algérie</p></div>
         <div><h4>Restez inspirée</h4><p>Inscrivez-vous pour recevoir des tutoriels exclusifs, looks backstage et offres privées.</p><form onSubmit={(event) => event.preventDefault()}><input type="email" placeholder="Votre e-mail" /><button className="legacy-btn secondary">Je m’inscris</button></form></div>
         <div><h4>Suivez-nous</h4><div className="social-links"><a className="social-icon" href="https://www.instagram.com/divineglowdz" target="_blank" rel="noreferrer">Instagram</a><a className="social-icon" href="https://www.tiktok.com/@divineglowdz" target="_blank" rel="noreferrer">TikTok</a></div></div>
         <p className="credits">© {new Date().getFullYear()} Divine Glow DZ. Tous droits réservés. Brillance et bienveillance incluses.</p>

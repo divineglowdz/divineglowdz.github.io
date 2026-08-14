@@ -35,7 +35,7 @@ export function ContactPage() {
 
   return <div className="contact-page">
     <section className="contact-hero"><span className="eyebrow"><MessageCircle /> Une question ?</span><h1>Parlons de votre routine.</h1><p>Notre equipe est la pour vous guider, vous renseigner sur une commande ou vous aider a trouver la teinte ideale.</p></section>
-    <section className="contact-layout"><aside className="contact-aside"><div><Mail /><h2>Ecrivez-nous</h2><a href="mailto:divineglowdz1@gmail.com">divineglowdz1@gmail.com</a></div><div><Phone /><h2>Appelez-nous</h2><a href="tel:+213559764690">+213 55 97 64 690</a></div><div><MapPin /><h2>Notre univers</h2><p>Alger, Algerie</p></div><div className="contact-reply"><Clock3 /><p>Nous repondons generalement dans les 24 a 48 heures ouvrees.</p></div></aside>
+    <section className="contact-layout"><aside className="contact-aside"><div><Mail /><h2>Ecrivez-nous</h2><a href="mailto:divineglowdz1@gmail.com">divineglowdz1@gmail.com</a></div><div><Phone /><h2>Appelez-nous</h2><a href="tel:+213564012589">0564 01 25 89</a></div><div><MapPin /><h2>Notre univers</h2><p>Alger, Algerie</p></div><div className="contact-reply"><Clock3 /><p>Nous repondons generalement dans les 24 a 48 heures ouvrees.</p></div></aside>
       <form className="contact-form" onSubmit={submit}>
         <label className="spam-trap" aria-hidden="true">Site web<input tabIndex={-1} autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} /></label>
         <div className="contact-form-heading"><span className="eyebrow">Message prive</span><h2>Comment pouvons-nous vous aider ?</h2></div>

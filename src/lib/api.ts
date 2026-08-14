@@ -229,6 +229,7 @@ export function getCachedDeliveryRates(): DeliveryRate[] {
 }
 
 export async function trackEvent(eventType: string, metadata: Record<string, unknown> = {}) {
+  if (eventType !== 'contact_message') return
   if (isFirebaseActive) {
     try {
       await addDoc(collection(requireFirebase(), 'analytics_events'), {

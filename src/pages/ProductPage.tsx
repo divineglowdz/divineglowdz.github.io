@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { formatPrice } from '../components/ProductCard'
 import { ProductVisual } from '../components/ProductVisual'
 import { useCart } from '../contexts/CartContext'
-import { getCachedProduct, getProduct, trackEvent } from '../lib/api'
+import { getCachedProduct, getProduct } from '../lib/api'
 import { getProductPriceRange, getVariantPrice } from '../lib/pricing'
 import type { Product, ProductVariant } from '../types'
 
@@ -26,7 +26,6 @@ export function ProductPage() {
     void getProduct(slug).then((data) => {
       setProduct(data)
       setLoading(false)
-      if (data) void trackEvent('product_view', { product_id: data.id })
     })
   }, [slug])
   const availableStock = useMemo(() => variant?.stock ?? product?.stock ?? 0, [product, variant])

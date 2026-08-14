@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { getVariantPrice } from '../lib/pricing'
 import type { CartItem, Product, ProductVariant } from '../types'
-import { trackEvent } from '../lib/api'
 
 type CartContextValue = {
   items: CartItem[]
@@ -46,7 +45,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (index < 0) return [...current, { product, variant, quantity: Math.min(Math.max(1, quantity), stock) }]
         return current.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: Math.min(item.quantity + quantity, stock) } : item)
       })
-      void trackEvent('add_to_cart', { product_id: product.id, variant: variant?.value })
     },
     updateQuantity(index, quantity) {
       setItems((current) => current.flatMap((item, i) => {
