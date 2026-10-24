@@ -328,6 +328,7 @@ textarea { min-height: 90px; resize: vertical; }
 .status.nouvelle { background: #e5edf8; color: #4c6e9e; }
 .status.livree { background: #e1f1e7; color: #47735c; }
 .status.annulee { background: #f8e4e2; color: #a34a43; }
+.status.retour, .status-select.retour { background: #f4e8d5; color: #805620; }
 .stock-overview > div { grid-template-columns: 9px 1fr auto; }
 .stock-overview > div > span { width: 9px; height: 32px; }
 .stock-overview strong { font-size: 11px; }

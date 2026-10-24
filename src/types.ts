@@ -32,7 +32,7 @@ export type Product = {
 
 export type CartItem = { product: Product; quantity: number; variant?: ProductVariant }
 export type DeliveryRate = { id?: string; wilaya_code: string; wilaya_name: string; home_price: number; office_price: number; active: boolean }
-export type OrderStatus = 'nouvelle' | 'confirmee' | 'preparee' | 'expediee' | 'livree' | 'annulee'
+export type OrderStatus = 'nouvelle' | 'confirmee' | 'preparee' | 'expediee' | 'livree' | 'annulee' | 'retour'
 
 export type Order = {
   id: string
@@ -48,6 +48,7 @@ export type Order = {
   subtotal: number
   total: number
   status: OrderStatus
+  stock_released?: boolean
   notes?: string
   created_at: string
   order_items?: Array<{ id?: string; product_id?: string; product_name: string; variant_id?: string; variant_name?: string; quantity: number; unit_price: number }>

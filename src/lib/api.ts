@@ -4,6 +4,7 @@ import type { AnalyticsSummary, ContactMessage, DeliveryRate, Order, Product, Pr
 import { isCloudinaryPath, uploadProductImage } from './cloudinary'
 import { firebaseAuth, firebaseConfig, firebaseDb, isFirebaseActive } from './firebase'
 import { isSupabaseConfigured, supabase } from './supabase'
+import { releasesOrderStock } from './orderStatus'
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query as firebaseQuery, runTransaction, setDoc, updateDoc, where } from 'firebase/firestore'
 import { getApp, getApps, initializeApp } from 'firebase/app'
 import { createUserWithEmailAndPassword, getAuth, signInAnonymously, signOut as firebaseSignOut } from 'firebase/auth'
@@ -371,17 +372,31 @@ export function getCachedOrders(): Order[] {
   return readCache<Order[]>(cacheKeys.orders, [])
 }
 
-export async function saveOrder(id: string, updates: Partial<Order>) {
+export async function saveOrder(id: string, updates: Partial<Order>, items?: NonNullable<Order['order_items']>) {
   if (isFirebaseActive) {
+    if (items) await saveOrderItems(id, items)
     const cleanUpdates = withoutUndefined(updates)
     await updateDoc(doc(requireFirebase(), 'orders', id), cleanUpdates)
     writeCache(cacheKeys.orders, getCachedOrders().map((order) => order.id === id ? { ...order, ...updates } : order))
     return
   }
-  const { error } = await supabase.from('orders').update(updates).eq('id', id)
-  if (error) throw error
+  const { error } = items
+    ? await supabase.rpc('admin_save_order', { target_order_id: id, updates, items: items.map(orderItemPayload) })
+    : await supabase.from('orders').update(updates).eq('id', id)
+  if (error) throw new Error(error.message)
   writeCache(cacheKeys.orders, getCachedOrders().map((order) => order.id === id ? { ...order, ...updates } : order))
+  localStorage.removeItem(cacheKeys.publicProducts)
+  localStorage.removeItem(cacheKeys.adminProducts)
 }
+
+const orderItemPayload = (item: NonNullable<Order['order_items']>[number]) => ({
+  product_id: item.product_id || null,
+  product_name: item.product_name,
+  variant_id: item.variant_id || null,
+  variant_name: item.variant_name || null,
+  quantity: item.quantity,
+  unit_price: item.unit_price,
+})
 
 export async function saveOrderItems(orderId: string, items: NonNullable<Order['order_items']>) {
   if (isFirebaseActive) {
@@ -392,14 +407,9 @@ export async function saveOrderItems(orderId: string, items: NonNullable<Order['
     writeCache(cacheKeys.orders, getCachedOrders().map((order) => order.id === orderId ? { ...order, order_items: items, subtotal, total } : order))
     return { subtotal, total }
   }
-  const payload = items.map((item) => ({
-    product_id: item.product_id,
-    variant_id: item.variant_id || null,
-    quantity: item.quantity,
-    unit_price: item.unit_price,
-  }))
+  const payload = items.map(orderItemPayload)
   const { data, error } = await supabase.rpc('admin_update_order_items', { target_order_id: orderId, items: payload })
-  if (error) throw error
+  if (error) throw new Error(error.message)
   localStorage.removeItem(cacheKeys.orders)
   localStorage.removeItem(cacheKeys.publicProducts)
   localStorage.removeItem(cacheKeys.adminProducts)
@@ -694,7 +704,7 @@ export async function getAnalytics(products: Product[]): Promise<AnalyticsSummar
         productViews: events.filter((event) => event.event_type === 'product_view').length,
         addToCart: events.filter((event) => event.event_type === 'add_to_cart').length,
         orders: orders.length,
-        revenue: orders.filter((order) => order.status !== 'annulee').reduce((sum, order) => sum + Number(order.total), 0),
+        revenue: orders.filter((order) => !releasesOrderStock(order.status)).reduce((sum, order) => sum + Number(order.total), 0),
         lowStock: products.filter((product) => product.stock <= 5).length,
       }
     } catch { return { views: 0, productViews: 0, addToCart: 0, orders: 0, revenue: 0, lowStock: products.filter((product) => product.stock <= 5).length } }
@@ -711,7 +721,7 @@ export async function getAnalytics(products: Product[]): Promise<AnalyticsSummar
     productViews: eventList.filter((event) => event.event_type === 'product_view').length,
     addToCart: eventList.filter((event) => event.event_type === 'add_to_cart').length,
     orders: orderList.length,
-    revenue: orderList.filter((order) => order.status !== 'annulee').reduce((sum, order) => sum + Number(order.total), 0),
+    revenue: orderList.filter((order) => !releasesOrderStock(order.status)).reduce((sum, order) => sum + Number(order.total), 0),
     lowStock: products.filter((product) => product.stock <= 5).length,
   }
 }
