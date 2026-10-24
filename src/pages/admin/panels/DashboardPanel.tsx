@@ -5,12 +5,13 @@ import { formatPrice } from '../../../components/ProductCard'
 import { getCachedOrders, getCachedProducts, getOrders, getProducts } from '../../../lib/api'
 import { isFirebaseActive } from '../../../lib/firebase'
 import { isSupabaseConfigured } from '../../../lib/supabase'
+import { releasesOrderStock } from '../../../lib/orderStatus'
 import type { Order, Product } from '../../../types'
 
 const cachedProducts = getCachedProducts(true)
 const cachedOrders = getCachedOrders()
 type DashboardSummary = { orders: number; revenue: number; lowStock: number }
-const makeSummary = (orders: Order[], products: Product[]): DashboardSummary => ({ orders: orders.length, revenue: orders.filter((order) => order.status !== 'annulee').reduce((sum, order) => sum + Number(order.total), 0), lowStock: products.filter((product) => product.stock <= 5).length })
+const makeSummary = (orders: Order[], products: Product[]): DashboardSummary => ({ orders: orders.length, revenue: orders.filter((order) => !releasesOrderStock(order.status)).reduce((sum, order) => sum + Number(order.total), 0), lowStock: products.filter((product) => product.stock <= 5).length })
 const emptySummary = makeSummary(cachedOrders, cachedProducts)
 
 export function DashboardPanel() {
