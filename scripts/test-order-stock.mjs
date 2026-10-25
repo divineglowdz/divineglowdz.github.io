@@ -29,8 +29,12 @@ before(async () => {
       id uuid primary key default gen_random_uuid(), product_id uuid references public.products(id),
       name text default 'Teinte', value text not null, stock integer not null check(stock >= 0), price integer, active boolean default true
     );
+    create table public.delivery_rates (
+      wilaya_code text primary key, wilaya_name text not null,
+      home_price integer not null, office_price integer not null, active boolean default true
+    );
     create table public.orders (
-      id uuid primary key default gen_random_uuid(), order_number text, customer_name text, phone text,
+      id uuid primary key default gen_random_uuid(), order_number text default gen_random_uuid()::text, customer_name text, phone text,
       commune text, address text, notes text default '', status public.order_status not null default 'nouvelle',
       wilaya_code text, wilaya_name text, delivery_type public.delivery_type default 'home',
       delivery_price integer not null default 100, subtotal integer not null default 250,
@@ -45,12 +49,14 @@ before(async () => {
   `)
   await db.exec(await readFile('supabase/migrations/202610240001_order_return_status.sql', 'utf8'))
   await db.exec(await readFile('supabase/migrations/202610240002_order_stock_returns.sql', 'utf8'))
+  await db.exec(await readFile('supabase/migrations/202610250001_checkout_variant_identity.sql', 'utf8'))
 })
 
 beforeEach(async () => {
   await db.exec(`
     set test.staff = 'true';
-    truncate public.order_items, public.orders, public.product_variants, public.products cascade;
+    truncate public.order_items, public.orders, public.product_variants, public.products, public.delivery_rates cascade;
+    insert into public.delivery_rates values ('16','Alger',500,300,true);
     insert into public.products(id,slug,name,price,stock) values
       ('${product}','blush','Blush',100,3), ('${secondProduct}','primer','Primer',50,5);
     insert into public.product_variants(id,product_id,value,stock) values
@@ -207,4 +213,97 @@ test('verification SQL de production: tous les tests passent et les fixtures son
   const result = await db.exec(await readFile('supabase/tests/order_stock_returns.sql', 'utf8'))
   assert.equal(result.at(-1).rows[0].test_data_removed, true)
   assert.deepEqual(await state(), previous)
+})
+
+const checkout = (items) => db.query('select public.place_order($1::jsonb) as result', [JSON.stringify({
+  customer_name: 'Verification', phone: '0500000000', wilaya_code: '16', commune: 'Alger',
+  address: 'Adresse de verification', delivery_type: 'home', notes: '', items,
+})])
+const checkoutLine = (changes = {}) => ({ product_id: product, variant_id: variant, variant_name: 'Rose', quantity: 1, ...changes })
+const orderCount = async () => (await db.query('select count(*)::integer as count from public.orders')).rows[0].count
+
+test('commande avec ancien identifiant: retrouve la bonne teinte et reserve son stock', async () => {
+  const result = (await checkout([checkoutLine({ variant_id: uuid(2, 99), variant_name: ' rose ' })])).rows[0].result
+  const line = (await db.query('select * from public.order_items where order_id=$1', [result.id])).rows[0]
+  assert.equal(line.variant_id, variant)
+  assert.equal(line.variant_name, 'Rose')
+  await assertStocks(2, 0)
+})
+
+test('commande avec identifiant actuel: le nom affiche peut avoir ete renomme', async () => {
+  await checkout([checkoutLine({ variant_name: 'Ancien nom' })])
+  await assertStocks(2, 0)
+})
+
+test('ancien panier sans identifiant: retrouve une teinte par son nom unique', async () => {
+  await checkout([checkoutLine({ variant_id: null })])
+  await assertStocks(2, 0)
+})
+
+test('teinte inconnue: ne choisit jamais une autre couleur par defaut', async () => {
+  await assert.rejects(checkout([checkoutLine({ variant_id: uuid(2, 99), variant_name: 'Inconnue' })]), /Teinte introuvable/)
+  assert.equal(await orderCount(), 1)
+  await assertStocks(3, 1)
+})
+
+test('nom de teinte ambigu: refuse au lieu de reserver la mauvaise option', async () => {
+  await db.query('insert into public.product_variants(product_id,value,stock) values($1,$2,3)', [product, 'rose'])
+  await assert.rejects(checkout([checkoutLine({ variant_id: uuid(2, 99) })]), /Teinte introuvable/)
+  assert.equal(await orderCount(), 1)
+  await assertStocks(3, 1)
+})
+
+test('ancien identifiant de teinte epuisee: reste refuse sans creer de commande', async () => {
+  await db.query('update public.product_variants set stock=0 where id=$1', [variant])
+  await assert.rejects(checkout([checkoutLine({ variant_id: uuid(2, 99) })]), /Quantite indisponible/)
+  assert.equal(await orderCount(), 1)
+  await assertStocks(3, 0)
+})
+
+test('teinte desactivee: refuse meme si son stock est positif', async () => {
+  await db.query('update public.product_variants set active=false where id=$1', [variant])
+  await assert.rejects(checkout([checkoutLine()]), /Teinte indisponible/)
+  await assertStocks(3, 1)
+})
+
+test('panier sans teinte: ne contourne pas le stock des options', async () => {
+  await assert.rejects(checkout([checkoutLine({ variant_id: null, variant_name: null })]), /Choisissez une teinte/)
+  assert.equal(await orderCount(), 1)
+  await assertStocks(3, 1)
+})
+
+test('lignes dupliquees: ne peuvent pas depasser le stock restant', async () => {
+  await assert.rejects(checkout([checkoutLine(), checkoutLine()]), /Quantite indisponible/)
+  assert.equal(await orderCount(), 1)
+  await assertStocks(3, 1)
+})
+
+test('commande multiple refusee: toutes les reservations precedentes sont annulees', async () => {
+  await assert.rejects(checkout([checkoutLine(), checkoutLine({ product_id: secondProduct, variant_id: null, variant_name: null, quantity: 6 })]), /Stock insuffisant/)
+  assert.equal(await orderCount(), 1)
+  await assertStocks(3, 1)
+})
+
+test('prix de commande: utilise les prix actuels du serveur et la livraison', async () => {
+  await db.query('update public.product_variants set price=150 where id=$1', [variant])
+  const result = (await checkout([checkoutLine({ unit_price: 1 })])).rows[0].result
+  const saved = (await db.query('select subtotal,total from public.orders where id=$1', [result.id])).rows[0]
+  assert.deepEqual(saved, { subtotal: 150, total: 650 })
+})
+
+test('commande sans options: reserve toujours le stock general', async () => {
+  await checkout([{ product_id: secondProduct, quantity: 2 }])
+  await assertStocks(3, 1, 3)
+})
+
+test('annulation apres une commande ancien panier: restitue la teinte resolue', async () => {
+  const result = (await checkout([checkoutLine({ variant_id: uuid(2, 99) })])).rows[0].result
+  await db.query("update public.orders set status='annulee' where id=$1", [result.id])
+  await assertStocks(3, 1)
+})
+
+test('quantite invalide: ne cree ni commande ni reservation', async () => {
+  await assert.rejects(checkout([checkoutLine({ quantity: 0 })]), /Quantite invalide/)
+  assert.equal(await orderCount(), 1)
+  await assertStocks(3, 1)
 })

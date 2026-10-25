@@ -5,6 +5,7 @@ import { isCloudinaryPath, uploadProductImage } from './cloudinary'
 import { firebaseAuth, firebaseConfig, firebaseDb, isFirebaseActive } from './firebase'
 import { isSupabaseConfigured, supabase } from './supabase'
 import { releasesOrderStock } from './orderStatus'
+import { prepareProductVariants } from './productVariants'
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query as firebaseQuery, runTransaction, setDoc, updateDoc, where } from 'firebase/firestore'
 import { getApp, getApps, initializeApp } from 'firebase/app'
 import { createUserWithEmailAndPassword, getAuth, signInAnonymously, signOut as firebaseSignOut } from 'firebase/auth'
@@ -276,7 +277,7 @@ export async function placeOrder(payload: Record<string, unknown>): Promise<{ or
   }
   if (!isSupabaseConfigured) return { order_number: `DG-${Date.now().toString().slice(-6)}` }
   const { data, error } = await supabase.rpc('place_order', { payload })
-  if (error) throw error
+  if (error) throw new Error(error.message)
   return data as { order_number: string }
 }
 
@@ -520,24 +521,16 @@ export async function saveProduct(product: Partial<Product>) {
   if (error) throw error
 
   if (product.product_variants) {
-    const { error: deleteError } = await supabase.from('product_variants').delete().eq('product_id', data.id)
-    if (deleteError) throw deleteError
-    const variants = product.product_variants.map((variant) => ({
-      product_id: data.id,
-      name: variant.name || 'Teinte',
-      value: variant.value.trim(),
-      color_hex: variant.color_hex || null,
-      image_url: variant.image_url || null,
-      image_path: variant.image_path || null,
-      price: variant.price ?? null,
-      stock: Number(variant.stock) || 0,
-      active: variant.active !== false,
-    }))
-    if (variants.length) {
-      const { error: variantError } = await supabase.from('product_variants').insert(
-        variants,
-      )
+    const { data: existing, error: existingError } = await supabase.from('product_variants').select('id,value').eq('product_id', data.id)
+    if (existingError) throw existingError
+    const { rows, removedIds } = prepareProductVariants(data.id, product.product_variants, existing || [])
+    if (rows.length) {
+      const { error: variantError } = await supabase.from('product_variants').upsert(rows, { onConflict: 'id' })
       if (variantError) throw variantError
+    }
+    if (removedIds.length) {
+      const { error: deleteError } = await supabase.from('product_variants').delete().eq('product_id', data.id).in('id', removedIds)
+      if (deleteError) throw deleteError
     }
   }
   localStorage.removeItem(cacheKeys.publicProducts)

@@ -43,7 +43,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         if (!stock) return current
         const index = current.findIndex((item) => item.product.id === product.id && item.variant?.value === variant?.value)
         if (index < 0) return [...current, { product, variant, quantity: Math.min(Math.max(1, quantity), stock) }]
-        return current.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: Math.min(item.quantity + quantity, stock) } : item)
+        return current.map((item, itemIndex) => itemIndex === index ? { ...item, product, variant, quantity: Math.min(item.quantity + quantity, stock) } : item)
       })
     },
     updateQuantity(index, quantity) {
